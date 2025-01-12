@@ -16,8 +16,14 @@ import { checkSchema } from 'express-validator'
 // Import the user controller that handles the business logic for user-related operations
 import userCltr from './app/controllers/user-cltr.js'
 
+// Importing the customer controller from the specified path
+import customerCltr from './app/controllers/customer-cltr.js';
+
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
+
+//Import the validation schemas for customer
+import customerValidationSchema from './app/validators/customer-validation-schema.js'
 
 // Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
 import authenticateUser from './app/middlewares/authenticate.js';
@@ -52,6 +58,10 @@ app.post('/api/users/login',checkSchema(userLoginSchema),userCltr.login)
 // The authenticateUser middleware is used to validate the JWT token before accessing the profile data
 // Once authenticated, the profile method from the userCltr controller is called to handle the response
 app.get('/api/users/profile',authenticateUser,userCltr.profile)
+
+// POST request to create a customer
+// Authenticates user, validates input, and calls the create method.
+app.post('/api/users/customer',authenticateUser,checkSchema(customerValidationSchema),customerCltr.create)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
