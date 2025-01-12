@@ -59,9 +59,15 @@ app.post('/api/users/login',checkSchema(userLoginSchema),userCltr.login)
 // Once authenticated, the profile method from the userCltr controller is called to handle the response
 app.get('/api/users/profile',authenticateUser,userCltr.profile)
 
-// POST request to create a customer
+// Define a POST request to create a customer
 // Authenticates user, validates input, and calls the create method.
 app.post('/api/users/customer',authenticateUser,checkSchema(customerValidationSchema),customerCltr.create)
+
+// Define a GET route for retrieving the current customer's information
+// The authenticateUser middleware is used to validate the JWT token and ensure the user is authenticated
+// After authentication, the show method from the customerCltr controller is called to handle the response
+app.get('/api/users/customer/my', authenticateUser, customerCltr.show);
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

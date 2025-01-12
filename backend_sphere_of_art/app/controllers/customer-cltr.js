@@ -36,5 +36,27 @@ customerCltr.create = async (req, res) => {
     }
 };
 
+// Define the show method in the customer controller to retrieve the current customer's information
+customerCltr.show = async (req, res) => {
+    try {
+        // Fetch the customer record from the database using the userId from the JWT token (stored in req.currentUser)
+        const customer = await Customer.findOne({ userId: req.currentUser.userId });
+
+        // If no customer record is found, return a 400 response indicating the record was not found
+        if (!customer) {
+            return res.status(400).json({ error: 'record not found' });
+        }
+
+        // Respond with the customer data in JSON format
+        res.json(customer);
+    } catch (err) {
+        // Log any errors that occur during the process
+        console.log(err.message);
+
+        // Return a 500 response indicating a server-side error
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+};
+
 // Export the customer controller to make it available for other modules
 export default customerCltr;
