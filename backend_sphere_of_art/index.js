@@ -74,6 +74,8 @@ app.get('/api/users/customer/my', authenticateUser, customerCltr.show);
 // - Calls the 'update' controller function in customerCltr to handle the update logic
 app.put('/api/customers/:id',authenticateUser,checkSchema(customerValidationSchema),customerCltr.update)
 
+app.delete('/api/customers/:id',authenticateUser,customerCltr.delete)
+
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
     // Log that the server is running successfully and show the port it's listening on

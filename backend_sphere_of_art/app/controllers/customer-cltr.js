@@ -91,6 +91,34 @@ customerCltr.update = async (req, res) => {
     }
 }
 
+// Define the delete method in the customer controller to delete the customer's information
+customerCltr.delete = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // If validation errors exist, return a 400 response with the error details
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id; // Extract customer ID from URL parameters
+
+    try {
+        // Delete the customer document by its ID
+        const customer = await Customer.findOneAndDelete({ _id: id }); // Use the ID to find and delete
+
+        if (!customer) {
+            // If no matching customer found, return an error
+            return res.status(404).json({ error: 'record not found' });
+        }
+
+        // Return the deleted customer document
+        res.json({ message: 'Customer deleted successfully', customer });
+    } catch (err) {
+        // Log and handle any errors during the delete process
+        console.error(err.message);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+}
+
 
 // Export the customer controller to make it available for other modules
 export default customerCltr;
