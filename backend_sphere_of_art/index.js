@@ -19,6 +19,10 @@ import userCltr from './app/controllers/user-cltr.js'
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
 
+// Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
+import authenticateUser from './app/middlewares/authenticate.js';
+
+
 // Initialize the Express application
 const app = express(); 
 
@@ -44,6 +48,10 @@ app.post('/api/users/register', checkSchema(userRegisterSchema), userCltr.regist
 // After validation, the login method from the user controller is called
 app.post('/api/users/login',checkSchema(userLoginSchema),userCltr.login)
 
+// Define a GET route for retrieving the user profile
+// The authenticateUser middleware is used to validate the JWT token before accessing the profile data
+// Once authenticated, the profile method from the userCltr controller is called to handle the response
+app.get('/api/users/profile',authenticateUser,userCltr.profile)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
