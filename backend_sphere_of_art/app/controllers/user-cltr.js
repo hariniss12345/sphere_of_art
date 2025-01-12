@@ -54,48 +54,7 @@ userCltr.register = async (req, res) => {
     }
 }
 
-// The login method handles user authentication and login
-userCltr.login = async (req, res) => {
-    // Check if there are any validation errors from express-validator
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        // If errors are present, return a 400 response with the error details
-        return res.status(400).json({ errors: errors.array() })
-    }
 
-    // Get the request body containing login details
-    const body = req.body;
-
-    try {
-        // Find the user in the database based on the provided email
-        const user = await User.findOne({ email: body.email })
-
-        // If no user is found with the given email, return a 404 response
-        if (!user) {
-            return res.status(404).json({ errors: 'invalid email' })
-        }
-
-        // Compare the provided password with the hashed password stored in the database
-        const isValidUser = await bcryptjs.compare(body.password, user.password)
-
-        // If the password is incorrect, return a 404 response
-        if (!isValidUser) {
-            return res.status(404).json({ errors: 'invalid email/ password' })
-        }
-
-        // If user is valid, generate a JWT token with the user's ID and role, set to expire in 7 days
-        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
-
-        // Return the token in the response, prefixed with 'Bearer ' to follow standard authorization practices
-        res.json({ token: `Bearer ${token}` })
-    } catch (err) {
-        // Log any errors that occur
-        console.log(err)
-
-        // Return a 500 response if something goes wrong on the server
-        res.status(500).json({ errors: 'Something went wrong' })
-    }
-}
 
 
 // Export the controller for use in routes
