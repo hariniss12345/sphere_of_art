@@ -39,6 +39,12 @@ app.use(cors())
 // After validation, the register method from the user controller is called
 app.post('/api/users/register', checkSchema(userRegisterSchema), userCltr.register)
 
+// Define a POST route for user login
+// It validates the incoming request body using the userLoginSchema
+// After validation, the login method from the user controller is called
+app.post('/api/users/login',checkSchema(userLoginSchema),userCltr.login)
+
+
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
     // Log that the server is running successfully and show the port it's listening on
