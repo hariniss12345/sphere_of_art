@@ -68,6 +68,11 @@ app.post('/api/users/customer',authenticateUser,checkSchema(customerValidationSc
 // After authentication, the show method from the customerCltr controller is called to handle the response
 app.get('/api/users/customer/my', authenticateUser, customerCltr.show);
 
+// Route to update a specific customer's details by their ID
+// - Uses authentication middleware to ensure the user is logged in
+// - Validates the request body using customerValidationSchema
+// - Calls the 'update' controller function in customerCltr to handle the update logic
+app.put('/api/customers/:id',authenticateUser,checkSchema(customerValidationSchema),customerCltr.update)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

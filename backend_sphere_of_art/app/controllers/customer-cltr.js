@@ -58,5 +58,39 @@ customerCltr.show = async (req, res) => {
     }
 };
 
+// Define the update method in the customer controller to update the customer's information
+customerCltr.update = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        // If validation errors exist, return a 400 response with the error details
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id; // Extract customer ID from URL parameters
+    const body = req.body; // Extract updated data from request body
+
+    try {
+        // Update the customer document by its ID
+        const customer = await Customer.findOneAndUpdate(
+            { _id: id }, // Query condition to find the document
+            body,        // Data to update
+            { new: true, runValidators: true } // Options: return updated document and validate
+        );
+
+        if (!customer) {
+            // If no matching customer found, return an error
+            return res.status(404).json({ error: 'record not found' });
+        }
+
+        // Return the updated customer document
+        res.json(customer);
+    } catch (err) {
+        // Log and handle any errors during the update process
+        console.error(err.message);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+}
+
+
 // Export the customer controller to make it available for other modules
 export default customerCltr;
