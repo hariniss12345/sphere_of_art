@@ -44,40 +44,29 @@ app.use(express.json())
 // Enable CORS to allow cross-origin requests
 app.use(cors())
 
-// Define the POST route for user registration
-// It validates the incoming request body using the userRegisterSchema
-// After validation, the register method from the user controller is called
-app.post('/api/users/register', checkSchema(userRegisterSchema), userCltr.register)
+// POST route for use registration : validates request body and calls the register handler
+app.post('/api/users/register',checkSchema(userRegisterSchema), userCltr.register)
 
-// Define a POST route for user login
-// It validates the incoming request body using the userLoginSchema
-// After validation, the login method from the user controller is called
-app.post('/api/users/login',checkSchema(userLoginSchema),userCltr.login)
+// POST route for user login: validates request body and calls the login handler
+app.post('/api/users/login', checkSchema(userLoginSchema), userCltr.login);
 
-// Define a GET route for retrieving the user profile
-// The authenticateUser middleware is used to validate the JWT token before accessing the profile data
-// Once authenticated, the profile method from the userCltr controller is called to handle the response
-app.get('/api/users/profile',authenticateUser,userCltr.profile)
+// GET route for user profile: authenticates the user and retrieves their profile
+app.get('/api/users/profile', authenticateUser, userCltr.profile);
 
-// Define a POST request to create a customer
-// Authenticates user, validates input, and calls the create method.
-app.post('/api/users/customer',authenticateUser,checkSchema(customerValidationSchema),customerCltr.create)
+// POST route for customers: authenticates the user, validates input and calls the create handler
+app.post('/api/customers', authenticateUser, checkSchema(customerValidationSchema), customerCltr.create);
 
-// Define a GET route for retrieving the current customer's information
-// The authenticateUser middleware is used to validate the JWT token and ensure the user is authenticated
-// After authentication, the show method from the customerCltr controller is called to handle the response
-app.get('/api/users/customer/my', authenticateUser, customerCltr.show);
+// GET route for customers: authenticates the user, validates input and calls the show handler
+app.get('/api/customers/my', authenticateUser, customerCltr.show);
 
-// Route to update a specific customer's details by their ID
-// - Uses authentication middleware to ensure the user is logged in
-// - Validates the request body using customerValidationSchema
-// - Calls the 'update' controller function in customerCltr to handle the update logic
+// PUT route for customers: authenticates the user, validates input and calls the update handler
 app.put('/api/customers/:id',authenticateUser,checkSchema(customerValidationSchema),customerCltr.update)
 
+// DELETE route for customers: authenticates the user,validates input and calls the delete handler
 app.delete('/api/customers/:id',authenticateUser,customerCltr.delete)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
     // Log that the server is running successfully and show the port it's listening on
     console.log('Server is running on port', process.env.PORT);
-});
+})
