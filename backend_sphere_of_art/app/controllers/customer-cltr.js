@@ -20,13 +20,16 @@ customerCltr.create = async (req, res) => {
         const body = req.body;
 
         // Create a new Customer instance using the request body data
-        const newCustomer = new Customer(body);
+        const customer = new Customer(body);
+
+        // Assign the user ID from the authenticated user (this assumes userId is present in req.currentUser)
+        customer.user = req.currentUser.userId
 
         // Save the new customer to the database
-        const savedCustomer = await newCustomer.save();
+        await customer.save();
 
         // Return the saved customer data in a 201 response
-        res.status(201).json(savedCustomer);
+        res.status(201).json(customer);
     } catch (err) {
         // Log any errors that occur during the process
         console.log(err.message);
@@ -40,7 +43,7 @@ customerCltr.create = async (req, res) => {
 customerCltr.show = async (req, res) => {
     try {
         // Fetch the customer record from the database using the userId from the JWT token (stored in req.currentUser)
-        const customer = await Customer.findOne({ userId: req.currentUser.userId });
+        const customer = await Customer.findOne({ user: req.currentUser.userId });
 
         // If no customer record is found, return a 400 response indicating the record was not found
         if (!customer) {

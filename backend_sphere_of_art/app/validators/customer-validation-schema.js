@@ -3,17 +3,6 @@ import Customer from '../models/customer-model.js';
 
 // Defining the validation schema for customer data
 const customerValidationSchema = {
-    // Validation for userId field
-    userId: {
-        in: ['body'], // Indicates the field should be in the request body
-        isMongoId: {
-            errorMessage: 'Invalid user ID format. It should be a valid MongoDB ObjectId.', // Custom error message for invalid ObjectId
-        },
-        notEmpty: {
-            errorMessage: 'User ID is required.', // Custom error message when userId is missing
-        },
-    },
-    
     // Validation for address field
     address: {
         in: ['body'], // Indicates the field should be in the request body

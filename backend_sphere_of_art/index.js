@@ -19,17 +19,17 @@ import userCltr from './app/controllers/user-cltr.js'
 // Importing the customer controller from the specified path
 import customerCltr from './app/controllers/customer-cltr.js';
 
-//Importing the artist controller from the specified path
-import artistCltr from './app/controllers/artist-cltr.js'
 
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
 
+// Importing the idValidationSchema from the 'validators' directory
+import idValidationSchema from './app/validators/id-validation-schema.js'
+
 //Import the validation schemas for customer
 import customerValidationSchema from './app/validators/customer-validation-schema.js'
 
-//Import the validation schemas for artist
-import artistValidationSchema from './app/validators/artist-validation-schema.js'
+
 
 // Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
 import authenticateUser from './app/middlewares/authenticate.js';
@@ -67,14 +67,13 @@ app.post('/api/customers', authenticateUser, checkSchema(customerValidationSchem
 app.get('/api/customers/my', authenticateUser, customerCltr.show);
 
 // PUT route for customers: authenticates the user, validates input and calls the update handler
-app.put('/api/customers/:id',authenticateUser,checkSchema(customerValidationSchema),customerCltr.update)
+app.put('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),checkSchema(customerValidationSchema),customerCltr.update)
 
 // DELETE route for customers: authenticates the user,validates input and calls the delete handler
-app.delete('/api/customers/:id',authenticateUser,customerCltr.delete)
+app.delete('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),customerCltr.delete)
 
 
-// POST route for artists :
-app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),artistCltr.create)
+
 
 
 // Start the server and listen on the port specified in the environment variables
