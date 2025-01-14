@@ -84,6 +84,8 @@ app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),art
 // GET route for artists : authenticates the user and calls the show method
 app.get('/api/artists/my',authenticateUser,artistCltr.show)
 
+//PUT route for artists : authenticates the user,validates the input and calls the update method
+app.put('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),checkSchema(artistValidationSchema),artistCltr.update)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

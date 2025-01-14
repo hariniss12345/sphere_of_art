@@ -59,4 +59,37 @@ artistCltr.show = async ( req,res ) => {
 
 }
 
+// Define the update method in the artist controller to update the artist's information
+artistCltr.update = async (req, res) => {
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) {
+        // If validation errors exist, return a 400 response with the error details
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id; // Extract customer ID from URL parameters
+    const body = req.body; // Extract updated data from request body
+
+    try {
+        // Update the artist document by its ID
+        const artist = await Artist.findOneAndUpdate(
+            { _id: id }, // Query condition to find the document
+            body,        // Data to update
+            { new: true, runValidators: true } // Options: return updated document and validate
+        );
+
+        if (!artist) {
+            // If no matching artist found, return an error
+            return res.status(404).json({ error: 'record not found' });
+        }
+
+        // Return the updated artist document
+        res.json(artist);
+    } catch (err) {
+        // Log and handle any errors during the update process
+        console.error(err.message);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+}
+
 export default artistCltr  // Exporting the artist controller to be used in other parts of the application
