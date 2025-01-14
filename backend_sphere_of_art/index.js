@@ -19,6 +19,9 @@ import userCltr from './app/controllers/user-cltr.js'
 // Importing the customer controller from the specified path
 import customerCltr from './app/controllers/customer-cltr.js';
 
+//Importing the artist controller from the specified path
+import artistCltr from './app/controllers/artist-cltr.js'
+
 
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
@@ -29,6 +32,8 @@ import idValidationSchema from './app/validators/id-validation-schema.js'
 //Import the validation schemas for customer
 import customerValidationSchema from './app/validators/customer-validation-schema.js'
 
+//Import the validation schemas for artist
+import artistValidationSchema from './app/validators/artist-validation-schema.js'
 
 
 // Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
@@ -73,6 +78,8 @@ app.put('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),ch
 app.delete('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),customerCltr.delete)
 
 
+// POST route for artists : authenticates the user,validates input and calls the create method
+app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),artistCltr.create)
 
 
 
