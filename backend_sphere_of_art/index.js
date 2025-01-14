@@ -81,6 +81,8 @@ app.delete('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema)
 // POST route for artists : authenticates the user,validates input and calls the create method
 app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),artistCltr.create)
 
+// GET route for artists : authenticates the user and calls the show method
+app.get('/api/artists/my',authenticateUser,artistCltr.show)
 
 
 // Start the server and listen on the port specified in the environment variables

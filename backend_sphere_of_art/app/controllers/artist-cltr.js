@@ -35,4 +35,28 @@ artistCltr.create = async (req, res) => {
     }
 }
 
+// Define the show method in the artist controller to retrieve the current artist's information
+artistCltr.show = async ( req,res ) => {
+   
+    try {
+        // Fetch the artist record from the database using the userId from the JWT token (stored in req.currentUser)
+        const artist = await Artist.findOne({ user: req.currentUser.userId });
+
+        // If no artist record is found, return a 400 response indicating the record was not found
+        if (!artist) {
+            return res.status(400).json({ error: 'record not found' });
+        }
+
+        // Respond with the artist data in JSON format
+        res.json(artist);
+    } catch (err) {
+        // Log any errors that occur during the process
+        console.log(err.message);
+
+        // Return a 500 response indicating a server-side error
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+
+}
+
 export default artistCltr  // Exporting the artist controller to be used in other parts of the application
