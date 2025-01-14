@@ -5,7 +5,7 @@ import { Schema, model } from 'mongoose';
 const customerSchema = new Schema(
   {
     // Reference to the user this customer is associated with
-    userId: {
+    user: {
       type: Schema.Types.ObjectId, // MongoDB ObjectId type
       ref: 'User', // Refers to the 'User' collection
     },
