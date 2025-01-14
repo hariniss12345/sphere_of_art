@@ -4,7 +4,7 @@ import { Schema, model } from 'mongoose';
 const artistSchema = new Schema(
   {
     // Reference to the User model 
-    userId: {
+    user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
     },

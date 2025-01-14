@@ -3,31 +3,6 @@ import Artist from '../models/artist-model.js';
 
 // Defining the validation schema for artist data
 const artistValidationSchema = {
-  // Validation for userId field
-  userId: {
-    in: ['body'], // Indicates the field should be in the request body
-    isMongoId: {
-      errorMessage: 'Invalid user ID format. It should be a valid MongoDB ObjectId.', // Custom error message for invalid ObjectId
-    },
-    notEmpty: {
-      errorMessage: 'User ID is required.', // Custom error message when userId is missing
-    },
-    custom: {
-      // Custom validation to check if the artist already exists
-      options: async (value) => {
-        try {
-          const existingArtist = await Artist.findOne({ userId: value });
-          if (existingArtist) {
-            throw new Error('An artist with this user ID already exists.');
-          }
-          return true;
-        } catch (err) {
-          throw new Error('Error checking artist uniqueness.'); // Handle errors that occur during the uniqueness check
-        }
-      },
-    },
-  },
-
   // Validation for bio field
   bio: {
     in: ['body'], // Indicates the field should be in the request body

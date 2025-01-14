@@ -19,11 +19,17 @@ import userCltr from './app/controllers/user-cltr.js'
 // Importing the customer controller from the specified path
 import customerCltr from './app/controllers/customer-cltr.js';
 
+//Importing the artist controller from the specified path
+import artistCltr from './app/controllers/artist-cltr.js'
+
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
 
 //Import the validation schemas for customer
 import customerValidationSchema from './app/validators/customer-validation-schema.js'
+
+//Import the validation schemas for artist
+import artistValidationSchema from './app/validators/artist-validation-schema.js'
 
 // Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
 import authenticateUser from './app/middlewares/authenticate.js';
@@ -53,6 +59,7 @@ app.post('/api/users/login', checkSchema(userLoginSchema), userCltr.login);
 // GET route for user profile: authenticates the user and retrieves their profile
 app.get('/api/users/profile', authenticateUser, userCltr.profile);
 
+
 // POST route for customers: authenticates the user, validates input and calls the create handler
 app.post('/api/customers', authenticateUser, checkSchema(customerValidationSchema), customerCltr.create);
 
@@ -64,6 +71,11 @@ app.put('/api/customers/:id',authenticateUser,checkSchema(customerValidationSche
 
 // DELETE route for customers: authenticates the user,validates input and calls the delete handler
 app.delete('/api/customers/:id',authenticateUser,customerCltr.delete)
+
+
+// POST route for artists :
+app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),artistCltr.create)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
