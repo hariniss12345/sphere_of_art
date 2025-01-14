@@ -67,7 +67,7 @@ artistCltr.update = async (req, res) => {
         return res.status(400).json({ errors: errors.array() });
     }
 
-    const id = req.params.id; // Extract customer ID from URL parameters
+    const id = req.params.id; // Extract artist ID from URL parameters
     const body = req.body; // Extract updated data from request body
 
     try {
@@ -87,6 +87,34 @@ artistCltr.update = async (req, res) => {
         res.json(artist);
     } catch (err) {
         // Log and handle any errors during the update process
+        console.error(err.message);
+        res.status(500).json({ error: 'Something went wrong' });
+    }
+}
+
+// Define the delete method in the artist controller to delete the artist's information
+artistCltr.delete = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        // If validation errors exist, return a 400 response with the error details
+        return res.status(400).json({ errors: errors.array() });
+    }
+
+    const id = req.params.id; // Extract artist ID from URL parameters
+
+    try {
+        // Delete the artist document by its ID
+        const artist = await Artist.findOneAndDelete({ _id: id }); // Use the ID to find and delete
+
+        if (!artist) {
+            // If no matching artist found, return an error
+            return res.status(404).json({ error: 'record not found' });
+        }
+
+        // Return the deleted artist document
+        res.json({ message: 'Artist deleted successfully', artist });
+    } catch (err) {
+        // Log and handle any errors during the delete process
         console.error(err.message);
         res.status(500).json({ error: 'Something went wrong' });
     }
