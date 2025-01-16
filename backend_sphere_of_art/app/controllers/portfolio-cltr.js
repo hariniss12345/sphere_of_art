@@ -58,5 +58,65 @@ portfolioCltr.upload = async (req, res) => {
   }
 };
 
+
+portfolioCltr.update = async (req, res) => {
+    const { id } = req.params; // Extract portfolio ID from request parameters
+    const { title } = req.body; // Extract updated title from request body
+  
+    try {
+      // Prepare the fields to update
+      const updateData = {};
+  
+      if (title) updateData.title = title; // Update the title if provided
+      if (req.file) updateData.filePath = req.file.path; // Update file path if new file is uploaded
+  
+      // Update the portfolio using findOneAndUpdate
+      const updatedPortfolio = await Portfolio.findOneAndUpdate(
+        { _id: id }, // Search by portfolio ID
+        updateData,   // Fields to update (title, filePath)
+        { new: true } // Return the updated document
+      );
+  
+      if (!updatedPortfolio) {
+        return res.status(404).json({ message: 'Portfolio not found' });
+      }
+  
+      // Log the updated portfolio for debugging
+      console.log('Updated Portfolio:', updatedPortfolio);
+  
+      // Retrieve the artist who owns the portfolio
+      const artist = await Artist.findOne({ user: updatedPortfolio.artistId });
+  
+      if (!artist) {
+        return res.status(404).json({ message: 'Artist not found' });
+      }
+  
+      // Log the artist's portfolio for debugging
+      console.log('Artist Portfolio Array:', artist.portfolio);
+  
+      // Optionally, update the artist's portfolio array (if necessary)
+      // For example, if you want to ensure the portfolio ID is correctly updated in the artist's portfolio array
+      const portfolioIndex = artist.portfolio.indexOf(updatedPortfolio._id);
+      if (portfolioIndex === -1) {
+        artist.portfolio.push(updatedPortfolio._id); // Push new portfolio if not found
+      }
+  
+      // Save the artist model with the updated portfolio reference (if needed)
+      await artist.save();
+  
+      // Return a success response with the updated portfolio and artist info
+      res.status(200).json({
+        message: 'Portfolio and artist updated successfully',
+        portfolio: updatedPortfolio,
+        artist,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error updating portfolio or artist' });
+    }
+  };
+  
+  
+
 // Exporting the portfolioCltr object which contains the upload function to be used in routes
 export default portfolioCltr;

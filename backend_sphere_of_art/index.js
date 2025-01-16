@@ -103,6 +103,9 @@ app.delete('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),a
 // POST route for portfolio: authenticates the user,handles file upload,validates the input and calls the upload method
 app.post('/api/portfolio/upload',authenticateUser,upload.single('file'),checkSchema(portfolioValidationSchema),portfolioCltr.upload)
 
+// PUT route for portfolio : authenticates the user,validates the input and calls the update method
+app.put('/api/portfolios/:id',authenticateUser,upload.single('file'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
+
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
     // Log that the server is running successfully and show the port it's listening on

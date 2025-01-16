@@ -12,7 +12,7 @@ const PortfolioSchema = new Schema({
     // Reference to the Artist model, linking this portfolio item to an artist
     artistId: { 
         type: Schema.Types.ObjectId, // This field stores an ObjectId (MongoDB unique identifier)
-        ref: 'Artist' // Specifies the referenced collection/model as 'Artist'
+        ref: 'User' // Specifies the referenced collection/model as 'Artist'
     },
 }, { timestamps: true })
 
