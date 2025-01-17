@@ -58,7 +58,29 @@ portfolioCltr.upload = async (req, res) => {
   }
 };
 
-      
+portfolioCltr.show = async (req, res) => {
+  const { id } = req.params; // Extract the portfolio ID from the request parameters
+
+  try {
+    // Find the portfolio by its ID
+    const portfolio = await Portfolio.findById(id);
+
+    // If no portfolio is found, return an error response
+    if (!portfolio) {
+      return res.status(404).json({ message: 'Portfolio not found' });
+    }
+
+    // Return the portfolio details
+    res.status(200).json({
+      message: 'Portfolio retrieved successfully',
+      portfolio,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error retrieving portfolio' });
+  }
+};
+
 
 
 portfolioCltr.update = async (req, res) => {
