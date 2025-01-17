@@ -47,6 +47,7 @@ import authenticateUser from './app/middlewares/authenticate.js';
 // This middleware handles file uploads, using configurations like storage options and file validation.
 import upload from './app/middlewares/upload.js';
 
+import fileValidation from './app/middlewares/fileValidation.js'
 
 
 // Initialize the Express application
@@ -101,7 +102,7 @@ app.delete('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),a
 
 
 // POST route for portfolio: authenticates the user,handles file upload,validates the input and calls the upload method
-app.post('/api/portfolios/upload',authenticateUser,upload.single('file'),checkSchema(portfolioValidationSchema),portfolioCltr.upload)
+app.post('/api/portfolios/upload',authenticateUser,upload.single('file'),fileValidation,checkSchema(portfolioValidationSchema),portfolioCltr.upload)
 
 // GET route for portfolio: authenticates the user,validates the input and calls the show method
 app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.show)

@@ -4,61 +4,65 @@ import Portfolio from '../models/portfolio-model.js';  // Assuming Portfolio is 
 // Importing the Artist model to reference the artist associated with the portfolio
 import Artist from '../models/artist-model.js';  // Assuming Artist model to reference the portfolio
 
+// Import validationResult to handle request validation errors
+import { validationResult } from 'express-validator' 
+
 // Initialize an empty object to hold the controller functions
 const portfolioCltr = {}
 
-// Upload function to handle the portfolio image upload and save it to the database
+// Upload function to handle file upload and save portfolio entry
 portfolioCltr.upload = async (req, res) => {
-  // Check if a file is uploaded, return error if no file is found
+  // Check if a file is uploaded
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' });
   }
 
-  // Extract the title from the request body, which is submitted alongside the file
+  // Extract the title from the request body and file path
   const { title } = req.body;
+  const filePath = req.file.path;
+  const artistId = req.currentUser.userId; // Assuming this is set during authentication
 
   try {
-    // Get the file path of the uploaded image, saved by multer
-    const filePath = req.file.path;
-
-    // Get the artist's userId from the authenticated request (assumed to be set during authentication)
-    const artistId = req.currentUser.userId;
-
-    // Create a new Portfolio entry with the extracted data (title, file path, and artist's ID)
+    // Create a new portfolio entry with the file path and artist ID
     const newPortfolio = new Portfolio({
-      title,  // Use the title provided in the request body
+      title,
       filePath,
       artistId,
+      fileHash: req.fileHash,  // Store the file hash to ensure uniqueness
     });
 
-    // Save the new portfolio entry to the database
+    // Save the portfolio entry to the database
     await newPortfolio.save();
 
-    // Find the artist in the database based on the userId (artistId)
+    // Find the artist by userId
     const artist = await Artist.findOne({ user: artistId });
-
-    // If no artist is found, return an error response
     if (!artist) {
       return res.status(404).json({ message: 'Artist not found' });
     }
 
-    // Add the newly created portfolio reference (ID) to the artist's portfolio array
+    // Add the portfolio reference to the artist's portfolio array
     artist.portfolio.push(newPortfolio._id);
     await artist.save();
 
-    // Return a success response with the newly uploaded portfolio details
+    // Return a success response with the portfolio data
     res.status(200).json({
       message: 'Portfolio image uploaded successfully',
       portfolio: newPortfolio,
     });
   } catch (error) {
-    // In case of an error, log it and send an error response
     console.error(error);
     res.status(500).json({ error: 'Error uploading portfolio image' });
   }
 };
 
+
 portfolioCltr.show = async (req, res) => {
+  // Check if there are validation errors from express-validator
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      // If errors are present, return a 400 response with the error details
+      return res.status(400).json({errors: errors.array()})
+  }
   const { id } = req.params; // Extract the portfolio ID from the request parameters
 
   try {
@@ -103,6 +107,13 @@ portfolioCltr.list = async (req, res) => {
 };
 
 portfolioCltr.update = async (req, res) => {
+     // Check if there are validation errors from express-validator
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+      // If errors are present, return a 400 response with the error details
+      return res.status(400).json({errors: errors.array()})
+    }
+
     const { id } = req.params; // Extract portfolio ID from request parameters
     const { title } = req.body; // Extract updated title from request body
   
@@ -161,6 +172,13 @@ portfolioCltr.update = async (req, res) => {
   
 
   portfolioCltr.delete = async (req, res) => {
+    // Check if there are validation errors from express-validator
+    const errors = validationResult(req)
+    if(!errors.isEmpty()){
+       // If errors are present, return a 400 response with the error details
+       return res.status(400).json({errors: errors.array()})
+    }
+
     const { id } = req.params; // Extract the portfolio ID from the request parameters
   
     try {

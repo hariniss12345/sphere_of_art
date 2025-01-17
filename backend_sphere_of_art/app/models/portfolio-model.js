@@ -14,6 +14,7 @@ const PortfolioSchema = new Schema({
         type: Schema.Types.ObjectId, // This field stores an ObjectId (MongoDB unique identifier)
         ref: 'User' // Specifies the referenced collection/model as 'Artist'
     },
+    fileHash : String
 }, { timestamps: true })
 
 // Create a Portfolio model using the defined schema
