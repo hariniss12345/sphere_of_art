@@ -58,6 +58,8 @@ portfolioCltr.upload = async (req, res) => {
   }
 };
 
+      
+
 
 portfolioCltr.update = async (req, res) => {
     const { id } = req.params; // Extract portfolio ID from request parameters
@@ -113,6 +115,49 @@ portfolioCltr.update = async (req, res) => {
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: 'Error updating portfolio or artist' });
+    }
+  };
+  
+
+  portfolioCltr.delete = async (req, res) => {
+    const { id } = req.params; // Extract the portfolio ID from the request parameters
+  
+    try {
+      // Find the portfolio to be deleted
+      const portfolio = await Portfolio.findById(id);
+  
+      // If no portfolio is found, return an error response
+      if (!portfolio) {
+        return res.status(404).json({ message: 'Portfolio not found' });
+      }
+  
+      // Retrieve the artist associated with the portfolio
+      const artist = await Artist.findOne({ user: portfolio.artistId });
+  
+      // If no artist is found, return an error response
+      if (!artist) {
+        return res.status(404).json({ message: 'Artist not found' });
+      }
+  
+      // Remove the portfolio reference from the artist's portfolio array
+      artist.portfolio = artist.portfolio.filter(
+        (portfolioId) => portfolioId.toString() !== id
+      );
+  
+      // Save the updated artist document
+      await artist.save();
+  
+      // Delete the portfolio entry from the database
+      await Portfolio.findOneAndDelete(id);
+  
+      // Return a success response
+      res.status(200).json({
+        message: 'Portfolio deleted successfully',
+        portfolio
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Error deleting portfolio' });
     }
   };
   
