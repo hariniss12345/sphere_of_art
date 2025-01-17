@@ -72,7 +72,7 @@ portfolioCltr.show = async (req, res) => {
 
     // Return the portfolio details
     res.status(200).json({
-      message: 'Portfolio retrieved successfully',
+      message: ' Single portfolio retrieved successfully',
       portfolio,
     });
   } catch (error) {
@@ -81,7 +81,26 @@ portfolioCltr.show = async (req, res) => {
   }
 };
 
+portfolioCltr.list = async (req, res) => {
+  try {
+    // Fetch all portfolios from the database
+    const portfolios = await Portfolio.find();
 
+    // If no portfolios are found, return an appropriate message
+    if (portfolios.length === 0) {
+      return res.status(404).json({ message: 'No portfolios found' });
+    }
+
+    // Return the list of portfolios
+    res.status(200).json({
+      message: 'Portfolios retrieved successfully',
+      portfolios,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error retrieving portfolios' });
+  }
+};
 
 portfolioCltr.update = async (req, res) => {
     const { id } = req.params; // Extract portfolio ID from request parameters

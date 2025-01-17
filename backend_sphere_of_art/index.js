@@ -106,6 +106,9 @@ app.post('/api/portfolios/upload',authenticateUser,upload.single('file'),checkSc
 // GET route for portfolio: authenticates the user,validates the input and calls the show method
 app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.show)
 
+// GET route for portfolio: authenticates the user,validates the input and calls the list method
+app.get('/api/portfolios',authenticateUser,portfolioCltr.list)
+
 // PUT route for portfolio: authenticates the user,validates the input and calls the update method
 app.put('/api/portfolios/:id',authenticateUser,upload.single('file'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
 
