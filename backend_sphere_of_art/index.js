@@ -22,6 +22,8 @@ import customerCltr from './app/controllers/customer-cltr.js';
 //Importing the artist controller from the specified path
 import artistCltr from './app/controllers/artist-cltr.js'
 
+//Importing the portfolio controller from the specifird path
+import portfolioCltr from './app/controllers/portfolio-cltr.js'
 
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
@@ -35,9 +37,17 @@ import customerValidationSchema from './app/validators/customer-validation-schem
 //Import the validation schemas for artist
 import artistValidationSchema from './app/validators/artist-validation-schema.js'
 
+//Import the validation schemas for portfolio
+import portfolioValidationSchema from './app/validators/portfolio-validation-schema.js'
 
 // Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
 import authenticateUser from './app/middlewares/authenticate.js';
+
+// Importing the 'upload' middleware from the specified path
+// This middleware handles file uploads, using configurations like storage options and file validation.
+import upload from './app/middlewares/upload.js';
+
+import fileValidation from './app/middlewares/fileValidation.js'
 
 
 // Initialize the Express application
@@ -55,7 +65,7 @@ app.use(express.json())
 // Enable CORS to allow cross-origin requests
 app.use(cors())
 
-// POST route for use registration : validates request body and calls the register handler
+// POST route for use registration: validates request body and calls the register handler
 app.post('/api/users/register',checkSchema(userRegisterSchema), userCltr.register)
 
 // POST route for user login: validates request body and calls the login handler
@@ -78,17 +88,35 @@ app.put('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),ch
 app.delete('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),customerCltr.delete)
 
 
-// POST route for artists : authenticates the user,validates input and calls the create method
+// POST route for artists: authenticates the user,validates input and calls the create method
 app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),artistCltr.create)
 
-// GET route for artists : authenticates the user and calls the show method
+// GET route for artists: authenticates the user and calls the show method
 app.get('/api/artists/my',authenticateUser,artistCltr.show)
 
-//PUT route for artists : authenticates the user,validates the input and calls the update method
+//PUT route for artists: authenticates the user,validates the input and calls the update method
 app.put('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),checkSchema(artistValidationSchema),artistCltr.update)
 
-//DELETE route for artists : authenticates the user.validates the input and calls the delete method
+//DELETE route for artists: authenticates the user.validates the input and calls the delete method
 app.delete('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),artistCltr.delete)
+
+
+// POST route for portfolio: authenticates the user,handles file upload,validates the input and calls the upload method
+app.post('/api/portfolios/upload',authenticateUser,upload.single('file'),fileValidation,checkSchema(portfolioValidationSchema),portfolioCltr.upload)
+
+// GET route for portfolio: authenticates the user,validates the input and calls the show method
+app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.show)
+
+// GET route for portfolio: authenticates the user,validates the input and calls the list method
+app.get('/api/portfolios',authenticateUser,portfolioCltr.list)
+
+// PUT route for portfolio: authenticates the user,validates the input and calls the update method
+app.put('/api/portfolios/:id',authenticateUser,upload.single('file'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
+
+// DELETE route for portfolio: authenticates the user,validates the input and calls the delete method
+app.delete('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.delete)
+
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
