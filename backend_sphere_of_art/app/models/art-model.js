@@ -4,7 +4,7 @@ import { Schema, model } from 'mongoose'; // Import Schema and model from mongoo
 const artSchema = new Schema(
   {
     title: String, // The title of the artwork
-    style: String, // The style or category of the artwork 
+    style: String, // The style of the artwork 
     image: String, // The image URL or file path for the artwork
     customerId: {
       type: Schema.Types.ObjectId, // Refers to the ObjectId of a Customer
