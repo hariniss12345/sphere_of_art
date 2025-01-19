@@ -130,6 +130,9 @@ app.get('/api/arts',authenticateUser,artCltr.list)
 //GET route for art:authenticates the user ,validates the id and calls show method
 app.get('/api/arts/:id',authenticateUser,checkSchema(idValidationSchema),artCltr.show)
 
+//PUT route for art:authenticates the user,handles the file upload,validates the id and calls the update method
+app.put('/api/arts/:artId',authenticateUser,upload.array('images',5),artCltr.update)
+
 //DELETE route for art: authenticates the user,validates the id and calls the delete method
 app.delete('/api/arts/:artId',authenticateUser,checkSchema(idValidationSchema),artCltr.delete)
 
