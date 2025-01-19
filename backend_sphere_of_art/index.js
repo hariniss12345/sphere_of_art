@@ -127,6 +127,9 @@ app.post('/api/arts/uploads',authenticateUser,upload.array('images',5),fileValid
 // GET route for art: authenticates the user and calls the list method
 app.get('/api/arts',authenticateUser,artCltr.list)
 
+//GET route for art:authenticates the user ,validates the id and calls show method
+app.get('/api/arts/:id',authenticateUser,checkSchema(idValidationSchema),artCltr.show)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

@@ -1,4 +1,8 @@
+// Importing the Art model to interact with the art collection in the database
 import Art from '../models/art-model.js';
+
+// Import validationResult to handle request validation errors
+import { validationResult } from 'express-validator' 
 
 const artCltr = {};
 
@@ -37,12 +41,12 @@ artCltr.list = async ( req,res ) => {
         // Fetch all art from the database
         const arts = await Art.find();
     
-        // If no portfolios are found, return an appropriate message
+        // If no art are found, return an appropriate message
         if (arts.length === 0) {
           return res.status(404).json({ message: 'No arts found' });
         }
     
-        // Return the list of portfolios
+        // Return the list of arts
         res.status(200).json({
           message: 'Arts retrieved successfully',
           arts,
@@ -51,6 +55,35 @@ artCltr.list = async ( req,res ) => {
         console.error(error);
         res.status(500).json({ error: 'Error retrieving arts' });
       }
+}
+
+artCltr.show = async ( req,res ) => {
+    // Check if there are validation errors from express-validator
+  const errors = validationResult(req)
+  if(!errors.isEmpty()){
+      // If errors are present, return a 400 response with the error details
+      return res.status(400).json({errors: errors.array()})
+  }
+  const { id } = req.params; // Extract the portfolio ID from the request parameters
+
+  try {
+    // Find the art by its ID
+    const art = await Art.findById(id);
+
+    // If no portfolio is found, return an error response
+    if (!art) {
+      return res.status(404).json({ message: 'Art not found' });
+    }
+
+    // Return the art details
+    res.status(200).json({
+      message: ' Single art retrieved successfully',
+      art,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error retrieving art' });
+  }
 }
 
 export default artCltr;
