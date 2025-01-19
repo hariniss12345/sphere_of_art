@@ -124,6 +124,9 @@ app.delete('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema
 //POST route for art: authenticates the user,handles the file upload,validates the input and calls the create method
 app.post('/api/arts/uploads',authenticateUser,upload.array('images',5),fileValidation,artCltr.upload)
 
+// GET route for art: authenticates the user and calls the list method
+app.get('/api/arts',authenticateUser,artCltr.list)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

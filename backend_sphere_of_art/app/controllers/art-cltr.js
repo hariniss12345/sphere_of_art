@@ -32,4 +32,25 @@ artCltr.upload = async (req, res) => {
   }
 };
 
+artCltr.list = async ( req,res ) => {
+    try {
+        // Fetch all art from the database
+        const arts = await Art.find();
+    
+        // If no portfolios are found, return an appropriate message
+        if (arts.length === 0) {
+          return res.status(404).json({ message: 'No arts found' });
+        }
+    
+        // Return the list of portfolios
+        res.status(200).json({
+          message: 'Arts retrieved successfully',
+          arts,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Error retrieving arts' });
+      }
+}
+
 export default artCltr;
