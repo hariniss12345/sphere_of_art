@@ -113,5 +113,41 @@ artCltr.delete = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 }
+artCltr.deleteImage = async (req, res) => {
+    const { artId, imageId } = req.params; // artId and imageId from the request params
+  
+    try {
+      // Find the art document by its ID
+      const art = await Art.findById(artId);
+  
+      // If the artwork doesn't exist, return an error
+      if (!art) {
+        return res.status(404).json({ message: 'Artwork not found' });
+      }
+  
+      // Pull the image by its _id from the image array
+      const updatedArt = await Art.findByIdAndUpdate(
+        artId,
+        { $pull: { image: { _id: imageId } } }, // Removing image by _id
+        { new: true } // Return the updated document
+      );
+  
+      // If the update fails, return an error
+      if (!updatedArt) {
+        return res.status(400).json({ message: 'Error deleting the image' });
+      }
+  
+      // Respond with the updated artwork
+      res.status(200).json({
+        message: 'Image deleted successfully',
+        data: updatedArt,
+      });
+    } catch (error) {
+      // Catch and handle any errors
+      res.status(500).json({ message: error.message });
+    }
+  };
+  
+
 
 export default artCltr;

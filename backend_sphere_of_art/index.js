@@ -133,6 +133,9 @@ app.get('/api/arts/:id',authenticateUser,checkSchema(idValidationSchema),artCltr
 //DELETE route for art: authenticates the user,validates the id and calls the delete method
 app.delete('/api/arts/:artId',authenticateUser,checkSchema(idValidationSchema),artCltr.delete)
 
+//DELETE route for image: authenticates the user,validates the id and calls the deleteImage method
+app.delete('/api/arts/:artId/image/:imageId',authenticateUser,checkSchema(idValidationSchema),artCltr.deleteImage)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
