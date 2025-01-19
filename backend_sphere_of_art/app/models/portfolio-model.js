@@ -5,9 +5,9 @@ import { Schema, model } from 'mongoose';
 const PortfolioSchema = new Schema({
     // Title of the portfolio item or artwork
     title: String, 
-
-    // Path to the uploaded file, stored as a string (e.g., file location on the server)
-    filePath: String,
+    
+    // Path to the uploaded file, stored as a string 
+    filePath : String,
 
     // Reference to the Artist model, linking this portfolio item to an artist
     artistId: { 

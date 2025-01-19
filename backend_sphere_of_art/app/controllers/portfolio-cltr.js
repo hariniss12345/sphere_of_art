@@ -28,7 +28,8 @@ portfolioCltr.upload = async (req, res) => {
       title,
       filePath,
       artistId,
-      fileHash: req.fileHash,  // Store the file hash to ensure uniqueness
+      fileHash : req.fileHash
+      
     });
 
     // Save the portfolio entry to the database

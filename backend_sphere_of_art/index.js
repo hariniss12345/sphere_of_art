@@ -22,8 +22,11 @@ import customerCltr from './app/controllers/customer-cltr.js';
 //Importing the artist controller from the specified path
 import artistCltr from './app/controllers/artist-cltr.js'
 
-//Importing the portfolio controller from the specifird path
+//Importing the portfolio controller from the specified path
 import portfolioCltr from './app/controllers/portfolio-cltr.js'
+
+//Importing thr art controller from the specified path
+import artCltr from './app/controllers/art-cltr.js'
 
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
@@ -40,6 +43,9 @@ import artistValidationSchema from './app/validators/artist-validation-schema.js
 //Import the validation schemas for portfolio
 import portfolioValidationSchema from './app/validators/portfolio-validation-schema.js'
 
+//Import the validation schemas for art
+import artValidationSchema from './app/validators/art-validation-schema.js'
+
 // Import the authenticateUser middleware function to validate the user's JWT and authenticate requests
 import authenticateUser from './app/middlewares/authenticate.js';
 
@@ -48,7 +54,6 @@ import authenticateUser from './app/middlewares/authenticate.js';
 import upload from './app/middlewares/upload.js';
 
 import fileValidation from './app/middlewares/fileValidation.js'
-
 
 // Initialize the Express application
 const app = express(); 
@@ -102,7 +107,7 @@ app.delete('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),a
 
 
 // POST route for portfolio: authenticates the user,handles file upload,validates the input and calls the upload method
-app.post('/api/portfolios/upload',authenticateUser,upload.single('file'),fileValidation,checkSchema(portfolioValidationSchema),portfolioCltr.upload)
+app.post('/api/portfolios/upload',authenticateUser,upload.single('image'),fileValidation,checkSchema(portfolioValidationSchema),portfolioCltr.upload)
 
 // GET route for portfolio: authenticates the user,validates the input and calls the show method
 app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.show)
@@ -111,11 +116,13 @@ app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),p
 app.get('/api/portfolios',authenticateUser,portfolioCltr.list)
 
 // PUT route for portfolio: authenticates the user,validates the input and calls the update method
-app.put('/api/portfolios/:id',authenticateUser,upload.single('file'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
+app.put('/api/portfolios/:id',authenticateUser,upload.single('image'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
 
 // DELETE route for portfolio: authenticates the user,validates the input and calls the delete method
 app.delete('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.delete)
 
+//POST route for art: authenticates the user,handles the file upload,validates the input and calls the create method
+app.post('/api/arts/uploads',authenticateUser,upload.array('images',5),fileValidation,artCltr.upload)
 
 
 // Start the server and listen on the port specified in the environment variables
