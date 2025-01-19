@@ -36,7 +36,8 @@ artCltr.upload = async (req, res) => {
   }
 };
 
-artCltr.list = async ( req,res ) => {
+// List function to retrieve all art documents from the database
+artCltr.list = async (req, res) => {
     try {
         // Fetch all art from the database
         const arts = await Art.find();
@@ -52,19 +53,21 @@ artCltr.list = async ( req,res ) => {
           arts,
         });
       } catch (error) {
+        // Log error and respond with an error message
         console.error(error);
         res.status(500).json({ error: 'Error retrieving arts' });
       }
 }
 
-artCltr.show = async ( req,res ) => {
-    // Check if there are validation errors from express-validator
+// Show function to retrieve a specific art by ID
+artCltr.show = async (req, res) => {
+  // Check if there are validation errors from express-validator
   const errors = validationResult(req)
   if(!errors.isEmpty()){
       // If errors are present, return a 400 response with the error details
       return res.status(400).json({errors: errors.array()})
   }
-  const { id } = req.params; // Extract the portfolio ID from the request parameters
+  const { id } = req.params; // Extract the art ID from the request parameters
 
   try {
     // Find the art by its ID
@@ -77,12 +80,37 @@ artCltr.show = async ( req,res ) => {
 
     // Return the art details
     res.status(200).json({
-      message: ' Single art retrieved successfully',
+      message: 'Single art retrieved successfully',
       art,
     });
   } catch (error) {
+    // Log error and respond with an error message
     console.error(error);
     res.status(500).json({ error: 'Error retrieving art' });
+  }
+}
+
+// Delete function to remove an art document from the database by ID
+artCltr.delete = async (req, res) => {
+  try {
+    const { artId } = req.params; // Get the artwork ID from the request params
+  
+    // Find and delete the artwork by its ID
+    const deletedArt = await Art.findByIdAndDelete(artId);
+
+    // If no artwork is found, return a 404 response
+    if (!deletedArt) {
+      return res.status(404).json({ message: 'Artwork not found' });
+    }
+
+    // Respond with a success message and the deleted art data
+    res.status(200).json({
+      message: 'Artwork deleted successfully',
+      data: deletedArt,
+    });
+  } catch (error) {
+    // Handle any errors during the process by responding with a 500 error and the error message
+    res.status(500).json({ message: error.message });
   }
 }
 

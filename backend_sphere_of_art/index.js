@@ -130,6 +130,9 @@ app.get('/api/arts',authenticateUser,artCltr.list)
 //GET route for art:authenticates the user ,validates the id and calls show method
 app.get('/api/arts/:id',authenticateUser,checkSchema(idValidationSchema),artCltr.show)
 
+//DELETE route for art: authenticates the user,validates the id and calls the delete method
+app.delete('/api/arts/:artId',authenticateUser,checkSchema(idValidationSchema),artCltr.delete)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
