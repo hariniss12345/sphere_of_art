@@ -4,7 +4,7 @@ const idValidationSchema={
       isMongoId:{
         errorMessage:'id is invalid'
       }
-    }
   }
+}
 
 export default idValidationSchema
