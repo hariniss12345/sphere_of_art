@@ -135,6 +135,7 @@ artCltr.update = async (req, res) => {
   }
 }
 
+
 // Delete function to remove an art document from the database by ID
 artCltr.delete = async (req, res) => {
   // Check if there are validation errors from express-validator
