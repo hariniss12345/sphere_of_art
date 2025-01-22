@@ -19,19 +19,19 @@ export default function AuthProvider(props){
         return userDispatch({type:'LOGOUT',payload:{isLoggedIn:false,user:null}})
     }
 
-    useEffect(()=>{
-        (async ()=>{
-            if(localStorage.getItem('token')){
-                const response=await axios.get('http://localhost:4700/api/users/profile',{headers:{Authorization:localStorage.getItem('token')}})
-                handleLogin(response.data)
-            }
-        })();
-    },[])     
+    // useEffect(()=>{
+    //     (async ()=>{
+    //         if(localStorage.getItem('token')){
+    //             const response=await axios.get('http://localhost:4700/api/users/profile',{headers:{Authorization:localStorage.getItem('token')}})
+    //             handleLogin(response.data)
+    //         }
+    //     })();
+    // },[])     
 
-    //to handle page loads
-    if(localStorage.getItem('token')&& !userState.user){
-        return <p>loading...</p>
-    }
+    // //to handle page loads
+    // if(localStorage.getItem('token')&& !userState.user){
+    //     return <p>loading...</p>
+    // }
 
     return (
         <div>
