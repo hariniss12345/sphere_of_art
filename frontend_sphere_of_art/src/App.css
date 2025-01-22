@@ -9,3 +9,13 @@
 .main h2 {
     margin-top:40px;
   }
+
+  #top-nav 
+  {
+      list-style-type:none
+  }
+  
+  li{
+      display: inline;
+      margin-right: 10px;
+  }
