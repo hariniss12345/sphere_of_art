@@ -14,7 +14,7 @@ const portfolioCltr = {}
 portfolioCltr.upload = async (req, res) => {
   // Check if a file is uploaded
   if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
+    return res.status(400).json({ error: 'no file uploaded' });
   }
 
   // Extract the title from the request body and file path
