@@ -3,6 +3,8 @@ import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../context/Auth";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login() {
   const { handleLogin } = useContext(AuthContext); // Context to manage authentication state
@@ -14,6 +16,7 @@ export default function Login() {
     password: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false);
   // State to store validation errors from the client
   const [clientErrors, setClientErrors] = useState({});
   // State to store errors returned by the server
@@ -91,15 +94,29 @@ export default function Login() {
         )}
         <br />
 
-        {/* Password input */}
-        <input
-          type="password"
-          value={formData.password}
-          onChange={(e) =>
-            setFormdata({ ...formData, password: e.target.value }) // Update password field
-          }
-          placeholder="Enter password"
-        />
+        {/* Password input with eye icon */}
+        <div style={{ position: "relative", display: "inline-block" }}>
+          <input
+            type={showPassword ? "text" : "password"} // Toggle between "text" and "password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormdata({ ...formData, password: e.target.value })
+            }
+            placeholder="Enter password"
+            style={{ paddingRight: "2rem" }} // Space for the eye icon
+          />
+          <FontAwesomeIcon
+            icon={showPassword ? faEyeSlash : faEye} // Toggle icons
+            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
+            style={{
+              position: "absolute",
+              right: "10px",
+              top: "50%",
+              transform: "translateY(-50%)",
+              cursor: "pointer",
+            }}
+          />
+        </div>
         {clientErrors.password && (
           <span style={{ color: "red" }}>{clientErrors.password}</span> // Show client-side validation error
         )}
