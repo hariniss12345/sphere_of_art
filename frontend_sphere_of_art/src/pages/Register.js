@@ -1,9 +1,9 @@
 import '../App.css';
 import { useState } from "react"
-
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
 export default function Register(){
-    
+    const navigate = useNavigate(); 
     const [formData, setFormdata] = useState({
         username:"",
         email : "",
@@ -11,7 +11,7 @@ export default function Register(){
         role : ""
     });
     const [clientErrors, setClientErros] = useState(null);
-  
+    const [serverErrors, setServerErrors] = useState(null); 
     const clientValidationsErrors = {};
 
 
@@ -39,10 +39,11 @@ export default function Register(){
         console.log(clientValidationsErrors); 
         if(Object.keys(clientValidationsErrors).length == 0) {
             try {
-                const response = await axios.post('http://localhost:4700/api/users/register', formData)  
+                const response = await axios.post('http://localhost:4700/api/users/register', formData) 
+                navigate('/login'); 
                 console.log(response.data)
             } catch(err) {
-               console.log(err.message)
+                setServerErrors(err.response.data.errors); 
             }
             setClientErros({})
         } else {
@@ -53,7 +54,16 @@ export default function Register(){
     return(
         <>
             <h2>Register page</h2>
-           
+            { serverErrors && (
+                <div>
+                    <h3>Server Errors</h3>
+                    <ul>
+                        { serverErrors.map((ele,i) => {
+                            return <li key={i}>{ele.msg}</li>
+                        })}
+                    </ul>
+                </div>
+            )}
             <form onSubmit={handleSubmit}>
             <input 
                     type="text" 
