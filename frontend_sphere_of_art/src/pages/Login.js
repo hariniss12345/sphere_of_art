@@ -1,96 +1,127 @@
-import { useState } from "react"
-import AuthContext from "../context/Auth.js";
-import { useContext } from "react";
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios'; 
-export default function Login(){
+// Importing required modules and hooks
+import { useState } from "react"; // useState for managing form inputs and errors
+import AuthContext from "../context/Auth.js"; // AuthContext for accessing authentication-related functions
+import { useContext } from "react"; // useContext to consume AuthContext
+import { useNavigate } from 'react-router-dom'; // useNavigate for programmatic navigation
+import axios from 'axios'; // axios for making HTTP requests
+
+export default function Login() {
+    // Accessing `handleLogin` from AuthContext
     const { handleLogin } = useContext(AuthContext); 
+
+    // Hook for navigation
     const navigate = useNavigate(); 
+
+    // State to manage form inputs
     const [formData, setFormadata] = useState({
-        username:"",
-        email : "",
-        password : ""
+        username: "",
+        email: "",
+        password: ""
     });
+
+    // State to manage client-side and server-side errors
     const [clientErrors, setClientErros] = useState(null);
-    const [serverErrors, setServerErrors] = useState(null); 
+    const [serverErrors, setServerErrors] = useState(null);
+
+    // Object to store client-side validation errors
     const clientValidationsErrors = {};
 
-
-    const runClientValidations = ()=>{
-        if(formData.username.trim().length === 0){
-            clientValidationsErrors.username = 'username is required'
+    // Function to run client-side validations
+    const runClientValidations = () => {
+        // Check if username is empty
+        if (formData.username.trim().length === 0) {
+            clientValidationsErrors.username = 'Username is required';
         }
 
-        if(formData.password.trim().length === 0){
-            clientValidationsErrors.password = 'password is required'
+        // Check if password is empty
+        if (formData.password.trim().length === 0) {
+            clientValidationsErrors.password = 'Password is required';
         }
 
-        if(formData.email.trim().length === 0){
-            clientValidationsErrors.email = 'email is required'
+        // Check if email is empty
+        if (formData.email.trim().length === 0) {
+            clientValidationsErrors.email = 'Email is required';
         }
+    };
 
-    }
+    // Function to handle form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent default form submission behavior
+        runClientValidations(); // Run client-side validations
 
-    const handleSubmit = async (e)=>{
-        e.preventDefault();
-        runClientValidations();
-        if(Object.keys(clientValidationsErrors).length == 0) {
+        // Check if there are no client-side validation errors
+        if (Object.keys(clientValidationsErrors).length === 0) {
             try {
-               const response = await axios.post('http://localhost:4700/api/users/login',formData)
-               //console.log(response.data)
-               localStorage.setItem('token',response.data.token)
-               const userResponse=await axios.get('http://localhost:4700/api/users/profile',{headers:{Authorization:localStorage.getItem('token')}})
-               //console.log(userResponse.data)
-               handleLogin(userResponse.data)
-               navigate('/dashboard')
-            } catch(err) {
-                setServerErrors(err.response.data.errors); 
-            }
-            setClientErros({})
-        } else {
-            
-            setClientErros(clientValidationsErrors); 
-        }
-    }
+                // Send login request to the server
+                const response = await axios.post('http://localhost:4700/api/users/login', formData);
+                localStorage.setItem('token', response.data.token); // Save the token in localStorage
 
-    return(
+                // Fetch user profile after successful login
+                const userResponse = await axios.get('http://localhost:4700/api/users/profile', {
+                    headers: { Authorization: localStorage.getItem('token') }
+                });
+
+                // Log the user in using `handleLogin`
+                handleLogin(userResponse.data);
+
+                // Redirect to the dashboard
+                navigate('/dashboard');
+            } catch (err) {
+                // Set server-side errors if login fails
+                setServerErrors(err.response.data.errors);
+            }
+            setClientErros({}); // Clear client-side errors
+        } else {
+            setClientErros(clientValidationsErrors); // Set client-side validation errors
+        }
+    };
+
+    return (
         <div className="login">
-            <h2>Login page</h2>
-            { serverErrors && (
+            <h2>Login Page</h2>
+
+            {/* Display server-side errors if any */}
+            {serverErrors && (
                 <div>
-                    <b>{ serverErrors }</b>
+                    <b>{serverErrors}</b>
                 </div>
             )}
-            <form onSubmit={handleSubmit}>
-            <input 
-                    type="text" 
-                    value={formData.username} 
-                    onChange={(e)=> setFormadata({...formData, username:e.target.value})}
-                    placeholder="Enter username" 
-                />
-                {clientErrors && <span style={{color:'red'}}>{clientErrors.username}</span>}
-                <br/>
-                <input 
-                    type="email" 
-                    value={formData.email} 
-                    onChange={(e)=> setFormadata({...formData, email:e.target.value})}
-                    placeholder="Enter email" 
-                />
-               {clientErrors && <span style={{color:'red'}}>{clientErrors.email}</span>}
-                <br/>
 
-                <input 
-                    type="password" 
-                    value={formData.password} 
-                    onChange={(e)=> setFormadata({...formData, password:e.target.value})}
+            {/* Login form */}
+            <form onSubmit={handleSubmit}>
+                {/* Username input */}
+                <input
+                    type="text"
+                    value={formData.username}
+                    onChange={(e) => setFormadata({ ...formData, username: e.target.value })}
+                    placeholder="Enter username"
+                />
+                {clientErrors && <span style={{ color: 'red' }}>{clientErrors.username}</span>}
+                <br />
+
+                {/* Email input */}
+                <input
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormadata({ ...formData, email: e.target.value })}
+                    placeholder="Enter email"
+                />
+                {clientErrors && <span style={{ color: 'red' }}>{clientErrors.email}</span>}
+                <br />
+
+                {/* Password input */}
+                <input
+                    type="password"
+                    value={formData.password}
+                    onChange={(e) => setFormadata({ ...formData, password: e.target.value })}
                     placeholder="Enter password"
-                /> 
-                {clientErrors && <span style={{color:'red'}}>{clientErrors.password}</span>}
-                <br/>
-              
-                <input type="submit"/>
+                />
+                {clientErrors && <span style={{ color: 'red' }}>{clientErrors.password}</span>}
+                <br />
+
+                {/* Submit button */}
+                <input type="submit" value="Sign In" />
             </form>
         </div>
-    )
+    );
 }
-
