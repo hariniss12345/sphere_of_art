@@ -6,6 +6,7 @@ import MainPage from './pages/MainPage'
 import Home from './pages/Home'
 import Register from './pages/Register'
 import Login from './pages/Login'
+import Dashboard from './pages/Dashboard'
 
 export default function App () {
     return (
@@ -14,6 +15,7 @@ export default function App () {
           <li><Link to = "/home" >Home</Link></li> 
           <li><Link to = "/register" >Register</Link></li>
           <li><Link to = "/login" >Login</Link></li>
+          <li><Link to = "/dashboard" >Dashboard</Link></li>
           </ul>
           
           <Routes>
@@ -21,6 +23,7 @@ export default function App () {
             <Route path = "/home" element = {<Home/>} />
             <Route path = "/register" element = {<Register/>} />
             <Route path = "/login" element = {<Login/>} />
+            <Route path = "/dashboard" element = {<Dashboard/>} />
 
           </Routes>
         </div>
