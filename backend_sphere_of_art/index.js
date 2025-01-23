@@ -107,7 +107,7 @@ app.delete('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),a
 
 
 // POST route for portfolio: authenticates the user,handles file upload,validates the input and calls the upload method
-app.post('/api/portfolios/upload',authenticateUser,upload.single('image'),fileValidation,checkSchema(portfolioValidationSchema),portfolioCltr.upload)
+app.post('/api/portfolios/upload',authenticateUser,upload.single('image'),checkSchema(portfolioValidationSchema),portfolioCltr.upload)
 
 // GET route for portfolio: authenticates the user,validates the input and calls the show method
 app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.show)
@@ -131,13 +131,13 @@ app.get('/api/arts',authenticateUser,artCltr.list)
 app.get('/api/arts/:id',authenticateUser,checkSchema(idValidationSchema),artCltr.show)
 
 //PUT route for art:authenticates the user,handles the file upload,validates the id and calls the update method
-app.put('/api/arts/:artId',authenticateUser,upload.array('images',5),checkSchema(idValidationSchema),artCltr.update)
+app.put('/api/arts/:artId',authenticateUser,upload.array('images',5),artCltr.update)
 
 //DELETE route for art: authenticates the user,validates the id and calls the delete method
-app.delete('/api/arts/:artId',authenticateUser,checkSchema(idValidationSchema),artCltr.delete)
+app.delete('/api/arts/:artId',authenticateUser,artCltr.delete)
 
 //DELETE route for image: authenticates the user,validates the id and calls the deleteImage method
-app.delete('/api/arts/:artId/image/:imageId',authenticateUser,checkSchema(idValidationSchema),artCltr.deleteImage)
+app.delete('/api/arts/:artId/image/:imageId',authenticateUser,artCltr.deleteImage)
 
 
 // Start the server and listen on the port specified in the environment variables
