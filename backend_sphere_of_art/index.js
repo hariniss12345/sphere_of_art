@@ -80,6 +80,8 @@ app.post('/api/users/register',checkSchema(userRegisterSchema), userCltr.registe
 // POST route for user login: validates request body and calls the login handler
 app.post('/api/users/login',loginValidation,checkSchema(userLoginSchema),userCltr.login);
 
+app.post('/api/users/forgot-password',userCltr.forgotPassword)
+
 // GET route for user profile: authenticates the user and retrieves their profile
 app.get('/api/users/profile', authenticateUser, userCltr.profile);
 

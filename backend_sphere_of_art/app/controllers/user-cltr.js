@@ -8,6 +8,9 @@ import bcryptjs from 'bcryptjs';
 // Import the jsonwebtoken library to handle the creation and verification of JSON Web Tokens (JWT)
 import jwt from 'jsonwebtoken';
 
+import sendEmail from '../../utils/mailer.js'
+
+
 
 
 // Create an empty object to store the controller methods
@@ -109,6 +112,44 @@ userCltr.profile = async (req, res) => {
         res.status(500).json({ errors: 'something went wrong' });
     }
 };
+
+userCltr.forgotPassword = async ( req,res ) => {
+    const { email } = req.body;
+
+    try {
+         // Step 1: Check if the user exists
+        const user = await User.findOne({ email });
+        if (!user) {
+          return res.status(404).json({ message: 'User with that email does not exist.' });
+        }
+
+        // Step 2: Create a JWT reset password token
+        const resetToken = jwt.sign(
+        { userId: user._id }, // Include user ID in the token payload
+        process.env.JWT_SECRET, // Use your secret key
+        { expiresIn: process.env.JWT_RESET_PASSWORD_EXPIRATION } // Token expiration time
+        );
+
+        // Step 3: Create reset password URL (you can customize the URL based on your frontend)
+    
+        const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+   
+        // Step 4: Send email with the reset URL
+        const subject = 'Password Reset Request';
+        const text = `You requested a password reset. Click the link below to reset your password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
+        const html = `<p>You requested a password reset. Click the link below to reset your password:</p>
+                 <a href="${resetUrl}">${resetUrl}</a>
+                 <p>If you did not request this, please ignore this email.</p>`;
+
+        await sendEmail(user.email, subject, text, html); // Send the email
+
+        // Step 5: Respond to the client
+        res.status(200).json({ message: 'Password reset email sent successfully' });
+    } catch (error) {
+        console.error('Error in forgotPassword:', error);
+        res.status(500).json({ message: 'Something went wrong' });
+ }   
+}
 
 // Export the controller for use in routes
 export default userCltr
