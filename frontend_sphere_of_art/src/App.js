@@ -23,7 +23,7 @@ import Profile from './pages/Profile';
 // The main App component
 export default function App(props) {
   // Consuming user state and authentication-related actions from AuthContext
-  const { userState } = useContext(AuthContext);
+  const { userState,handelLogout } = useContext(AuthContext);
 
   // useNavigate hook for programmatic navigation
   const navigate = useNavigate();
@@ -50,6 +50,15 @@ export default function App(props) {
             <li><Link to="/order">Order</Link></li>
             <li><Link to="/profile">Profile</Link></li>
             {/* Logout button that clears user session and navigates to Home */}
+            <li>
+              <button onClick={() => {
+                handelLogout(); // Call the logout handler
+                localStorage.removeItem('token'); // Remove the token from localStorage
+                navigate('/home'); // Redirect to Home page
+              }}>
+                LOGOUT
+              </button>
+            </li>
           </>
         )}
       </ul>
