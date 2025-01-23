@@ -71,13 +71,10 @@ export const userRegisterSchema = {
  * Schema for user login validation.
  * Validates the data entered by the user during the login process.
 */
-
 export const userLoginSchema = {
-    // Validation rules for the username field
+    // Validation for username field
     username: {
-        exists: {
-            errorMessage: 'username field is required', // Ensures the username is provided
-        },
+        optional: { options: { nullable: true } }, // Allow this field to be optional
         notEmpty: {
             errorMessage: 'username should not be empty', // Ensures the username is not empty
         },
@@ -87,13 +84,11 @@ export const userLoginSchema = {
         },
         trim: true, // Removes leading and trailing spaces from the username
     },
-    // Validation rules for the email field
+    // Validation for email field
     email: {
-        exists: {
-            errorMessage: 'email field is required', // Ensures the email is provided
-        },
+        optional: { options: { nullable: true } }, // Allow this field to be optional
         notEmpty: {
-            errorMessage: 'email cannot be empty', // Ensures the email is not empty
+            errorMessage: 'email should not be empty', // Ensures the email is not empty
         },
         isEmail: {
             errorMessage: 'email should be in a valid format', // Ensures the email is in a valid format
@@ -101,7 +96,7 @@ export const userLoginSchema = {
         trim: true, // Removes leading and trailing spaces from the email
         normalizeEmail: true, // Normalizes the email to a consistent format
     },
-    // Validation rules for the password field
+    // Validation for password field
     password: {
         exists: {
             errorMessage: 'password field is required', // Ensures the password is provided
@@ -111,14 +106,17 @@ export const userLoginSchema = {
         },
         isStrongPassword: {
             options: {
-                minLength: 8, // Minimum length of 8 characters for the password
-                minUpperCase: 1, // At least one uppercase letter
-                minLowerCase: 1, // At least one lowercase letter
-                minNumber: 1, // At least one number
-                minSymbol: 1, // At least one symbol
+                minLength: 8,
+                minUpperCase: 1,
+                minLowerCase: 1,
+                minNumber: 1,
+                minSymbol: 1,
             },
-            errorMessage: 'password must contain at least one uppercase letter, one lowercase letter, one number, one symbol, and be at least 8 characters long', // Custom error message for password complexity
+            errorMessage: 'password must contain at least one uppercase letter, one lowercase letter, one number, one symbol, and be at least 8 characters long',
         },
-        trim: true, // Removes leading and trailing spaces from the password
+        trim: true,
     },
 };
+
+
+

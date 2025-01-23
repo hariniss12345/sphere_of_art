@@ -56,42 +56,40 @@ userCltr.register = async (req, res) => {
 
 // The login method handles user authentication based on email and password
 userCltr.login = async (req, res) => {
-    // Check for validation errors from express-validator
-    const errors = validationResult(req)
+    // Check for validation errors
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        // If validation errors exist, return a 400 response with the error details
-        return res.status(400).json({ errors: errors.array() })
+        return res.status(400).json({ errors: errors.array() });
     }
 
-    // Get the request body containing the login details (email and password)
-    const body = req.body;
+    //get the request body
+    const { usernameOrEmail, password } = req.body;
 
     try {
-        // Attempt to find the user in the database based on the provided email
-        const user = await User.findOne({ email: body.email })
+        // Try to find the user by username or email
+        const user = await User.findOne({$or: [{username:usernameOrEmail},{email:usernameOrEmail}],})
 
-        // If no user is found with the given email, return a 404 response with an error message
+        // If no user is found, return an error
         if (!user) {
-            return res.status(404).json({ errors: 'invalid email' })
+            return res.status(400).json({ errors: 'Invalid username/email or password' });
         }
 
-        // Compare the provided password with the stored hashed password in the database
-        const isValidUser = await bcryptjs.compare(body.password, user.password)
+        // Compare the password with the stored hashed password
+        const isValidUser = await bcryptjs.compare(password, user.password);
 
-        // If the password is invalid, return a 404 response indicating incorrect credentials
+        // If password is invalid, return an error
         if (!isValidUser) {
-            return res.status(404).json({ errors: 'invalid email/ password' })
+            return res.status(400).json({ errors: 'Invalid username/email or password' });
         }
 
-        // If the user is valid, generate a JWT token with the user's ID and role, and set it to expire in 7 days
-        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' })
+        // Generate a JWT token if login is successful
+        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        // Return the JWT token to the client, prefixed with 'Bearer ' for authorization header format
-        res.json({ token: `Bearer ${token}` })
+        // Send the token to the client
+        return res.json({ token: `Bearer ${token}` });
     } catch (err) {
-        // Log any errors that occur and return a 500 response with a generic error message
-        console.log(err)
-        res.status(500).json({ errors: 'Something went wrong' })
+        console.error(err);
+        res.status(500).json({ errors: 'Something went wrong' });
     }
 }
 
