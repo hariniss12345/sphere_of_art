@@ -1,19 +1,18 @@
 import { useState } from "react"
 import AuthContext from "../context/Auth.js";
 import { useContext } from "react";
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios'; 
-
-
 export default function Login(){
     const { handleLogin } = useContext(AuthContext); 
-    
+    const navigate = useNavigate(); 
     const [formData, setFormadata] = useState({
         username:"",
         email : "",
         password : ""
     });
     const [clientErrors, setClientErros] = useState(null);
-   
+    const [serverErrors, setServerErrors] = useState(null); 
     const clientValidationsErrors = {};
 
 
@@ -37,14 +36,15 @@ export default function Login(){
         runClientValidations();
         if(Object.keys(clientValidationsErrors).length == 0) {
             try {
-               const response = await axios.post('http://localhost:3010/api/users/login',formData)
+               const response = await axios.post('http://localhost:4700/api/users/login',formData)
                //console.log(response.data)
                localStorage.setItem('token',response.data.token)
-               const userResponse=await axios.get('http://localhost:3010/api/users/account',{headers:{Authorization:localStorage.getItem('token')}})
+               const userResponse=await axios.get('http://localhost:4700/api/users/profile',{headers:{Authorization:localStorage.getItem('token')}})
+               //console.log(userResponse.data)
                handleLogin(userResponse.data)
-               
+               navigate('/dashboard')
             } catch(err) {
-              console.log(err.message) 
+                setServerErrors(err.response.data.errors); 
             }
             setClientErros({})
         } else {
@@ -56,7 +56,11 @@ export default function Login(){
     return(
         <div className="login">
             <h2>Login page</h2>
-            
+            { serverErrors && (
+                <div>
+                    <b>{ serverErrors }</b>
+                </div>
+            )}
             <form onSubmit={handleSubmit}>
             <input 
                     type="text" 
