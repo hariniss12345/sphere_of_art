@@ -7,6 +7,9 @@ import { Link, Routes, Route, useNavigate } from 'react-router-dom';
 // Importing the authentication context to access user-related state and actions
 import AuthContext from './context/Auth.js';
 
+// Import the PrivateRoute component from the components folder
+import PrivateRoute from './components/PrivateRoute.js';
+
 // Importing the useContext hook to consume the authentication context
 import { useContext } from 'react';
 
@@ -69,10 +72,26 @@ export default function App(props) {
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/findartist" element={<FindArtist />} />
-        <Route path="/order" element={<Order />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/dashboard" element={ 
+          <PrivateRoute>
+              <Dashboard />
+          </PrivateRoute>
+         } />
+        <Route path="/findartist" element={
+          <PrivateRoute>
+             <FindArtist />
+          </PrivateRoute>
+        } />
+        <Route path="/order" element={
+          <PrivateRoute>
+             <Order />
+          </PrivateRoute>
+        } />
+        <Route path="/profile" element={
+          <PrivateRoute>
+              <Profile />
+          </PrivateRoute>
+        } />
       </Routes>
     </div>
   );
