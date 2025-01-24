@@ -1,15 +1,18 @@
 // Import necessary modules
 // Import the User model to interact with the database
 import User from '../models/user-model.js' 
+
 // Import validationResult to handle request validation errors
 import { validationResult } from 'express-validator' 
+
 // Import the bcryptjs library for hashing and comparing passwords
 import bcryptjs from 'bcryptjs';
+
 // Import the jsonwebtoken library to handle the creation and verification of JSON Web Tokens (JWT)
 import jwt from 'jsonwebtoken';
 
+// Utility function to send an email
 import sendEmail from '../../utils/mailer.js'
-
 
 
 
@@ -118,12 +121,14 @@ userCltr.forgotPassword = async ( req,res ) => {
 
     try {
          // Step 1: Check if the user exists
+
         const user = await User.findOne({ email });
         if (!user) {
           return res.status(404).json({ message: 'User with that email does not exist.' });
         }
 
         // Step 2: Create a JWT reset password token
+        
         const resetToken = jwt.sign(
         { userId: user._id }, // Include user ID in the token payload
         process.env.JWT_SECRET, // Use your secret key
@@ -135,6 +140,7 @@ userCltr.forgotPassword = async ( req,res ) => {
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
    
         // Step 4: Send email with the reset URL
+
         const subject = 'Password Reset Request';
         const text = `You requested a password reset. Click the link below to reset your password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
         const html = `<p>You requested a password reset. Click the link below to reset your password:</p>

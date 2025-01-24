@@ -1,7 +1,10 @@
 // Import the Nodemailer module to handle email functionality
 import nodemailer from 'nodemailer';
 
+// Import the dotenv package to load environment variables from a .env file into process.env
 import dotenv from 'dotenv'
+
+// Load environment variables from the .env file
 dotenv.config()
 
 // Create a transporter (Gmail example)
