@@ -36,8 +36,11 @@ export default function Profile() {
             {details.portfolio?.length > 0 ? (
               details.portfolio.map((item) => (
                 <div key={item.title}>
-                
-
+                  <img
+                    src={`${process.env.REACT_APP_API_BASE_URL}/${item.filePath}`}
+                    alt={item.title}
+                    style={{ width: "200px", margin: "10px 0" }}
+                  />
                   <p>{item.title}</p>
                 </div>
               ))
