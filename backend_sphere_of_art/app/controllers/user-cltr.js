@@ -1,6 +1,12 @@
 // Import necessary modules
 // Import the User model to interact with the database
-import User from '../models/user-model.js' 
+import User from '../models/user-model.js'
+
+// Import the Customer model to interact with the database
+import Customer from '../models/customer-model.js'
+
+// Import the Artist model to interact with the database
+import Artist from '../models/artist-model.js'
 
 // Import validationResult to handle request validation errors
 import { validationResult } from 'express-validator' 
@@ -99,22 +105,69 @@ userCltr.login = async (req, res) => {
     }
 }
 
-// The profile method handles the retrieval of the current user's profile information
+// // The profile method handles the retrieval of the current user's profile information
+// userCltr.profile = async (req, res) => {
+//     try {
+//         // Retrieve the user's information from the database using the userId from the JWT token (stored in req.currentUser)
+//         const user = await User.findById(req.currentUser.userId);
+
+//         // Respond with the user data in JSON format
+//         res.json(user);
+//     } catch (err) {
+//         // Log any errors that occur during the process
+//         console.log(err);
+
+//         // Return a 500 response indicating a server-side error
+//         res.status(500).json({ errors: 'something went wrong' });
+//     }
+// };
+
 userCltr.profile = async (req, res) => {
     try {
-        // Retrieve the user's information from the database using the userId from the JWT token (stored in req.currentUser)
-        const user = await User.findById(req.currentUser.userId);
+        // Retrieve the user's basic information
+        const user = await User.findById(req.currentUser.userId).select('-password'); // Exclude password
 
-        // Respond with the user data in JSON format
-        res.json(user);
+        if (!user) {
+            return res.status(404).json({ errors: 'User not found' });
+        }
+
+        // Initialize profile with basic user details
+        let profile = {
+            username: user.username,
+            email: user.email,
+            role: user.role,
+        };
+
+        // Fetch extra details based on role
+        if (user.role === 'artist') {
+            // Populate portfolio with specific fields
+            const artistDetails = await Artist.findOne({ user: user._id }).populate('portfolio', 'title filePath');
+            if (artistDetails) {
+                profile.details = {
+                    bio: artistDetails.bio,
+                    styles: artistDetails.styles,
+                    portfolio: artistDetails.portfolio, // Now includes title and filePath
+                };
+            }
+        } else if (user.role === 'customer') {
+            const customerDetails = await Customer.findOne({ user: user._id });
+            if (customerDetails) {
+                profile.details = {
+                    address: customerDetails.address,
+                    contactNumber: customerDetails.contactNumber,
+                };
+            }
+        }
+
+        res.json(profile);
     } catch (err) {
-        // Log any errors that occur during the process
-        console.log(err);
-
-        // Return a 500 response indicating a server-side error
-        res.status(500).json({ errors: 'something went wrong' });
+        console.error(err);
+        res.status(500).json({ errors: 'Something went wrong' });
     }
 };
+
+
+
 
 userCltr.forgotPassword = async ( req,res ) => {
     const { email } = req.body;
