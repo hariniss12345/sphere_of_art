@@ -19,7 +19,7 @@ const artistSchema = new Schema(
     },
 
     // Placeholder for portfolio entries, will be linked to the Portfolio model later
-    portfolio: [],
+    portfolio: [{ type: Schema.Types.ObjectId, ref: 'Portfolio' }],
 
     // Boolean flag to indicate if the artist is verified
     isVerified: {

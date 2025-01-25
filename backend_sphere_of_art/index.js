@@ -74,6 +74,9 @@ app.use(express.json())
 // Enable CORS to allow cross-origin requests
 app.use(cors())
 
+// Serve static files from the "uploads" directory
+app.use('/uploads', express.static('uploads'));
+
 // POST route for use registration: validates request body and calls the register handler
 app.post('/api/users/register',checkSchema(userRegisterSchema), userCltr.register)
 
