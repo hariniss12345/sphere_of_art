@@ -11,7 +11,7 @@ const artSchema = new Schema(
         fileHash: String,
       },
     ],
-    customerId: {
+    customer: {
       type: Schema.Types.ObjectId, // Refers to the ObjectId of a Customer
       ref: 'User', // Specifies that this field references the 'User' model
     },

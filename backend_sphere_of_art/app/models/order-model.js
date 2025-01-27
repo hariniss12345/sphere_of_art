@@ -6,12 +6,12 @@ const orderSchema = new Schema({
     // Refers to the customer making the order, linked to the 'Customer' model
     customer: {
         type: Schema.Types.ObjectId,  // Using ObjectId to link the customer
-        ref: 'Customer'               // Reference to the 'Customer' model
+        ref: 'User'               // Reference to the 'Customer' model
     },
     // Refers to the artist handling the order, linked to the 'Artist' model
     artist: {
         type: Schema.Types.ObjectId,  // Using ObjectId to link the artist
-        ref: 'Artist'                 // Reference to the 'Artist' model
+        ref: 'User'                // Reference to the 'Artist' model
     },
     // Refers to the art(s) ordered by the customer, linked to the 'Art' model
     arts: [{
