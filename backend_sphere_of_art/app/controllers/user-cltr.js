@@ -105,22 +105,6 @@ userCltr.login = async (req, res) => {
     }
 }
 
-// // The profile method handles the retrieval of the current user's profile information
-// userCltr.profile = async (req, res) => {
-//     try {
-//         // Retrieve the user's information from the database using the userId from the JWT token (stored in req.currentUser)
-//         const user = await User.findById(req.currentUser.userId);
-
-//         // Respond with the user data in JSON format
-//         res.json(user);
-//     } catch (err) {
-//         // Log any errors that occur during the process
-//         console.log(err);
-
-//         // Return a 500 response indicating a server-side error
-//         res.status(500).json({ errors: 'something went wrong' });
-//     }
-// };
 
 userCltr.profile = async (req, res) => {
     try {
