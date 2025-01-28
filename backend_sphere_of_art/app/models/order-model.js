@@ -23,7 +23,6 @@ const orderSchema = new Schema({
     // Status of the order, can be 'pending', 'in progress', 'completed', or 'cancelled'
     status: {
         type: String,
-        enum: ['pending', 'in progress', 'completed', 'cancelled'], // Enum validation for status
         default: 'pending'            // Default status is 'pending'
     },
     // Price of the order, presumably the cost of the artwork
