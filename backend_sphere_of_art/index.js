@@ -28,6 +28,10 @@ import portfolioCltr from './app/controllers/portfolio-cltr.js'
 //Importing thr art controller from the specified path
 import artCltr from './app/controllers/art-cltr.js'
 
+//Importing the order controller from the specified path
+import orderCltr from './app/controllers/order-cltr.js'
+
+
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
 
@@ -148,6 +152,16 @@ app.delete('/api/arts/:artId',authenticateUser,artCltr.delete)
 
 //DELETE route for image: authenticates the user,validates the id and calls the deleteImage method
 app.delete('/api/arts/:artId/image/:imageId',authenticateUser,artCltr.deleteImage)
+
+
+// POST route for order:authenticate the user,handles uploads,calls middleware and calls the create method
+app.post('/api/orders',authenticateUser,upload.array('images',5),fileValidation,orderCltr.create)
+
+//PUT route for order:authenticates the user,calls accept method
+app.put('/api/orders/:orderId/artist-action',authenticateUser,orderCltr.artistAction)
+
+//PUT route for oder:authenticates the user,calls confirm method
+app.put('/api/orders/:orderId/customer-action',authenticateUser,orderCltr.customerAction)
 
 
 // Start the server and listen on the port specified in the environment variables

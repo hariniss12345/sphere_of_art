@@ -14,7 +14,7 @@ const configureDB = async () => {
         console.log('Connected to the database');
     } catch (err) {
         // Log an error message if the connection attempt fails
-        console.log(err.message);
+        console.log('err',err.message);
     }
 };
 
