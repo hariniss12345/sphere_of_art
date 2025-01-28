@@ -28,6 +28,7 @@ import portfolioCltr from './app/controllers/portfolio-cltr.js'
 //Importing thr art controller from the specified path
 import artCltr from './app/controllers/art-cltr.js'
 
+//Importing the order controller from the specified path
 import orderCltr from './app/controllers/order-cltr.js'
 
 
@@ -153,8 +154,11 @@ app.delete('/api/arts/:artId',authenticateUser,artCltr.delete)
 app.delete('/api/arts/:artId/image/:imageId',authenticateUser,artCltr.deleteImage)
 
 
+// POST route for order:authenticate the user,handles uploads,calls middleware and calls the create method
 app.post('/api/orders',authenticateUser,upload.array('images',5),fileValidation,orderCltr.create)
 
+//PUT route for order:authenticates the user,calls accept method
+app.put('/api/orders/:orderId/accept',authenticateUser,orderCltr.accept)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
