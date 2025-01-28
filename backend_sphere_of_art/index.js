@@ -158,7 +158,11 @@ app.delete('/api/arts/:artId/image/:imageId',authenticateUser,artCltr.deleteImag
 app.post('/api/orders',authenticateUser,upload.array('images',5),fileValidation,orderCltr.create)
 
 //PUT route for order:authenticates the user,calls accept method
-app.put('/api/orders/:orderId/accept',authenticateUser,orderCltr.accept)
+app.put('/api/orders/:orderId/artist-action',authenticateUser,orderCltr.artistAction)
+
+//PUT route for oder:authenticates the user,calls confirm method
+app.put('/api/orders/:orderId/customer-action',authenticateUser,orderCltr.customerAction)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

@@ -80,63 +80,156 @@ orderCltr.create = async (req, res) => {
 };
 
 // Controller for accepting an order by the artist
-orderCltr.accept = async (req, res) => {
-  try {
-    const { price, deliveryCharges, dueDate } = req.body; // Get the price, delivery charges, and due date
-    const { orderId } = req.params; // Get the order ID from the route parameter
+orderCltr.artistAction = async (req, res) => {
+    try {
+        const { orderId } = req.params; // Get the order ID from the route parameter
+        const { action } = req.body; // Get the action (accept or cancel) from the request body
+    
+        // Find the order by ID
+        const order = await Order.findById(orderId);
+        if (!order) {
+          return res.status(404).json({ message: 'Order not found' });
+        }
+    
+        // Handle accept or cancel actions
+        if (action === 'accept') {
+          const { price, deliveryCharges, dueDate } = req.body; // Additional details required when accepting an order
+          if (!price || !deliveryCharges || !dueDate) {
+            return res.status(400).json({ message: 'Price, delivery charges, and due date are required to accept the order' });
+          }
+    
+          order.price = price;
+          order.deliveryCharges = deliveryCharges;
+          order.totalPrice = price + deliveryCharges;
+          order.dueDate = new Date(dueDate);
+          order.status = 'in-progress'; // Update status to "in-progress"
+          order.artistHasAccepted = true; // Mark artist acceptance
+        } else if (action === 'cancel') {
+          order.status = 'canceled'; // Update status to "canceled"
+          order.artistHasAccepted = false; // Mark artist rejection
+        } else {
+          return res.status(400).json({ message: 'Invalid action. Use "accept" or "cancel"' });
+        }
+    
+        // Save the updated order
+        const updatedOrder = await order.save();
+    
+        // Notify the customer about the artist's action
+        const customer = await User.findById(order.customer);
+        if (!customer) {
+          return res.status(404).json({ message: 'Customer not found' });
+        }
+    
+        const customerEmail = customer.email;
+        const customerName = customer.username;
+    
+        // Prepare email content for the customer
+        const emailSubject =
+          action === 'accept'
+            ? 'Artist Accepted Your Order'
+            : 'Artist Canceled Your Order';
+        const emailText = `Hi ${customerName},\n\nThe artist has ${
+          action === 'accept' ? 'accepted' : 'canceled'
+        } your order. Please log in to your account to view the details.\n\nThank you,\nArt Commission Platform`;
+        const emailHtml = `
+          <h1>Order ${action === 'accept' ? 'Accepted' : 'Canceled'}</h1>
+          <p>Hi ${customerName},</p>
+          <p>The artist has ${
+            action === 'accept' ? 'accepted' : 'canceled'
+          } your order. Please log in to your account to view the details.</p>
+          <p>Thank you,</p>
+        `;
+    
+        // Send email to the customer
+        await sendEmail(customerEmail, emailSubject, emailText, emailHtml);
+    
+        // Respond with the updated order
+        res.status(200).json({
+          message:
+            action === 'accept'
+              ? 'Order accepted and customer notified successfully'
+              : 'Order canceled and customer notified successfully',
+          order: updatedOrder,
+        });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Something went wrong' });
+      }   
+};
 
-    // Find the order in the database
-    const order = await Order.findById(orderId);
-    if (!order) {
-      return res.status(404).json({ message: 'Order not found' });
+// Controller for confirming or declining an order by the customer
+orderCltr.customerAction = async (req, res) => {
+    try {
+      const { orderId } = req.params; // Get the order ID from the route parameter
+      const { action } = req.body; // Get the action (either 'confirm' or 'decline')
+  
+      // Find the order by ID
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return res.status(404).json({ message: 'Order not found' });
+      }
+  
+      // Handle confirmation or decline
+      if (action === 'confirm') {
+        order.status = 'confirmed'; // Update status to "confirmed"
+        order.customerHasAccepted = true; // Mark customer confirmation
+      } else if (action === 'decline') {
+        order.status = 'declined'; // Update status to "declined"
+        order.customerHasAccepted = false; // Mark customer rejection
+      } else {
+        return res.status(400).json({ message: 'Invalid action' });
+      }
+  
+      // Save the updated order
+      const updatedOrder = await order.save();
+  
+      // Fetch the artist's and customer's details
+      const artist = await User.findById(order.artist);
+      if (!artist) {
+        return res.status(404).json({ message: 'Artist not found' });
+      }
+      
+      const customer = await User.findById(order.customer);
+      if (!customer) {
+        return res.status(404).json({ message: 'Customer not found' });
+      }
+  
+      const artistEmail = artist.email;
+      const artistName = artist.username;
+      const customerName = customer.username;
+  
+      // Prepare email content for the artist
+      const emailSubject = action === 'confirm'
+        ? `${customerName} Confirmed Your Order`
+        : `${customerName} Declined Your Order`;
+  
+      const emailText = `Hi ${artistName},\n\n${customerName} has ${
+        action === 'confirm' ? 'confirmed' : 'declined'
+      } your order. Please log in to your account to view the details.\n\nThank you,\nArt Commission Platform`;
+  
+      const emailHtml = `
+        <h1>Order ${action === 'confirm' ? 'Confirmed' : 'Declined'}</h1>
+        <p>Hi ${artistName},</p>
+        <p>${customerName} has ${
+          action === 'confirm' ? 'confirmed' : 'declined'
+        } your order. Please log in to your account to view the details.</p>
+        <p>Thank you,</p>
+      `;
+  
+      // Send email to the artist
+      await sendEmail(artistEmail, emailSubject, emailText, emailHtml);
+  
+      // Respond with the updated order
+      res.status(200).json({
+        message: action === 'confirm'
+          ? 'Order confirmed and artist notified successfully'
+          : 'Order declined and artist notified successfully',
+        order: updatedOrder,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Something went wrong' });
     }
-
-    // Ensure the logged-in user is the artist associated with the order
-    if (order.artist.toString() !== req.currentUser.userId) {
-      return res.status(403).json({ message: 'You are not authorized to accept this order' });
-    }
-
-    // Update the order details
-    order.price = price;
-    order.deliveryCharges = deliveryCharges;
-    order.totalPrice = price + deliveryCharges;
-    order.dueDate = new Date(dueDate);
-    order.status = 'in progress';
-    order.artistHasAccepted = true;
-
-    const updatedOrder = await order.save(); // Save the updated order
-
-    // Fetch customer details to send a notification email
-    const customer = await User.findById(order.customer);
-    if (!customer) {
-      return res.status(404).json({ message: 'Customer not found' });
-    }
-
-    const customerEmail = customer.email;
-    const customerName = customer.username;
-
-    // Prepare email content for the customer
-    const emailSubject = 'Artist Has Accepted Your Order';
-    const emailText = `Hi ${customerName},\n\nThe artist has accepted your order. Please log in to your account to check the order details.\n\nThank you,\nArt Commission Platform`;
-    const emailHtml = `
-      <h1>Artist Has Accepted Your Order</h1>
-      <p>Hi ${customerName},</p>
-      <p>The artist has accepted your order. Please log in to your account to check the order details.</p>
-      <p>Thank you,</p>
-    `;
-
-    // Send email to the customer
-    await sendEmail(customerEmail, emailSubject, emailText, emailHtml);
-
-    // Send response with the updated order
-    res.status(200).json({
-      message: 'Order accepted and customer notified successfully',
-      order: updatedOrder,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Something went wrong' });
-  }
 };
 
 export default orderCltr;
