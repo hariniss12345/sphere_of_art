@@ -57,7 +57,7 @@ userCltr.register = async (req, res) => {
         // Save the user to the database
         await user.save()
         // Return a 201 response with the created user
-        res.status(201).json(user)
+        res.status(201).json({ message: "User registered successfully", user })
     } catch (err) {
         // Log any errors that occur
         console.log(err.message)

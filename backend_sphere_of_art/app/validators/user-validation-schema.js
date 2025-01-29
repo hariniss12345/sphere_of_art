@@ -45,6 +45,29 @@ export const userRegisterSchema = {
             },
         },
     },
+    // Validation rules for the phoneNumber field
+    phoneNumber: {
+        exists: {
+            errorMessage: 'phoneNumber field is required',
+        },
+        notEmpty: {
+            errorMessage: 'phoneNumber should not be empty',
+        },
+        isMobilePhone: {
+            options: ["any"], // Validates against any mobile phone format
+            errorMessage: 'phoneNumber should be a valid mobile number',
+        },
+        trim: true,
+        custom: {
+            options: async (value) => {
+                const user = await User.findOne({ phoneNumber: value });
+                if (user) {
+                    throw new Error('phoneNumber is already taken');
+                }
+                return true;
+            },
+        },
+    },
     // Validation rules for the password field
     password: {
         exists: {
