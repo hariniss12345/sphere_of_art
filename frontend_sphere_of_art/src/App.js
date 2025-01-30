@@ -23,6 +23,7 @@ import FindArtist from './pages/FindArtist';
 import Order from './pages/Order';
 import Profile from './pages/Profile';
 import Portfolio from './pages/Portfolio'
+import PortfolioUpload from './pages/PortfolioUpload'
 
 // The main App component
 export default function App(props) {
@@ -51,9 +52,10 @@ export default function App(props) {
             {/* Links visible when the user is logged in */}
             <li><Link to="/dashboard">Dashboard</Link></li>
             {userState.user?.role=='customer' && <li><Link to="/findartist">Find Your Artist</Link></li>}
-            <li><Link to="/order">Order</Link></li>
+            {userState.user?.role=='customer' && <li><Link to="/order">Order</Link></li>}
             <li><Link to="/profile">Profile</Link></li>
             {userState.user?.role=='artist' && <li><Link to="/portfolio">Portfolio</Link></li>}
+            {userState.user?.role=='artist' && <li><Link to="portfolioupload">Portfolio Upload</Link></li>}
             {/* Logout button that clears user session and navigates to Home */}
             <li>
               <button onClick={() => {
@@ -85,7 +87,7 @@ export default function App(props) {
           </PrivateRoute>
         } />
         <Route path="/order" element={
-          <PrivateRoute>
+          <PrivateRoute permittedRoles={['customer']}>
              <Order />
           </PrivateRoute>
         } />
@@ -97,6 +99,11 @@ export default function App(props) {
         <Route path="/portfolio" element={
           <PrivateRoute permittedRoles = {['artist']}> 
               <Portfolio />
+          </PrivateRoute>
+        } />
+        <Route path="/portfolio" element={
+          <PrivateRoute permittedRoles = {['artist']}> 
+              <PortfolioUpload />
           </PrivateRoute>
         } />
       </Routes>
