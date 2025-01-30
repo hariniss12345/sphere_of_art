@@ -117,6 +117,8 @@ app.post('/api/artists',authenticateUser,authorizeUser(['artist']),checkSchema(a
 // GET route for artists: authenticates the user and calls the show method
 app.get('/api/artists/my',authenticateUser,authorizeUser(['artist']),artistCltr.show)
 
+app.get('/api/artists',artistCltr.list)
+
 //PUT route for artists: authenticates the user,validates the input and calls the update method
 app.put('/api/artists/:id',authenticateUser,authorizeUser(['artist']),checkSchema(idValidationSchema),checkSchema(artistValidationSchema),artistCltr.update)
 
