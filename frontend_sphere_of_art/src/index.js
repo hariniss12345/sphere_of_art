@@ -19,6 +19,12 @@ import store from './redux/store';
 // Importing the custom AuthProvider component to handle authentication context
 import AuthProvider from './components/AuthProvider.js';
 
+console.log('store',store.getState())
+
+store.subscribe(()=>{
+  console.log('state get updated',store.getState())
+})
+
 // Creating a root element for React rendering
 const root = ReactDOM.createRoot(document.getElementById('root'));
 

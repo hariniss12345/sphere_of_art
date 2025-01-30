@@ -55,7 +55,7 @@ export default function App(props) {
             {userState.user?.role=='customer' && <li><Link to="/order">Order</Link></li>}
             <li><Link to="/profile">Profile</Link></li>
             {userState.user?.role=='artist' && <li><Link to="/portfolio">Portfolio</Link></li>}
-            {userState.user?.role=='artist' && <li><Link to="portfolioupload">Portfolio Upload</Link></li>}
+            {userState.user?.role=='artist' && <li><Link to="/portfolioupload">Portfolio Upload</Link></li>}
             {/* Logout button that clears user session and navigates to Home */}
             <li>
               <button onClick={() => {
@@ -101,7 +101,7 @@ export default function App(props) {
               <Portfolio />
           </PrivateRoute>
         } />
-        <Route path="/portfolio" element={
+        <Route path="/portfolioupload" element={
           <PrivateRoute permittedRoles = {['artist']}> 
               <PortfolioUpload />
           </PrivateRoute>
