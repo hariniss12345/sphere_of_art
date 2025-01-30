@@ -63,6 +63,8 @@ import fileValidation from './app/middlewares/fileValidation.js';
 // Importing the login validation middleware validates the login request data 
 import loginValidation from './app/middlewares/loginValidation.js';
 
+import authorizeUser from './app/middlewares/authorize.js'
+
 // Initialize the Express application
 const app = express(); 
 
@@ -97,73 +99,73 @@ app.get('/api/users/profile', authenticateUser, userCltr.profile);
 
 
 // POST route for customers: authenticates the user, validates input and calls the create handler
-app.post('/api/customers', authenticateUser, checkSchema(customerValidationSchema), customerCltr.create);
+app.post('/api/customers', authenticateUser,authorizeUser(['customer']),checkSchema(customerValidationSchema), customerCltr.create);
 
 // GET route for customers: authenticates the user, validates input and calls the show handler
-app.get('/api/customers/my', authenticateUser, customerCltr.show);
+app.get('/api/customers/my', authenticateUser,authorizeUser(['customer']),customerCltr.show);
 
 // PUT route for customers: authenticates the user, validates input and calls the update handler
-app.put('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),checkSchema(customerValidationSchema),customerCltr.update)
+app.put('/api/customers/:id',authenticateUser,authorizeUser(['customer']),checkSchema(idValidationSchema),checkSchema(customerValidationSchema),customerCltr.update)
 
 // DELETE route for customers: authenticates the user,validates input and calls the delete handler
-app.delete('/api/customers/:id',authenticateUser,checkSchema(idValidationSchema),customerCltr.delete)
+app.delete('/api/customers/:id',authenticateUser,authorizeUser(['customer']),checkSchema(idValidationSchema),customerCltr.delete)
 
 
 // POST route for artists: authenticates the user,validates input and calls the create method
-app.post('/api/artists',authenticateUser,checkSchema(artistValidationSchema),artistCltr.create)
+app.post('/api/artists',authenticateUser,authorizeUser(['artist']),checkSchema(artistValidationSchema),artistCltr.create)
 
 // GET route for artists: authenticates the user and calls the show method
-app.get('/api/artists/my',authenticateUser,artistCltr.show)
+app.get('/api/artists/my',authenticateUser,authorizeUser(['artist']),artistCltr.show)
 
 //PUT route for artists: authenticates the user,validates the input and calls the update method
-app.put('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),checkSchema(artistValidationSchema),artistCltr.update)
+app.put('/api/artists/:id',authenticateUser,authorizeUser(['artist']),checkSchema(idValidationSchema),checkSchema(artistValidationSchema),artistCltr.update)
 
 //DELETE route for artists: authenticates the user.validates the input and calls the delete method
-app.delete('/api/artists/:id',authenticateUser,checkSchema(idValidationSchema),artistCltr.delete)
+app.delete('/api/artists/:id',authenticateUser,authorizeUser(['artist']),checkSchema(idValidationSchema),artistCltr.delete)
 
 
 // POST route for portfolio: authenticates the user,handles file upload,validates the input and calls the upload method
-app.post('/api/portfolios/upload',authenticateUser,upload.single('image'),checkSchema(portfolioValidationSchema),portfolioCltr.upload)
+app.post('/api/portfolios/upload',authenticateUser,authorizeUser(['artist']),upload.single('image'),checkSchema(portfolioValidationSchema),portfolioCltr.upload)
 
 // GET route for portfolio: authenticates the user,validates the input and calls the show method
-app.get('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.show)
+app.get('/api/portfolios/:id',authenticateUser,authorizeUser(['artist']),checkSchema(idValidationSchema),portfolioCltr.show)
 
 // GET route for portfolio: authenticates the user,validates the input and calls the list method
-app.get('/api/portfolios',authenticateUser,portfolioCltr.list)
+app.get('/api/portfolios',authenticateUser,authorizeUser(['artist']),portfolioCltr.list)
 
 // PUT route for portfolio: authenticates the user,validates the input and calls the update method
-app.put('/api/portfolios/:id',authenticateUser,upload.single('image'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
+app.put('/api/portfolios/:id',authenticateUser,authorizeUser(['artist']),upload.single('image'),checkSchema(idValidationSchema),checkSchema(portfolioValidationSchema),portfolioCltr.update)
 
 // DELETE route for portfolio: authenticates the user,validates the input and calls the delete method
-app.delete('/api/portfolios/:id',authenticateUser,checkSchema(idValidationSchema),portfolioCltr.delete)
+app.delete('/api/portfolios/:id',authenticateUser,authorizeUser(['artist']),checkSchema(idValidationSchema),portfolioCltr.delete)
 
 //POST route for art: authenticates the user,handles the file upload,validates the input and calls the create method
-app.post('/api/arts/uploads',authenticateUser,upload.array('images',5),fileValidation,artCltr.upload)
+app.post('/api/arts/uploads',authenticateUser,authorizeUser(['customer']),upload.array('images',5),fileValidation,artCltr.upload)
 
 // GET route for art: authenticates the user and calls the list method
-app.get('/api/arts',authenticateUser,artCltr.list)
+app.get('/api/arts',authenticateUser,authorizeUser(['customer']),artCltr.list)
 
 //GET route for art:authenticates the user ,validates the id and calls show method
-app.get('/api/arts/:id',authenticateUser,checkSchema(idValidationSchema),artCltr.show)
+app.get('/api/arts/:id',authenticateUser,authorizeUser(['customer']),checkSchema(idValidationSchema),artCltr.show)
 
 //PUT route for art:authenticates the user,handles the file upload,validates the id and calls the update method
-app.put('/api/arts/:artId',authenticateUser,upload.array('images',5),artCltr.update)
+app.put('/api/arts/:artId',authenticateUser,authorizeUser(['customer']),upload.array('images',5),artCltr.update)
 
 //DELETE route for art: authenticates the user,validates the id and calls the delete method
-app.delete('/api/arts/:artId',authenticateUser,artCltr.delete)
+app.delete('/api/arts/:artId',authenticateUser,authorizeUser(['customer']),artCltr.delete)
 
 //DELETE route for image: authenticates the user,validates the id and calls the deleteImage method
-app.delete('/api/arts/:artId/image/:imageId',authenticateUser,artCltr.deleteImage)
+app.delete('/api/arts/:artId/image/:imageId',authenticateUser,authorizeUser(['customer']),artCltr.deleteImage)
 
 
 // POST route for order:authenticate the user,handles uploads,calls middleware and calls the create method
-app.post('/api/orders',authenticateUser,upload.array('images',5),fileValidation,orderCltr.create)
+app.post('/api/orders',authenticateUser,authorizeUser(['customer']),upload.array('images',5),fileValidation,orderCltr.create)
 
 //PUT route for order:authenticates the user,calls accept method
-app.put('/api/orders/:orderId/artist-action',authenticateUser,orderCltr.artistAction)
+app.put('/api/orders/:orderId/artist-action',authenticateUser,authorizeUser(['customer']),orderCltr.artistAction)
 
 //PUT route for oder:authenticates the user,calls confirm method
-app.put('/api/orders/:orderId/customer-action',authenticateUser,orderCltr.customerAction)
+app.put('/api/orders/:orderId/customer-action',authenticateUser,authorizeUser(['customer']),orderCltr.customerAction)
 
 
 // Start the server and listen on the port specified in the environment variables
