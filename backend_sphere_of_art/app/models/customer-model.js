@@ -10,7 +10,6 @@ const customerSchema = new Schema(
       ref: 'User', // Refers to the 'User' collection
     },
     address: String, // Address of the customer
-    contactNumber: String, // Contact number of the customer
   },
   {
     // Enable timestamps to automatically add 'createdAt' and 'updatedAt' fields

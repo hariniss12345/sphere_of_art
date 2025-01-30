@@ -57,7 +57,7 @@ userCltr.register = async (req, res) => {
         // Save the user to the database
         await user.save()
         // Return a 201 response with the created user
-        res.status(201).json(user)
+        res.status(201).json({ message: "User registered successfully", user })
     } catch (err) {
         // Log any errors that occur
         console.log(err.message)
@@ -104,7 +104,6 @@ userCltr.login = async (req, res) => {
         res.status(500).json({ errors: 'Something went wrong' });
     }
 }
-
 
 userCltr.profile = async (req, res) => {
     try {
@@ -193,6 +192,37 @@ userCltr.forgotPassword = async ( req,res ) => {
         res.status(500).json({ message: 'Something went wrong' });
  }   
 }
+
+// Reset password controller
+userCltr.resetPassword = async (req, res) => {
+    const { token, newPassword } = req.body;
+
+    try {
+        // Step 1: Verify the reset token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token with your secret
+
+        // Step 2: Check if the user exists
+        const user = await User.findById(decoded.userId);  // Use the userId from the token
+        if (!user) {
+            return res.status(404).json({ message: 'User not found.' });
+        }
+
+        // Step 3: Hash the new password
+        const hashedPassword = await bcryptjs.hash(newPassword, 12);
+
+        // Step 4: Update the user's password in the database
+        user.password = hashedPassword;
+        await user.save();
+
+        // Step 5: Respond to the client
+        res.status(200).json({ message: 'Password reset successfully.' });
+
+    } catch (error) {
+        console.error('Error in resetPassword:', error);
+        res.status(500).json({ message: 'Something went wrong' });
+    }
+};
+
 
 // Export the controller for use in routes
 export default userCltr
