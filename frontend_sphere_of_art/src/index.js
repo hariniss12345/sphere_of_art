@@ -10,17 +10,24 @@ import App from './App';
 // Importing BrowserRouter from react-router-dom for enabling routing in the app
 import {BrowserRouter} from 'react-router-dom';
 
+// Import Provider from react-redux
+import { Provider } from 'react-redux';
+
+// Import the store
+import store from './redux/store';      
+
 // Importing the custom AuthProvider component to handle authentication context
 import AuthProvider from './components/AuthProvider.js';
 
-// Getting the root element from the DOM to render the React application
+// Render the app with Redux Provider wrapped around the application
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
-// Rendering the application wrapped with BrowserRouter and AuthProvider for routing and authentication
 root.render(
-  <BrowserRouter>
-    <AuthProvider>
-      <App/>
-    </AuthProvider> 
-  </BrowserRouter>
+  <Provider store={store}>  {/* Wrap your app with Redux Provider */}
+    <BrowserRouter>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </BrowserRouter>
+  </Provider>
 );
