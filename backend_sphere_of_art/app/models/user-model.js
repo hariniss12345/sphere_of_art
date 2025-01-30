@@ -12,7 +12,7 @@ const userSchema = new Schema(
         username: String,
         email: String,
         password: String,
-        phoneNumber: String,
+        //phoneNumber: String,
         role: {
             type: String,
             enum: ['admin', 'artist', 'customer'],
