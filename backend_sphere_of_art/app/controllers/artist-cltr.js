@@ -1,4 +1,5 @@
 import Artist from '../models/artist-model.js'  // Importing the Artist model
+import User from '../models/user-model.js'
 import { validationResult } from 'express-validator'  // Importing validationResult to check request validation
 import _ from 'lodash'  // Importing lodash for object manipulation (in this case, for picking specific fields from the body)
 
@@ -34,6 +35,24 @@ artistCltr.create = async (req, res) => {
         res.status(500).json({ error: 'Something went wrong' })
     }
 }
+
+artistCltr.list = async (req, res) => {
+    try {
+        // Find all artists and populate user details (username, email, profilePic)
+        const artists = await Artist.find()
+            .populate({
+                path: "user", // Reference field in Artist schema
+                select: "username email", // Only get needed fields
+            });
+
+        res.json(artists);
+    } catch (err) {
+        console.error("Error retrieving artists:", err.message);
+        res.status(500).json({ error: "Failed to retrieve artists. Please try again later." });
+    }
+};
+
+
 
 // Define the show method in the artist controller to retrieve the current artist's information
 artistCltr.show = async ( req,res ) => {
