@@ -115,7 +115,7 @@ app.delete('/api/customers/:id',authenticateUser,authorizeUser(['customer']),che
 app.post('/api/artists',authenticateUser,authorizeUser(['artist']),checkSchema(artistValidationSchema),artistCltr.create)
 
 // GET route for artists: authenticates the user and calls the show method
-app.get('/api/artists/my',authenticateUser,authorizeUser(['artist']),artistCltr.show)
+app.get('/api/artists/:id',artistCltr.show)
 
 app.get('/api/artists',artistCltr.list)
 

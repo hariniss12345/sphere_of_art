@@ -24,6 +24,7 @@ import Order from './pages/Order';
 import Profile from './pages/Profile';
 import Portfolio from './pages/Portfolio'
 import PortfolioUpload from './pages/PortfolioUpload'
+import ArtistProfile from './pages/ArtistProfile'
 
 // The main App component
 export default function App(props) {
@@ -86,6 +87,9 @@ export default function App(props) {
              <FindArtist />
           </PrivateRoute>
         } />
+        
+        <Route path="/artist-profile/:id" element={<ArtistProfile />} /> {/* Route for artist profile */}
+        
         <Route path="/order" element={
           <PrivateRoute permittedRoles={['customer']}>
              <Order />
@@ -106,6 +110,7 @@ export default function App(props) {
               <PortfolioUpload />
           </PrivateRoute>
         } />
+
       </Routes>
     </div>
   );
