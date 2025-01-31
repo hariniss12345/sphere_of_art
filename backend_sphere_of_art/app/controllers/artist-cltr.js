@@ -56,26 +56,19 @@ artistCltr.list = async (req, res) => {
 
 // Define the show method in the artist controller to retrieve the current artist's information
 artistCltr.show = async ( req,res ) => {
-   
     try {
-        // Fetch the artist record from the database using the userId from the JWT token (stored in req.currentUser)
-        const artist = await Artist.findOne({ user: req.currentUser.userId });
+        // Find all artists and populate user details (username, email, profilePic)
+        const artists = await Artist.findById(req.params.id)
+            .populate({
+                path: "user", // Reference field in Artist schema
+                select: "username email", // Only get needed fields
+            });
 
-        // If no artist record is found, return a 400 response indicating the record was not found
-        if (!artist) {
-            return res.status(400).json({ error: 'record not found' });
-        }
-
-        // Respond with the artist data in JSON format
-        res.json(artist);
+        res.json(artists);
     } catch (err) {
-        // Log any errors that occur during the process
-        console.log(err.message);
-
-        // Return a 500 response indicating a server-side error
-        res.status(500).json({ error: 'Something went wrong' });
+        console.error("Error retrieving artists:", err.message);
+        res.status(500).json({ error: "Failed to retrieve artists. Please try again later." });
     }
-
 }
 
 // Define the update method in the artist controller to update the artist's information
