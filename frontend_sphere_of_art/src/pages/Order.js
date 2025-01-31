@@ -1,5 +1,5 @@
 import React from 'react';
-import OrderForm from './OrderForm'; // Since both are in the same folder, use './'
+import OrderForm from './OrderForm'; 
 
 export default function Order() {
   return (
