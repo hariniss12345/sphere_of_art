@@ -169,6 +169,8 @@ app.put('/api/orders/:orderId/artist-action',authenticateUser,authorizeUser(['cu
 //PUT route for oder:authenticates the user,calls confirm method
 app.put('/api/orders/:orderId/customer-action',authenticateUser,authorizeUser(['customer']),orderCltr.customerAction)
 
+//GET route for orders:authenticates the user ,calls list method
+app.get('/api/orders',authenticateUser,authorizeUser(['artist','customer']),orderCltr.list)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
