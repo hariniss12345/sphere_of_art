@@ -26,6 +26,7 @@ import Portfolio from './pages/Portfolio'
 import PortfolioUpload from './pages/PortfolioUpload'
 import ArtistProfile from './pages/ArtistProfile'
 import OrderHub from './pages/OrderHub'
+import MyOrders from './pages/MyOrders'
 
 // The main App component
 export default function App(props) {
@@ -60,6 +61,7 @@ export default function App(props) {
             {userState.user?.role=='artist' && <li><Link to="/portfolio">Portfolio</Link></li>}
             {userState.user?.role=='artist' && <li><Link to="/portfolioupload">Portfolio Upload</Link></li>}
             {userState.user?.role=='artist' && <li><Link to={`/order-hub/${userState.user.id}`}>Order Hub</Link></li>}
+            {userState.user?.role=='customer' && <li><Link to={`/my-orders/${userState.user.id}`}>My Orders</Link></li>}
             {/* Logout button that clears user session and navigates to Home */}
             <li>
               <button onClick={() => {
@@ -118,6 +120,11 @@ export default function App(props) {
               <OrderHub/>
           </PrivateRoute>
         } />
+        <Route path="/my-orders/:customerId" element={
+          <PrivateRoute permittedRoles = {['customer']}> 
+              <MyOrders/>
+          </PrivateRoute>
+        }/>
 
       </Routes>
     </div>
