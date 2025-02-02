@@ -16,7 +16,7 @@ export const placeOrder = createAsyncThunk(
   async (formData, { rejectWithValue }) => {
     try {
       const response = await axios.post(
-        'http://localhost:4700/api/orders',
+        'http://localhost:4800/api/orders',
         formData,
         {
           headers: {
@@ -38,7 +38,7 @@ export const fetchArtistOrders = createAsyncThunk(
   async (artistId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:4700/api/orders/artist/${artistId}`,
+        `http://localhost:4800/api/orders/artist/${artistId}`,
         {
           headers: {
             Authorization: localStorage.getItem("token"), // Important for authentication
@@ -58,7 +58,7 @@ export const fetchCustomerOrders = createAsyncThunk(
   "order/fetchCustomerOrders",
   async (customerId, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`http://localhost:4700/api/orders/customer/${customerId}`,
+      const response = await axios.get(`http://localhost:4800/api/orders/customer/${customerId}`,
         {
           headers: {
             Authorization: localStorage.getItem("token"), 
