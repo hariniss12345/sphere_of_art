@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const initialState = {
+  customerOrders: [],   //list of orderes for the customer
   artistOrders: [],     // List of orders for the artist
   selectedOrder: null,  // The order selected for detailed view
   loading: false,
@@ -37,10 +38,10 @@ export const fetchArtistOrders = createAsyncThunk(
   async (artistId, { rejectWithValue }) => {
     try {
       const response = await axios.get(
-        `http://localhost:4700/api/orders/${artistId}`,
+        `http://localhost:4700/api/orders/artist/${artistId}`,
         {
           headers: {
-            Authorization: localStorage.getItem("token"), // Important for file uploads
+            Authorization: localStorage.getItem("token"), // Important for authentication
           },
         }
       );
@@ -48,6 +49,24 @@ export const fetchArtistOrders = createAsyncThunk(
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data || "Error fetching orders");
+    }
+  }
+);
+
+// Fetch orders for customers
+export const fetchCustomerOrders = createAsyncThunk(
+  "order/fetchCustomerOrders",
+  async (customerId, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`http://localhost:4700/api/orders/customer/${customerId}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"), 
+          },
+        });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data || "Failed to fetch customer orders");
     }
   }
 );
@@ -91,6 +110,19 @@ const orderSlice = createSlice({
         state.artistOrders = action.payload;
       })
       .addCase(fetchArtistOrders.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Fetch customer orders cases 
+      .addCase(fetchCustomerOrders.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchCustomerOrders.fulfilled, (state, action) => {
+        state.loading = false;
+        state.customerOrders = action.payload;
+      })
+      .addCase(fetchCustomerOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });
