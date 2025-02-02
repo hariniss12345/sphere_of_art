@@ -116,6 +116,7 @@ userCltr.profile = async (req, res) => {
 
         // Initialize profile with basic user details
         let profile = {
+            id: user._id,
             username: user.username,
             email: user.email,
             role: user.role,

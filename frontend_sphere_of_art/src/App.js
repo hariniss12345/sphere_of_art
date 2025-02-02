@@ -31,6 +31,7 @@ import OrderHub from './pages/OrderHub'
 export default function App(props) {
   // Consuming user state and authentication-related actions from AuthContext
   const { userState,handelLogout } = useContext(AuthContext);
+  console.log(userState)
 
   // useNavigate hook for programmatic navigation
   const navigate = useNavigate();
@@ -58,7 +59,7 @@ export default function App(props) {
             <li><Link to="/profile">Profile</Link></li>
             {userState.user?.role=='artist' && <li><Link to="/portfolio">Portfolio</Link></li>}
             {userState.user?.role=='artist' && <li><Link to="/portfolioupload">Portfolio Upload</Link></li>}
-            {userState.user?.role=='artist' && <li><Link to="/orderhub">Order Hub</Link></li>}
+            {userState.user?.role=='artist' && <li><Link to={`/order-hub/${userState.user.id}`}>Order Hub</Link></li>}
             {/* Logout button that clears user session and navigates to Home */}
             <li>
               <button onClick={() => {
@@ -112,7 +113,7 @@ export default function App(props) {
               <PortfolioUpload />
           </PrivateRoute>
         } />
-      <Route path="/orderhub" element={
+      <Route path="/order-hub/:artistId" element={
           <PrivateRoute permittedRoles = {['artist']}> 
               <OrderHub/>
           </PrivateRoute>
