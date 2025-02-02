@@ -4,6 +4,9 @@ import React from 'react';
 // Importing ReactDOM for rendering the React application into the DOM
 import ReactDOM from 'react-dom/client';
 
+
+import './index.css';
+
 // Importing the main application component
 import App from './App';
 
