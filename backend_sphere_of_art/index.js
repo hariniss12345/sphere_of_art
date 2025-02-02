@@ -170,10 +170,10 @@ app.put('/api/orders/:orderId/artist-action',authenticateUser,authorizeUser(['cu
 app.put('/api/orders/:orderId/customer-action',authenticateUser,authorizeUser(['customer']),orderCltr.customerAction)
 
 //GET route for orders:authenticates the user ,calls list method
-app.get('/api/orders/:artistId',authenticateUser,authorizeUser(['artist']),orderCltr.list)
+app.get('/api/orders/artist/:artistId',authenticateUser,authorizeUser(['artist']),orderCltr.listArtist)
 
 //GET route for orders:authenticates the user ,calls list method
-app.get('/api/orders/:customerId',authenticateUser,authorizeUser(['customer']),orderCltr.list)
+app.get('/api/orders/customer/:customerId',authenticateUser,authorizeUser(['customer']),orderCltr.listCustomer)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
