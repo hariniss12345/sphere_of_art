@@ -232,4 +232,25 @@ orderCltr.customerAction = async (req, res) => {
     }
 };
 
+orderCltr.list = async (req, res) => {
+  try {
+    const { artistId } = req.params; // Get artistId from URL
+
+    const orders = await Order.find({ artist: artistId }) // Correct field name
+        .populate('customer', 'username email') // Correct field name
+        .populate('arts', 'title style image') // Fetch ordered artwork details
+        .sort({ createdAt: -1 }); // Sort by newest first
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this artist" });
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Error fetching orders", error });
+  }
+};
+
+
 export default orderCltr;
