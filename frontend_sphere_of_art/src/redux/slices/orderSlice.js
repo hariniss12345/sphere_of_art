@@ -71,6 +71,29 @@ export const fetchCustomerOrders = createAsyncThunk(
   }
 );
 
+// Accept an order by artist (accept or cancel)
+export const acceptOrder = createAsyncThunk(
+  'order/acceptOrder',
+  async (orderData, { rejectWithValue }) => {
+    const { orderId, price, deliveryCharges, dueDate, action } = orderData;
+    try {
+      const response = await axios.put(
+        `http://localhost:4800/api/orders/${orderId}/artist-action`,
+        { action, price, deliveryCharges, dueDate },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"), // Important for authentication
+          },
+        }
+      );
+      console.log(response.data);
+      return response.data; // Return the updated order data
+    } catch (error) {
+      return rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -125,7 +148,21 @@ const orderSlice = createSlice({
       .addCase(fetchCustomerOrders.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-      });
+      })
+       // Accept order cases
+       .addCase(acceptOrder.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(acceptOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.successMessage = "Order accepted successfully!";
+        state.selectedOrder = action.payload.order; // Update selected order with the accepted order
+      })
+      .addCase(acceptOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
   },
 });
 

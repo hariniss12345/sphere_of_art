@@ -164,7 +164,7 @@ app.delete('/api/arts/:artId/image/:imageId',authenticateUser,authorizeUser(['cu
 app.post('/api/orders',authenticateUser,authorizeUser(['customer']),upload.array('images',5),fileValidation,orderCltr.create)
 
 //PUT route for order:authenticates the user,calls accept method
-app.put('/api/orders/:orderId/artist-action',authenticateUser,authorizeUser(['customer']),orderCltr.artistAction)
+app.put('/api/orders/:orderId/artist-action',authenticateUser,authorizeUser(['artist']),orderCltr.artistAction)
 
 //PUT route for oder:authenticates the user,calls confirm method
 app.put('/api/orders/:orderId/customer-action',authenticateUser,authorizeUser(['customer']),orderCltr.customerAction)
