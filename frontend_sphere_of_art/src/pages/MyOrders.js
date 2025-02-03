@@ -62,7 +62,7 @@ const MyOrders = () => {
             <strong>Email:</strong> {selectedOrder.artist?.email || "No Email"}
           </p>
           <p>
-             <strong>Status:</strong> {selectedOrder.status}
+            <strong>Status:</strong> {selectedOrder.status}
           </p>
 
           {/* Display Art Title and Image */}
@@ -87,6 +87,35 @@ const MyOrders = () => {
               <p className="text-gray-500">No artwork available</p>
             )}
           </div>
+
+          {/* Display Pricing & Order Confirmation */}
+          {selectedOrder.price && selectedOrder.deliveryCharges && selectedOrder.dueDate && (
+            <div className="mt-4 p-4 border rounded bg-gray-100">
+              <h4 className="font-semibold mb-2">Order Pricing Details</h4>
+              <p>
+                <strong>Price:</strong> ${selectedOrder.price}
+              </p>
+              <p>
+                <strong>Delivery Charges:</strong> ${selectedOrder.deliveryCharges}
+              </p>
+              <p>
+                <strong>Total Price:</strong> ${selectedOrder.totalPrice}
+              </p>
+              <p>
+                <strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toLocaleDateString()}
+              </p>
+
+              {/* Confirm and Cancel Buttons */}
+              <div className="mt-3">
+                <button className="bg-green-500 text-white px-4 py-2 rounded mr-2">
+                  Confirm
+                </button>
+                <button className="bg-red-500 text-white px-4 py-2 rounded">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          )}
 
           <button
             onClick={() => dispatch(setSelectedOrder(null))}
