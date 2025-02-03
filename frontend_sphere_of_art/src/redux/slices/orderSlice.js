@@ -94,6 +94,30 @@ export const acceptOrder = createAsyncThunk(
   }
 );
 
+// Async thunk for customer confirming or declining the order
+export const confirmOrder = createAsyncThunk(
+  "order/confirmOrder",
+  async ({ orderId, action }, { rejectWithValue }) => {
+    try {
+      const response = await axios.put(`http://localhost:4800/api/orders/${orderId}/customer-action`, 
+      {
+        action, // either 'confirm' or 'decline'
+      },
+      {
+        headers: {
+          Authorization: localStorage.getItem("token"), // Important for authentication
+        },
+      });
+      return response.data; // Return the updated order
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || "Something went wrong");
+    }
+  }
+);
+
+
+
+
 const orderSlice = createSlice({
   name: 'order',
   initialState,
@@ -160,6 +184,17 @@ const orderSlice = createSlice({
         state.selectedOrder = action.payload.order; // Update selected order with the accepted order
       })
       .addCase(acceptOrder.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(confirmOrder.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(confirmOrder.fulfilled, (state, action) => {
+        state.loading = false;
+        state.selectedOrder = action.payload.order; // Update the selected order with the latest data
+      })
+      .addCase(confirmOrder.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
