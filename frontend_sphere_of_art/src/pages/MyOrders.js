@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-import { fetchCustomerOrders, setSelectedOrder } from "../redux/slices/orderSlice";
+import { fetchCustomerOrders, setSelectedOrder, confirmOrder } from "../redux/slices/orderSlice";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -16,6 +16,12 @@ const MyOrders = () => {
       dispatch(fetchCustomerOrders(customerId));
     }
   }, [dispatch, customerId]);
+
+  // Handle Confirm or Decline
+  const handleCustomerAction = (action) => {
+    if (!selectedOrder) return;
+    dispatch(confirmOrder({ orderId: selectedOrder._id, action }));
+  };
 
   return (
     <div className="p-5">
@@ -55,15 +61,9 @@ const MyOrders = () => {
         // Order Details
         <div className="border p-4 rounded shadow">
           <h3 className="text-xl font-bold mb-2">Order Details</h3>
-          <p>
-            <strong>Artist Name:</strong> {selectedOrder.artist?.username || "Unknown"}
-          </p>
-          <p>
-            <strong>Email:</strong> {selectedOrder.artist?.email || "No Email"}
-          </p>
-          <p>
-            <strong>Status:</strong> {selectedOrder.status}
-          </p>
+          <p><strong>Artist Name:</strong> {selectedOrder.artist?.username || "Unknown"}</p>
+          <p><strong>Email:</strong> {selectedOrder.artist?.email || "No Email"}</p>
+          <p><strong>Status:</strong> {selectedOrder.status}</p>
 
           {/* Display Art Title and Image */}
           <div className="mt-4">
@@ -88,32 +88,46 @@ const MyOrders = () => {
             )}
           </div>
 
-          {/* Display Pricing & Order Confirmation */}
+          {/* Display price, delivery charges, and due date if available */}
           {selectedOrder.price && selectedOrder.deliveryCharges && selectedOrder.dueDate && (
-            <div className="mt-4 p-4 border rounded bg-gray-100">
-              <h4 className="font-semibold mb-2">Order Pricing Details</h4>
-              <p>
-                <strong>Price:</strong> ${selectedOrder.price}
-              </p>
-              <p>
-                <strong>Delivery Charges:</strong> ${selectedOrder.deliveryCharges}
-              </p>
-              <p>
-                <strong>Total Price:</strong> ${selectedOrder.totalPrice}
-              </p>
-              <p>
-                <strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toLocaleDateString()}
-              </p>
+            <div className="mt-4 p-3 border rounded">
+              <p><strong>Price:</strong> ${selectedOrder.price}</p>
+              <p><strong>Delivery Charges:</strong> ${selectedOrder.deliveryCharges}</p>
+              <p><strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toDateString()}</p>
+              <p><strong>Total Price:</strong> ${selectedOrder.totalPrice}</p>
 
-              {/* Confirm and Cancel Buttons */}
-              <div className="mt-3">
-                <button className="bg-green-500 text-white px-4 py-2 rounded mr-2">
-                  Confirm
-                </button>
-                <button className="bg-red-500 text-white px-4 py-2 rounded">
-                  Cancel
-                </button>
-              </div>
+              {/* Confirm and Decline Buttons */}
+              {!selectedOrder.customerHasAccepted ? (
+                <div className="mt-4">
+                  <button
+                    className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                    onClick={() => handleCustomerAction("confirm")}
+                  >
+                    Confirm
+                  </button>
+                  <button
+                    className="bg-red-500 text-white px-4 py-2 rounded"
+                    onClick={() => handleCustomerAction("decline")}
+                  >
+                    Decline
+                  </button>
+                </div>
+              ) : (
+                <div className="mt-4">
+                  <button
+                    className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed mr-4"
+                    disabled
+                  >
+                    Confirmed
+                  </button>
+                  <button
+                    className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
+                    disabled
+                  >
+                    Declined
+                  </button>
+                </div>
+              )}
             </div>
           )}
 

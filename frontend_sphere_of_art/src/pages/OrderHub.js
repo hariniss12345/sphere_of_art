@@ -50,6 +50,11 @@ const OrderHub = () => {
     }
   };
 
+  const handleBackToList = () => {
+    // When going back to the list, reset selectedOrder to null
+    dispatch(setSelectedOrder(null));
+  };
+
   return (
     <div className="p-5">
       <h2 className="text-2xl font-bold mb-4">Order Hub</h2>
@@ -58,7 +63,7 @@ const OrderHub = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       {!selectedOrder ? (
-        // Order List
+        // Show the table with orders first
         <table className="min-w-full border-collapse">
           <thead>
             <tr className="bg-gray-200">
@@ -75,7 +80,7 @@ const OrderHub = () => {
                 <td className="border px-4 py-2">
                   <button
                     className="bg-blue-500 text-white px-3 py-1 rounded"
-                    onClick={() => dispatch(setSelectedOrder(order))}
+                    onClick={() => dispatch(setSelectedOrder(order))} // Set selectedOrder when "View" is clicked
                   >
                     View
                   </button>
@@ -85,7 +90,7 @@ const OrderHub = () => {
           </tbody>
         </table>
       ) : (
-        // Order Details
+        // Show order details when an order is selected
         <div className="border p-4 rounded shadow">
           <h3 className="text-xl font-bold mb-2">Order Details</h3>
           <p><strong>Customer Name:</strong> {selectedOrder.customer?.username || "Unknown"}</p>
@@ -118,11 +123,10 @@ const OrderHub = () => {
           {/* Display Order Pricing & Details */}
           {selectedOrder.artistHasAccepted ? (
             <div className="mt-4">
-              
               <p><strong>Price:</strong> {selectedOrder.price}/-</p>
               <p><strong>Delivery Charges:</strong> {selectedOrder.deliveryCharges}/-</p>
               <p><strong>Total Price:</strong> {selectedOrder.totalPrice}/-</p>
-              <p><strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toLocaleDateString()}</p>
+              <p><strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toDateString()}</p>
 
               {/* Accept & Cancel Buttons Disabled */}
               <div className="mt-4">
@@ -198,7 +202,7 @@ const OrderHub = () => {
           )}
 
           <button
-            onClick={() => dispatch(setSelectedOrder(null))}
+            onClick={handleBackToList} // Go back to the table view
             className="mt-4 underline text-blue-500"
           >
             Back to List

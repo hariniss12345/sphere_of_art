@@ -192,6 +192,7 @@ const orderSlice = createSlice({
       })
       .addCase(confirmOrder.fulfilled, (state, action) => {
         state.loading = false;
+        state.successMessage = "Order confirmed successfully!";
         state.selectedOrder = action.payload.order; // Update the selected order with the latest data
       })
       .addCase(confirmOrder.rejected, (state, action) => {
