@@ -39,7 +39,7 @@ export default function AuthProvider(props) {
                 try {
                     // Fetch the user's profile using the token
                     const response = await axios.get(
-                        'http://localhost:4700/api/users/profile',
+                        'http://localhost:4800/api/users/profile',
                         { headers: { Authorization: localStorage.getItem('token') } }
                     );
                     // Log the user in with the received data

@@ -25,11 +25,14 @@ import Profile from './pages/Profile';
 import Portfolio from './pages/Portfolio'
 import PortfolioUpload from './pages/PortfolioUpload'
 import ArtistProfile from './pages/ArtistProfile'
+import OrderHub from './pages/OrderHub'
+import MyOrders from './pages/MyOrders'
 
 // The main App component
 export default function App(props) {
   // Consuming user state and authentication-related actions from AuthContext
   const { userState,handelLogout } = useContext(AuthContext);
+  console.log(userState)
 
   // useNavigate hook for programmatic navigation
   const navigate = useNavigate();
@@ -57,6 +60,8 @@ export default function App(props) {
             <li><Link to="/profile">Profile</Link></li>
             {userState.user?.role=='artist' && <li><Link to="/portfolio">Portfolio</Link></li>}
             {userState.user?.role=='artist' && <li><Link to="/portfolioupload">Portfolio Upload</Link></li>}
+            {userState.user?.role=='artist' && <li><Link to={`/order-hub/${userState.user.id}`}>Order Hub</Link></li>}
+            {userState.user?.role=='customer' && <li><Link to={`/my-orders/${userState.user.id}`}>My Orders</Link></li>}
             {/* Logout button that clears user session and navigates to Home */}
             <li>
               <button onClick={() => {
@@ -110,6 +115,16 @@ export default function App(props) {
               <PortfolioUpload />
           </PrivateRoute>
         } />
+      <Route path="/order-hub/:artistId" element={
+          <PrivateRoute permittedRoles = {['artist']}> 
+              <OrderHub/>
+          </PrivateRoute>
+        } />
+        <Route path="/my-orders/:customerId" element={
+          <PrivateRoute permittedRoles = {['customer']}> 
+              <MyOrders/>
+          </PrivateRoute>
+        }/>
 
       </Routes>
     </div>

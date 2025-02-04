@@ -41,14 +41,14 @@ export default function Login() {
       try {
         // Send login request to the server
         const response = await axios.post(
-          "http://localhost:4700/api/users/login",
+          "http://localhost:4800/api/users/login",
           formData
         );
         localStorage.setItem("token", response.data.token); // Save the token in localStorage
 
         // Fetch user profile after successful login
         const userResponse = await axios.get(
-          "http://localhost:4700/api/users/profile",
+          "http://localhost:4800/api/users/profile",
           {
             headers: { Authorization: localStorage.getItem("token")}, // Add token in headers
           }

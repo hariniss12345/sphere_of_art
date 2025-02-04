@@ -6,7 +6,7 @@ import axios from 'axios';
 
 // Defining an asynchronous thunk action to fetch artists from the backend
 export const fetchArtists = createAsyncThunk('artists/fetchArtists', async () => {
-  const response = await axios.get('http://localhost:4700/api/artists'); // Replace with your actual backend endpoint
+  const response = await axios.get('http://localhost:4800/api/artists'); // Replace with your actual backend endpoint
   console.log(response.data)
   return response.data; // Returning the fetched artist data
 });

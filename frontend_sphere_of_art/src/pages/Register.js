@@ -58,7 +58,7 @@ export default function Register() {
         if (Object.keys(clientValidationsErrors).length === 0) {
             try {
                 // Send form data to the server
-                const response = await axios.post('http://localhost:4700/api/users/register', formData);
+                const response = await axios.post('http://localhost:4800/api/users/register', formData);
                 navigate('/login'); // Navigate to login page on successful registration
                 console.log(response.data); // Log server response
             } catch (err) {

@@ -83,7 +83,7 @@ orderCltr.create = async (req, res) => {
 orderCltr.artistAction = async (req, res) => {
     try {
         const { orderId } = req.params; // Get the order ID from the route parameter
-        const { action } = req.body; // Get the action (accept or cancel) from the request body
+        const { action ,reason } = req.body; // Get the action (accept or cancel) from the request body
     
         // Find the order by ID
         const order = await Order.findById(orderId);
@@ -107,6 +107,7 @@ orderCltr.artistAction = async (req, res) => {
         } else if (action === 'cancel') {
           order.status = 'canceled'; // Update status to "canceled"
           order.artistHasAccepted = false; // Mark artist rejection
+          order.cancelReason = reason; // Save the cancellation reason
         } else {
           return res.status(400).json({ message: 'Invalid action. Use "accept" or "cancel"' });
         }
@@ -231,5 +232,47 @@ orderCltr.customerAction = async (req, res) => {
       res.status(500).json({ message: 'Something went wrong' });
     }
 };
+
+orderCltr.listArtist = async (req, res) => {
+  try {
+    const { artistId } = req.params; // Get artistId from URL
+
+    const orders = await Order.find({ artist: artistId }) // Correct field name
+        .populate('customer', 'username email') // Correct field name
+        .populate('arts', 'title style image') // Fetch ordered artwork details
+        .sort({ createdAt: -1 }); // Sort by newest first
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this artist" });
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Error fetching orders", error });
+  }
+};
+
+
+orderCltr.listCustomer = async (req, res) => {
+  try {
+    const { customerId } = req.params; // Get customerId from URL
+
+    const orders = await Order.find({ customer: customerId }) // Correct field name
+      .populate('artist', 'username email') // Fetch artist's details
+      .populate('arts', 'title style image') // Fetch ordered artwork details
+      .sort({ createdAt: -1 }); // Sort by newest first
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this customer" });
+    }
+
+    res.status(200).json(orders);
+  } catch (error) {
+    console.error("Error fetching orders:", error);
+    res.status(500).json({ message: "Error fetching orders", error });
+  }
+};
+
 
 export default orderCltr;
