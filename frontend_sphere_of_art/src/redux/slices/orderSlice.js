@@ -74,12 +74,11 @@ export const fetchCustomerOrders = createAsyncThunk(
 // Accept an order by artist (accept or cancel)
 export const acceptOrder = createAsyncThunk(
   'order/acceptOrder',
-  async (orderData, { rejectWithValue }) => {
-    const { orderId, price, deliveryCharges, dueDate, action } = orderData;
+  async ({ orderId, formData }, { rejectWithValue }) => {
     try {
       const response = await axios.put(
         `http://localhost:4800/api/orders/${orderId}/artist-action`,
-        { action, price, deliveryCharges, dueDate },
+        formData,
         {
           headers: {
             Authorization: localStorage.getItem("token"), // Important for authentication

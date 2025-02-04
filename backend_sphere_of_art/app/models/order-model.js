@@ -42,7 +42,11 @@ const orderSchema = new Schema({
     customerHasAccepted: {
         type: Boolean,
         default: false  // Default value is false (order not accepted by customer)
-    }
+    },
+    cancelReason: {
+        type: String,
+        default: '',
+    },
 }, {
     // Automatically add timestamps for creation and update
     timestamps: true

@@ -83,7 +83,7 @@ orderCltr.create = async (req, res) => {
 orderCltr.artistAction = async (req, res) => {
     try {
         const { orderId } = req.params; // Get the order ID from the route parameter
-        const { action } = req.body; // Get the action (accept or cancel) from the request body
+        const { action ,reason } = req.body; // Get the action (accept or cancel) from the request body
     
         // Find the order by ID
         const order = await Order.findById(orderId);
@@ -107,6 +107,7 @@ orderCltr.artistAction = async (req, res) => {
         } else if (action === 'cancel') {
           order.status = 'canceled'; // Update status to "canceled"
           order.artistHasAccepted = false; // Mark artist rejection
+          order.cancelReason = reason; // Save the cancellation reason
         } else {
           return res.status(400).json({ message: 'Invalid action. Use "accept" or "cancel"' });
         }

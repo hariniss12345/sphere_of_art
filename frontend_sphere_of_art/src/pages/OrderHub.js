@@ -7,16 +7,16 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const OrderHub = () => {
   const dispatch = useDispatch();
-  const { artistOrders, selectedOrder, loading, error } = useSelector(
-    (state) => state.order
-  );
-  const { artistId } = useParams(); // Get artistId from URL
-  const [showForm, setShowForm] = useState(false); // Control form visibility
-  const [price, setPrice] = useState('');
-  const [deliveryCharges, setDeliveryCharges] = useState('');
-  const [dueDate, setDueDate] = useState('');
+  const { artistOrders, selectedOrder, loading, error } = useSelector((state) => state.order);
+  const { artistId } = useParams();
 
-  // Fetch orders when component mounts
+  const [showForm, setShowForm] = useState(false);
+  const [showCancelReason, setShowCancelReason] = useState(false);
+  const [price, setPrice] = useState("");
+  const [deliveryCharges, setDeliveryCharges] = useState("");
+  const [dueDate, setDueDate] = useState("");
+  const [cancelReason, setCancelReason] = useState("");
+
   useEffect(() => {
     if (artistId) {
       dispatch(fetchArtistOrders(artistId));
@@ -31,39 +31,61 @@ const OrderHub = () => {
     }
   }, [selectedOrder]);
 
+  // Keep selectedOrder updated when artistOrders change
+  useEffect(() => {
+    if (selectedOrder) {
+      const updatedOrder = artistOrders.find((order) => order._id === selectedOrder._id);
+      if (updatedOrder) {
+        dispatch(setSelectedOrder(updatedOrder));
+      }
+    }
+  }, [artistOrders, selectedOrder, dispatch]);
+
   const handleAcceptOrder = () => {
-    setShowForm(true); // Show the form when "Accept" is clicked
+    setShowForm(true);
+    setShowCancelReason(false);
   };
 
   const handleSaveOrder = () => {
     if (price && deliveryCharges && dueDate) {
-      dispatch(acceptOrder({
-        orderId: selectedOrder._id,
-        price,
-        deliveryCharges,
-        dueDate,
-        action: 'accept',
-      }));
-      setShowForm(false); // Hide the form after saving
+      const formData = { action: "accept", price, deliveryCharges, dueDate };
+      dispatch(acceptOrder({ orderId: selectedOrder._id, formData })).then(() => {
+        dispatch(fetchArtistOrders(artistId)); // Fetch updated orders
+      });
+      setShowForm(false);
     } else {
       alert("Please fill in all fields.");
     }
   };
 
+  const handleCancelOrder = () => {
+    setShowCancelReason(true);
+    setShowForm(false);
+  };
+
+  const handleSubmitCancelOrder = () => {
+    if (cancelReason) {
+      const formData = { action: "cancel", cancelReason };
+      dispatch(acceptOrder({ orderId: selectedOrder._id, formData })).then(() => {
+        dispatch(fetchArtistOrders(artistId)); // Fetch updated orders
+      });
+      setShowCancelReason(false);
+    } else {
+      alert("Please provide a reason for cancellation.");
+    }
+  };
+
   const handleBackToList = () => {
-    // When going back to the list, reset selectedOrder to null
     dispatch(setSelectedOrder(null));
   };
 
   return (
     <div className="p-5">
       <h2 className="text-2xl font-bold mb-4">Order Hub</h2>
-
       {loading && <p>Loading orders...</p>}
       {error && <p className="text-red-500">{error}</p>}
 
       {!selectedOrder ? (
-        // Show the table with orders first
         <table className="min-w-full border-collapse">
           <thead>
             <tr className="bg-gray-200">
@@ -74,13 +96,11 @@ const OrderHub = () => {
           <tbody>
             {artistOrders.map((order) => (
               <tr key={order._id} className="border">
-                <td className="border px-4 py-2">
-                  {order.customer?.username || "Unknown Customer"}
-                </td>
+                <td className="border px-4 py-2">{order.customer?.username || "Unknown Customer"}</td>
                 <td className="border px-4 py-2">
                   <button
                     className="bg-blue-500 text-white px-3 py-1 rounded"
-                    onClick={() => dispatch(setSelectedOrder(order))} // Set selectedOrder when "View" is clicked
+                    onClick={() => dispatch(setSelectedOrder(order))}
                   >
                     View
                   </button>
@@ -90,14 +110,13 @@ const OrderHub = () => {
           </tbody>
         </table>
       ) : (
-        // Show order details when an order is selected
         <div className="border p-4 rounded shadow">
           <h3 className="text-xl font-bold mb-2">Order Details</h3>
           <p><strong>Customer Name:</strong> {selectedOrder.customer?.username || "Unknown"}</p>
           <p><strong>Email:</strong> {selectedOrder.customer?.email || "No Email"}</p>
           <p><strong>Status:</strong> {selectedOrder.status}</p>
 
-          {/* Display Art Title and Image */}
+          {/* Display Ordered Artwork */}
           <div className="mt-4">
             <h4 className="font-semibold">Ordered Artwork</h4>
             {selectedOrder.arts && selectedOrder.arts.length > 0 ? (
@@ -120,27 +139,9 @@ const OrderHub = () => {
             )}
           </div>
 
-          {/* Display Order Pricing & Details */}
-          {selectedOrder.artistHasAccepted ? (
-            <div className="mt-4">
-              <p><strong>Price:</strong> {selectedOrder.price}/-</p>
-              <p><strong>Delivery Charges:</strong> {selectedOrder.deliveryCharges}/-</p>
-              <p><strong>Total Price:</strong> {selectedOrder.totalPrice}/-</p>
-              <p><strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toDateString()}</p>
-
-              {/* Accept & Cancel Buttons Disabled */}
-              <div className="mt-4">
-                <button className="bg-gray-400 text-white px-4 py-2 mr-2 rounded cursor-not-allowed" disabled>
-                  Accept
-                </button>
-                <button className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed" disabled>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          ) : (
-            // Accept/Cancel Buttons
-            !showForm ? (
+          {/* Order Actions */}
+          {!selectedOrder.artistHasAccepted && !selectedOrder.isCancelled ? (
+            !showForm && !showCancelReason ? (
               <div className="mt-4">
                 <button
                   className="bg-green-500 text-white px-4 py-2 mr-2 rounded"
@@ -148,63 +149,56 @@ const OrderHub = () => {
                 >
                   Accept
                 </button>
-                <button className="bg-red-500 text-white px-4 py-2 rounded">
+                <button
+                  className="bg-red-500 text-white px-4 py-2 rounded"
+                  onClick={handleCancelOrder}
+                >
                   Cancel
                 </button>
               </div>
-            ) : (
-              // Form for Accepting Order
+            ) : showForm ? (
               <div className="mt-4">
                 <div className="mb-2">
-                  <label htmlFor="price" className="block font-semibold">Price</label>
-                  <input
-                    type="number"
-                    id="price"
-                    value={price}
-                    onChange={(e) => setPrice(e.target.value)}
-                    className="border p-2 w-full"
-                    required
-                  />
+                  <label className="block font-semibold">Price</label>
+                  <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
+                    className="border p-2 w-full" required />
                 </div>
                 <div className="mb-2">
-                  <label htmlFor="deliveryCharges" className="block font-semibold">Delivery Charges</label>
-                  <input
-                    type="number"
-                    id="deliveryCharges"
-                    value={deliveryCharges}
-                    onChange={(e) => setDeliveryCharges(e.target.value)}
-                    className="border p-2 w-full"
-                    required
-                  />
+                  <label className="block font-semibold">Delivery Charges</label>
+                  <input type="number" value={deliveryCharges} onChange={(e) => setDeliveryCharges(e.target.value)}
+                    className="border p-2 w-full" required />
                 </div>
                 <div className="mb-2">
-                  <label htmlFor="dueDate" className="block font-semibold">Due Date</label>
-                  <input
-                    type="date"
-                    id="dueDate"
-                    value={dueDate}
-                    onChange={(e) => setDueDate(e.target.value)}
-                    className="border p-2 w-full"
-                    required
-                  />
+                  <label className="block font-semibold">Due Date</label>
+                  <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
+                    className="border p-2 w-full" required />
                 </div>
-
-                <div className="mt-4">
-                  <button
-                    onClick={handleSaveOrder}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
-                  >
-                    Save
-                  </button>
-                </div>
+                <button onClick={handleSaveOrder} className="bg-blue-500 text-white px-4 py-2 rounded">
+                  Save
+                </button>
               </div>
-            )
+            ) : showCancelReason ? (
+              <div className="mt-4">
+                <label className="block font-semibold">Cancellation Reason</label>
+                <textarea value={cancelReason} onChange={(e) => setCancelReason(e.target.value)}
+                  className="border p-2 w-full" required />
+                <button onClick={handleSubmitCancelOrder} className="bg-red-500 text-white px-4 py-2 mt-2 rounded">
+                  Cancel Order
+                </button>
+              </div>
+            ) : null
+          ) : selectedOrder.isCancelled ? (
+            <p className="mt-4 text-red-600">Order Cancelled</p>
+          ) : (
+            <div className="mt-4">
+              <p><strong>Price:</strong> ${price}</p>
+              <p><strong>Delivery Charges:</strong> ${deliveryCharges}</p>
+              <p><strong>Due Date:</strong> {dueDate}</p>
+              <p><strong>Total Price:</strong> ${parseFloat(price) + parseFloat(deliveryCharges)}</p>
+            </div>
           )}
 
-          <button
-            onClick={handleBackToList} // Go back to the table view
-            className="mt-4 underline text-blue-500"
-          >
+          <button onClick={handleBackToList} className="mt-4 underline text-blue-500">
             Back to List
           </button>
         </div>
