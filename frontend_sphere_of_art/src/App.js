@@ -27,6 +27,7 @@ import PortfolioUpload from './pages/PortfolioUpload'
 import ArtistProfile from './pages/ArtistProfile'
 import OrderHub from './pages/OrderHub'
 import MyOrders from './pages/MyOrders'
+import ForgotPassword from './pages/ForgotPassword'
 
 // The main App component
 export default function App(props) {
@@ -125,7 +126,7 @@ export default function App(props) {
               <MyOrders/>
           </PrivateRoute>
         }/>
-
+        <Route path="/forgot-password" element={<ForgotPassword />} />
       </Routes>
     </div>
   );
