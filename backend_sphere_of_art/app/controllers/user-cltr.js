@@ -219,6 +219,9 @@ userCltr.resetPassword = async (req, res) => {
         res.status(200).json({ message: 'Password reset successfully.' });
 
     } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(400).json({ message: 'The reset token has expired. Please request a new password reset.' });
+        }
         console.error('Error in resetPassword:', error);
         res.status(500).json({ message: 'Something went wrong' });
     }
