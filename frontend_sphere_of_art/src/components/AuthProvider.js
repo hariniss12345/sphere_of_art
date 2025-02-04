@@ -53,9 +53,9 @@ export default function AuthProvider(props) {
     }, []); // Empty dependency array ensures this runs only once on mount
 
     // Render a loading message if a token exists but the user's data hasn't been fetched yet
-    if (localStorage.getItem('token') && !userState.user) {
-        return <p>loading...</p>;
-    }
+    // if (localStorage.getItem('token') && !userState.user) {
+    //     return <p>loading...</p>;
+    // }
 
     return (
         <div>
