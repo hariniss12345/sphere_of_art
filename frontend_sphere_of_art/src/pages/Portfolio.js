@@ -1,7 +1,7 @@
-export default function portfolio(){
+export default function Portfolio(){
     return (
         <div>
-            portfolio
+            list of artist portfolio
         </div>
     )
 }
