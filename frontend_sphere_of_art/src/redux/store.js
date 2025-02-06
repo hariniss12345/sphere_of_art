@@ -8,12 +8,15 @@ import orderReducer from "./slices/orderSlice"
 
 import authReducer from "./slices/authSlice"; 
 
+import portfolioReducer from './slices/portfolioSlice';
+
 // Configuring the Redux store with the artist slice
 const store = configureStore({
     reducer: {
         artists: artistReducer, // Adding the artistReducer to handle artists-related state
         order: orderReducer,
         auth: authReducer,
+        portfolio: portfolioReducer,
     },
 });
 
