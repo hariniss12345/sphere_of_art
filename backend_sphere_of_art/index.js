@@ -92,10 +92,10 @@ app.post('/api/users/login',loginValidation,checkSchema(userLoginSchema),userClt
 //POST route for users: users can request a password reset.
 app.post('/api/users/forgot-password',userCltr.forgotPassword)
 
-app.post('/api/users/reset-password',userCltr.resetPassword)
+app.post('/api/users/reset-password/:token',userCltr.resetPassword)
 
 // GET route for user profile: authenticates the user and retrieves their profile
-app.get('/api/users/profile', authenticateUser, userCltr.profile);
+app.get('/api/users/profile', authenticateUser, userCltr.profile)
 
 
 // POST route for customers: authenticates the user, validates input and calls the create handler

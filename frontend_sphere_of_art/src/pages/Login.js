@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../context/Auth";
@@ -7,124 +6,107 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Login() {
-  const { handleLogin } = useContext(AuthContext); // Context to manage authentication state
-  const navigate = useNavigate(); // Navigation hook to redirect users
+  const { handleLogin } = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  // State to store form data (username/email and password)
-  const [formData, setFormdata] = useState({
+  const [formData, setFormData] = useState({
     usernameOrEmail: "",
     password: "",
   });
 
   const [showPassword, setShowPassword] = useState(false);
-  // State to store validation errors from the client
   const [clientErrors, setClientErrors] = useState({});
-  // State to store errors returned by the server
   const [serverErrors, setServerErrors] = useState(null);
-  const errors = {}; // Object to store validation errors temporarily
+  const errors = {};
 
-  // Function to validate form data on the client side
   const runClientValidations = () => {
     if (formData.usernameOrEmail.trim().length === 0) {
-      errors.usernameOrEmail = "Username or Email is required"; // Error for empty username/email
+      errors.usernameOrEmail = "Username or Email is required";
     }
     if (formData.password.trim().length === 0) {
-      errors.password = "Password is required"; // Error for empty password
+      errors.password = "Password is required";
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
-    runClientValidations(); // Run client-side validations
+    e.preventDefault();
+    runClientValidations();
     if (Object.keys(errors).length === 0) {
       try {
-        // Send login request to the server
         const response = await axios.post(
           "http://localhost:4800/api/users/login",
           formData
         );
-        localStorage.setItem("token", response.data.token); // Save the token in localStorage
+        localStorage.setItem("token", response.data.token);
 
-        // Fetch user profile after successful login
         const userResponse = await axios.get(
           "http://localhost:4800/api/users/profile",
           {
-            headers: { Authorization: localStorage.getItem("token")}, // Add token in headers
+            headers: { Authorization: localStorage.getItem("token") },
           }
         );
 
-        // Log the user in using handleLogin
         handleLogin(userResponse.data);
-
-        // Redirect to the dashboard
         navigate("/dashboard");
       } catch (err) {
-        // Set server-side errors if login fails
         setServerErrors(err.response.data.errors);
       }
-      setClientErrors({}); // Clear client-side errors
+      setClientErrors({});
     } else {
-      setClientErrors(errors); // Set client-side validation errors
+      setClientErrors(errors);
     }
   };
 
   return (
-    <div className="login">
-      <h2>Login Page</h2>
-      {/* Display server-side errors if any */}
-      {serverErrors && (
-        <div>
-          <b>{serverErrors}</b>
-        </div>
-      )}
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
 
-      <form onSubmit={handleSubmit}>
-        {/* Username or Email input */}
-        <input
-          type="text"
-          value={formData.usernameOrEmail}
-          onChange={(e) =>
-            setFormdata({ ...formData, usernameOrEmail: e.target.value }) // Update username/email field
-          }
-          placeholder="Enter username or email"
-        />
-        {clientErrors.usernameOrEmail && (
-          <span style={{ color: "red" }}>{clientErrors.usernameOrEmail}</span> // Show client-side validation error
-        )}
-        <br />
+        {serverErrors && <div className="text-red-500 text-center mb-4">{serverErrors}</div>}
 
-        {/* Password input with eye icon */}
-        <div style={{ position: "relative", display: "inline-block" }}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type={showPassword ? "text" : "password"} // Toggle between "text" and "password"
-            value={formData.password}
-            onChange={(e) =>
-              setFormdata({ ...formData, password: e.target.value })
-            }
-            placeholder="Enter password"
-            style={{ paddingRight: "2rem" }} // Space for the eye icon
+            type="text"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.usernameOrEmail}
+            onChange={(e) => setFormData({ ...formData, usernameOrEmail: e.target.value })}
+            placeholder="Enter username or email"
           />
-          <FontAwesomeIcon
-            icon={showPassword ? faEyeSlash : faEye} // Toggle icons
-            onClick={() => setShowPassword(!showPassword)} // Toggle visibility
-            style={{
-              position: "absolute",
-              right: "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-            }}
-          />
-        </div>
-        {clientErrors.password && (
-          <span style={{ color: "red" }}>{clientErrors.password}</span> // Show client-side validation error
-        )}
-        <br />
+          {clientErrors.usernameOrEmail && <p className="text-red-500 text-sm">{clientErrors.usernameOrEmail}</p>}
 
-        {/* Submit button */}
-        <input type="submit" value="Sign In" />
-      </form>
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              placeholder="Enter password"
+            />
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 cursor-pointer text-gray-500"
+            />
+          </div>
+          {clientErrors.password && <p className="text-red-500 text-sm">{clientErrors.password}</p>}
+
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300"
+          >
+            Sign In
+          </button>
+
+          <p className="text-center text-sm mt-3">
+            <span
+              className="text-blue-500 cursor-pointer hover:underline"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot Password?
+            </span>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }

@@ -1,16 +1,7 @@
-// Importing the main CSS file for styling
-import './App.css';
-
-// Importing components and hooks from react-router-dom for navigation and routing
+import './App.css'; // Importing the main CSS file for styling
 import { Link, Routes, Route, useNavigate } from 'react-router-dom';
-
-// Importing the authentication context to access user-related state and actions
-import AuthContext from './context/Auth.js';
-
-// Import the PrivateRoute component from the components folder
-import PrivateRoute from './components/PrivateRoute.js';
-
-// Importing the useContext hook to consume the authentication context
+import AuthContext from './context/Auth.js'; // Importing the authentication context
+import PrivateRoute from './components/PrivateRoute.js'; // Import PrivateRoute for protected routes
 import { useContext } from 'react';
 
 // Importing different page components
@@ -22,110 +13,105 @@ import Dashboard from './pages/Dashboard';
 import FindArtist from './pages/FindArtist';
 import Order from './pages/Order';
 import Profile from './pages/Profile';
-import Portfolio from './pages/Portfolio'
-import PortfolioUpload from './pages/PortfolioUpload'
-import ArtistProfile from './pages/ArtistProfile'
-import OrderHub from './pages/OrderHub'
-import MyOrders from './pages/MyOrders'
+import Portfolio from './pages/Portfolio';
+import PortfolioUpload from './pages/PortfolioUpload';
+import ArtistProfile from './pages/ArtistProfile';
+import OrderHub from './pages/OrderHub';
+import MyOrders from './pages/MyOrders';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 
-// The main App component
-export default function App(props) {
-  // Consuming user state and authentication-related actions from AuthContext
-  const { userState,handelLogout } = useContext(AuthContext);
-  console.log(userState)
-
-  // useNavigate hook for programmatic navigation
+export default function App() {
+  const { userState, handelLogout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   return (
     <div className="App">
       {/* Top navigation bar */}
-      <ul id="top-nav">
-        {/* Always visible Home link */}
-        <li><Link to="/home">Home</Link></li>
+      <ul className="flex justify-between bg-gray-800 p-4 text-white">
+        <li>
+          <Link to="/home" className="hover:text-gray-400">Home</Link>
+        </li>
 
-        {/* Conditional rendering based on user login state */}
         {!userState.isLoggedIn ? (
           <>
-            {/* Links visible when the user is not logged in */}
-            <li><Link to="/register">Register</Link></li>
-            <li><Link to="/login">Login</Link></li>
+            <li>
+              <Link to="/register" className="hover:text-gray-400">Register</Link>
+            </li>
+            <li>
+              <Link to="/login" className="hover:text-gray-400">Login</Link>
+            </li>
           </>
         ) : (
           <>
-            {/* Links visible when the user is logged in */}
-            <li><Link to="/dashboard">Dashboard</Link></li>
-            {userState.user?.role=='customer' && <li><Link to="/findartist">Find Your Artist</Link></li>}
-            {userState.user?.role=='customer' && <li><Link to="/order">Order</Link></li>}
-            <li><Link to="/profile">Profile</Link></li>
-            {userState.user?.role=='artist' && <li><Link to="/portfolio">Portfolio</Link></li>}
-            {userState.user?.role=='artist' && <li><Link to="/portfolioupload">Portfolio Upload</Link></li>}
-            {userState.user?.role=='artist' && <li><Link to={`/order-hub/${userState.user.id}`}>Order Hub</Link></li>}
-            {userState.user?.role=='customer' && <li><Link to={`/my-orders/${userState.user.id}`}>My Orders</Link></li>}
-            {/* Logout button that clears user session and navigates to Home */}
             <li>
-              <button onClick={() => {
-                handelLogout(); // Call the logout handler
-                localStorage.removeItem('token'); // Remove the token from localStorage
-                navigate('/home'); // Redirect to Home page
-              }}>
+              <Link to="/dashboard" className="hover:text-gray-400">Dashboard</Link>
+            </li>
+            {userState.user?.role === 'customer' && (
+              <li>
+                <Link to="/findartist" className="hover:text-gray-400">Find Your Artist</Link>
+              </li>
+            )}
+            {userState.user?.role === 'customer' && (
+              <li>
+                <Link to="/order" className="hover:text-gray-400">Order</Link>
+              </li>
+            )}
+            <li>
+              <Link to="/profile" className="hover:text-gray-400">Profile</Link>
+            </li>
+            {userState.user?.role === 'artist' && (
+              <>
+                <li>
+                  <Link to="/portfolio" className="hover:text-gray-400">Portfolio</Link>
+                </li>
+                <li>
+                  <Link to="/portfolioupload" className="hover:text-gray-400">Portfolio Upload</Link>
+                </li>
+                <li>
+                  <Link to={`/order-hub/${userState.user.id}`} className="hover:text-gray-400">Order Hub</Link>
+                </li>
+              </>
+            )}
+            {userState.user?.role === 'customer' && (
+              <li>
+                <Link to={`/my-orders/${userState.user.id}`} className="hover:text-gray-400">My Orders</Link>
+              </li>
+            )}
+            {/* Logout button */}
+            <li>
+              <button
+                onClick={() => {
+                  handelLogout();
+                  localStorage.removeItem('token');
+                  navigate('/home');
+                }}
+                className="text-white bg-red-600 hover:bg-red-700 p-2 rounded"
+              >
                 LOGOUT
               </button>
             </li>
           </>
         )}
       </ul>
-      
+
       {/* Route definitions for the application */}
       <Routes>
         <Route path="/main" element={<MainPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={ 
-          <PrivateRoute>
-              <Dashboard />
-          </PrivateRoute>
-         } />
-        <Route path="/findartist" element={
-          <PrivateRoute permittedRoles={['customer']}>
-             <FindArtist />
-          </PrivateRoute>
-        } />
-        
-        <Route path="/artist-profile/:id" element={<ArtistProfile />} /> {/* Route for artist profile */}
-        
-        <Route path="/order" element={
-          <PrivateRoute permittedRoles={['customer']}>
-             <Order />
-          </PrivateRoute>
-        } />
-        <Route path="/profile" element={
-          <PrivateRoute>
-              <Profile />
-          </PrivateRoute>
-        } />
-        <Route path="/portfolio" element={
-          <PrivateRoute permittedRoles = {['artist']}> 
-              <Portfolio />
-          </PrivateRoute>
-        } />
-        <Route path="/portfolioupload" element={
-          <PrivateRoute permittedRoles = {['artist']}> 
-              <PortfolioUpload />
-          </PrivateRoute>
-        } />
-      <Route path="/order-hub/:artistId" element={
-          <PrivateRoute permittedRoles = {['artist']}> 
-              <OrderHub/>
-          </PrivateRoute>
-        } />
-        <Route path="/my-orders/:customerId" element={
-          <PrivateRoute permittedRoles = {['customer']}> 
-              <MyOrders/>
-          </PrivateRoute>
-        }/>
-
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/findartist" element={<PrivateRoute permittedRoles={['customer']}><FindArtist /></PrivateRoute>} />
+        <Route path="/artist-profile/:id" element={<ArtistProfile />} />
+        <Route path="/order" element={<PrivateRoute permittedRoles={['customer']}><Order /></PrivateRoute>} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+        <Route path="/portfolio" element={<PrivateRoute permittedRoles={['artist']}><Portfolio /></PrivateRoute>} />
+        <Route path="/portfolioupload" element={<PrivateRoute permittedRoles={['artist']}><PortfolioUpload /></PrivateRoute>} />
+        <Route path="/order-hub/:artistId" element={<PrivateRoute permittedRoles={['artist']}><OrderHub /></PrivateRoute>} />
+        <Route path="/my-orders/:customerId" element={<PrivateRoute permittedRoles={['customer']}><MyOrders /></PrivateRoute>} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </div>
   );

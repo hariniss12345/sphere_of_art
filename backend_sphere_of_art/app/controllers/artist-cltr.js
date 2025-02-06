@@ -52,24 +52,19 @@ artistCltr.list = async (req, res) => {
     }
 };
 
-
-
 // Define the show method in the artist controller to retrieve the current artist's information
 artistCltr.show = async ( req,res ) => {
     try {
-        // Find all artists and populate user details (username, email, profilePic)
-        const artists = await Artist.findById(req.params.id)
-            .populate({
-                path: "user", // Reference field in Artist schema
-                select: "username email", // Only get needed fields
-            });
-
-        res.json(artists);
-    } catch (err) {
-        console.error("Error retrieving artists:", err.message);
-        res.status(500).json({ error: "Failed to retrieve artists. Please try again later." });
+        const artist = await Artist.findById(req.params.id).populate('user', 'username email'); // Populate user details if needed
+        if (!artist) {
+            return res.status(404).json({ message: 'Artist not found' });
+        }
+        res.status(200).json(artist);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 }
+  
 
 // Define the update method in the artist controller to update the artist's information
 artistCltr.update = async (req, res) => {

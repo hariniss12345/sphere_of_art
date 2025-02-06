@@ -150,77 +150,92 @@ userCltr.profile = async (req, res) => {
     }
 };
 
-
-
-
-userCltr.forgotPassword = async ( req,res ) => {
+userCltr.forgotPassword = async (req, res) => {
     const { email } = req.body;
 
     try {
-         // Step 1: Check if the user exists
-
+        // Step 1: Check if the user exists
         const user = await User.findOne({ email });
         if (!user) {
-          return res.status(404).json({ message: 'User with that email does not exist.' });
+            return res.status(404).json({ message: 'User with that email does not exist.' });
         }
 
         // Step 2: Create a JWT reset password token
-        
         const resetToken = jwt.sign(
-        { userId: user._id }, // Include user ID in the token payload
-        process.env.JWT_SECRET, // Use your secret key
-        { expiresIn: process.env.JWT_RESET_PASSWORD_EXPIRATION } // Token expiration time
+            { userId: user._id }, // Include user ID in the token payload
+            process.env.JWT_SECRET, // Use your secret key
+            { expiresIn: process.env.JWT_RESET_PASSWORD_EXPIRATION } // Token expiration time
         );
 
         // Step 3: Create reset password URL (you can customize the URL based on your frontend)
-    
         const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
-   
-        // Step 4: Send email with the reset URL
 
+        // Step 4: Send email with the reset URL
         const subject = 'Password Reset Request';
         const text = `You requested a password reset. Click the link below to reset your password:\n\n${resetUrl}\n\nIf you did not request this, please ignore this email.`;
         const html = `<p>You requested a password reset. Click the link below to reset your password:</p>
-                 <a href="${resetUrl}">${resetUrl}</a>
-                 <p>If you did not request this, please ignore this email.</p>`;
+              <a href="${resetUrl}" target="_self">${resetUrl}</a>
+              <p>If you did not request this, please ignore this email.</p>`;
 
-        await sendEmail(user.email, subject, text, html); // Send the email
+        // Send the email without target="_blank"
+        await sendEmail(user.email, subject, text, html);
 
         // Step 5: Respond to the client
         res.status(200).json({ message: 'Password reset email sent successfully' });
     } catch (error) {
         console.error('Error in forgotPassword:', error);
         res.status(500).json({ message: 'Something went wrong' });
- }   
-}
+    }
+};
 
-// Reset password controller
+
+
 userCltr.resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
-
     try {
-        // Step 1: Verify the reset token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET); // Verify token with your secret
+        // Extract token from URL params
+        const { token } = req.params;
 
-        // Step 2: Check if the user exists
-        const user = await User.findById(decoded.userId);  // Use the userId from the token
-        if (!user) {
-            return res.status(404).json({ message: 'User not found.' });
+        // Extract password from request body
+        const { newPassword } = req.body;
+
+        // Debugging logs
+        console.log("Received Token:", token);
+        console.log("Received Password:", newPassword);
+
+        // Validate input
+        if (!newPassword) {
+            return res.status(400).json({ message: "Password is required" });
         }
 
-        // Step 3: Hash the new password
+        // Verify the reset token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded Token:", decoded);
+
+        // Find user by ID from decoded token
+        const user = await User.findById(decoded.userId);
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Hash the new password
         const hashedPassword = await bcryptjs.hash(newPassword, 12);
 
-        // Step 4: Update the user's password in the database
+        // Update password in DB
         user.password = hashedPassword;
         await user.save();
 
-        // Step 5: Respond to the client
-        res.status(200).json({ message: 'Password reset successfully.' });
+        // Respond to client
+        res.status(200).json({ message: "Password reset successfully." });
 
     } catch (error) {
-        console.error('Error in resetPassword:', error);
-        res.status(500).json({ message: 'Something went wrong' });
+        console.error("Error in resetPassword:", error);
+
+        // Handle token expiration
+        if (error.name === "TokenExpiredError") {
+            return res.status(400).json({ message: "The reset token has expired. Please request a new password reset." });
+        }
+
+        res.status(500).json({ message: "Something went wrong. Please try again." });
     }
 };
 
