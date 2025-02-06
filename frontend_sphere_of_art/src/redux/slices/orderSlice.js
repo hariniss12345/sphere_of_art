@@ -20,7 +20,7 @@ export const placeOrder = createAsyncThunk(
         formData,
         {
           headers: {
-            Authorization: localStorage.getItem("token"), // Important for file uploads
+            Authorization: localStorage.getItem("token"), 
           },
         }
       );
