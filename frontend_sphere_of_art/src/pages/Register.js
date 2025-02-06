@@ -1,16 +1,9 @@
-// Importing the main CSS file for styling
-import '../App.css';
-
-// Importing hooks and libraries
-import { useState } from "react"; // useState for managing form data and errors
-import { useNavigate } from 'react-router-dom'; // useNavigate for programmatic navigation
-import axios from 'axios'; // axios for making HTTP requests
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function Register() {
-    // Hook for programmatic navigation
-    const navigate = useNavigate(); 
-
-    // State for managing form inputs
+    const navigate = useNavigate();
     const [formData, setFormdata] = useState({
         username: "",
         email: "",
@@ -18,131 +11,98 @@ export default function Register() {
         role: ""
     });
 
-    // State for managing client-side and server-side errors
-    const [clientErrors, setClientErros] = useState(null);
+    const [clientErrors, setClientErrors] = useState(null);
     const [serverErrors, setServerErrors] = useState(null);
 
-    // Object to store client-side validation errors
     const clientValidationsErrors = {};
 
-    // Function to run client-side validations
     const runClientValidations = () => {
-        // Check if username is empty
-        if (formData.username.trim().length === 0) {
-            clientValidationsErrors.username = 'Username is required';
-        }
-
-        // Check if password is empty
-        if (formData.password.trim().length === 0) {
-            clientValidationsErrors.password = 'Password is required';
-        }
-
-        // Check if email is empty
-        if (formData.email.trim().length === 0) {
-            clientValidationsErrors.email = 'Email is required';
-        }
-
-        // Check if role is not selected
-        if (formData.role.trim().length === 0) {
-            clientValidationsErrors.role = 'Role is required';
-        }
+        if (!formData.username.trim()) clientValidationsErrors.username = "Username is required";
+        if (!formData.password.trim()) clientValidationsErrors.password = "Password is required";
+        if (!formData.email.trim()) clientValidationsErrors.email = "Email is required";
+        if (!formData.role.trim()) clientValidationsErrors.role = "Role is required";
     };
 
-    // Function to handle form submission
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent page reload
-        runClientValidations(); // Run client-side validations
-        console.log(clientValidationsErrors);
-
-        // Check if there are no client-side validation errors
+        e.preventDefault();
+        runClientValidations();
+        
         if (Object.keys(clientValidationsErrors).length === 0) {
             try {
-                // Send form data to the server
-                const response = await axios.post('http://localhost:4800/api/users/register', formData);
-                navigate('/login'); // Navigate to login page on successful registration
-                console.log(response.data); // Log server response
+                await axios.post("http://localhost:4800/api/users/register", formData);
+                navigate("/login");
             } catch (err) {
-                // Set server errors if the request fails
-                setServerErrors(err.response.data.errors);
+                setServerErrors(err.response?.data.errors);
             }
-            setClientErros({}); // Clear client errors
+            setClientErrors({});
         } else {
-            setClientErros(clientValidationsErrors); // Set client-side errors
+            setClientErrors(clientValidationsErrors);
         }
     };
 
     return (
-        <>
-            <h2>Register Page</h2>
-
-            {/* Display server errors if present */}
-            {serverErrors && (
-                <div>
-                    <h3>Server Errors</h3>
-                    <ul>
-                        {serverErrors.map((ele, i) => {
-                            return <li key={i}>{ele.msg}</li>;
-                        })}
-                    </ul>
-                </div>
-            )}
-
-            {/* Registration form */}
-            <form onSubmit={handleSubmit}>
-                {/* Username input */}
-                <input
-                    type="text"
-                    value={formData.username}
-                    onChange={(e) => setFormdata({ ...formData, username: e.target.value })}
-                    placeholder="Enter username"
-                />
-                {clientErrors && <span style= {{color: 'red'}}>{clientErrors.username}</span>}
-                <br/>
-
-                {/* Email input */}
-                <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormdata({ ...formData, email: e.target.value })}
-                    placeholder="Enter email"
-                />
-                {clientErrors && <span style={{color: 'red'}} >{clientErrors.email}</span>}
-                <br/>
-
-                {/* Password input */}
-                <input
-                    type="password"
-                    value={formData.password}
-                    onChange={(e) => setFormdata({ ...formData, password: e.target.value })}
-                    placeholder="Enter password"
-                />
-                {clientErrors && <span style ={{color: 'red'}}>{clientErrors.password}</span>}
-                <br/>
-
-                {/* Role selection (radio buttons) */}
-                <input
-                    type="radio"
-                    name="role"
-                    value="customer"
-                    id="customer"
-                    onChange={(e) => setFormdata({ ...formData, role: e.target.value })}
-                />
-                <label htmlFor="customer" name="customer">Customer</label>
-
-                <input
-                    type="radio"
-                    name="role"
-                    value="artist"
-                    id="artist"
-                    onChange={(e) => setFormdata({ ...formData, role: e.target.value })}
-                />
-                <label htmlFor="artist" name="artist">Artist</label>
-                {clientErrors && <span style={{color: 'red'}}>{clientErrors.role}</span>}
-                <br/> 
-                
-                {/* Submit button */}
-                <input type="submit" value="Sign Up" />
-            </form>
-        </>
+        <div className="flex justify-center items-center min-h-screen bg-gray-100">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-96">
+                <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
+                {serverErrors && (
+                    <div className="text-red-500 text-sm mb-4">
+                        {serverErrors.map((error, i) => <p key={i}>{error.msg}</p>)}
+                    </div>
+                )}
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="text"
+                        value={formData.username}
+                        onChange={(e) => setFormdata({ ...formData, username: e.target.value })}
+                        placeholder="Username"
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                    />
+                    {clientErrors?.username && <p className="text-red-500 text-sm">{clientErrors.username}</p>}
+                    
+                    <input
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormdata({ ...formData, email: e.target.value })}
+                        placeholder="Email"
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                    />
+                    {clientErrors?.email && <p className="text-red-500 text-sm">{clientErrors.email}</p>}
+                    
+                    <input
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => setFormdata({ ...formData, password: e.target.value })}
+                        placeholder="Password"
+                        className="w-full p-2 border border-gray-300 rounded-lg"
+                    />
+                    {clientErrors?.password && <p className="text-red-500 text-sm">{clientErrors.password}</p>}
+                    
+                    <div className="flex gap-4 items-center">
+                        <label className="flex items-center space-x-2">
+                            <label>Register As</label><br/>
+                            <input
+                                type="radio"
+                                name="role"
+                                value="customer"
+                                onChange={(e) => setFormdata({ ...formData, role: e.target.value })}
+                            />
+                            <span>Customer</span>
+                        </label>
+                        <label className="flex items-center space-x-2">
+                            <input
+                                type="radio"
+                                name="role"
+                                value="artist"
+                                onChange={(e) => setFormdata({ ...formData, role: e.target.value })}
+                            />
+                            <span>Artist</span>
+                        </label>
+                    </div>
+                    {clientErrors?.role && <p className="text-red-500 text-sm">{clientErrors.role}</p>}
+                    
+                    <button type="submit" className="w-full bg-blue-600 text-white p-2 rounded-lg hover:bg-blue-700 transition">Sign Up</button>
+                </form>
+            </div>
+        </div>
     );
 }

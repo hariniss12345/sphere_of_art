@@ -58,68 +58,55 @@ export default function Login() {
   };
 
   return (
-    <div className="login">
-      <h2>Login Page</h2>
+    <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
 
-      {serverErrors && (
-        <div>
-          <b>{serverErrors}</b>
-        </div>
-      )}
+        {serverErrors && <div className="text-red-500 text-center mb-4">{serverErrors}</div>}
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={formData.usernameOrEmail}
-          onChange={(e) =>
-            setFormData({ ...formData, usernameOrEmail: e.target.value })
-          }
-          placeholder="Enter username or email"
-        />
-        {clientErrors.usernameOrEmail && (
-          <span style={{ color: "red" }}>{clientErrors.usernameOrEmail}</span>
-        )}
-        <br />
-
-        <div style={{ position: "relative", display: "inline-block" }}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <input
-            type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={(e) =>
-              setFormData({ ...formData, password: e.target.value })
-            }
-            placeholder="Enter password"
-            style={{ paddingRight: "2rem" }}
+            type="text"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={formData.usernameOrEmail}
+            onChange={(e) => setFormData({ ...formData, usernameOrEmail: e.target.value })}
+            placeholder="Enter username or email"
           />
-          <FontAwesomeIcon
-            icon={showPassword ? faEyeSlash : faEye}
-            onClick={() => setShowPassword(!showPassword)}
-            style={{
-              position: "absolute",
-              right: "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              cursor: "pointer",
-            }}
-          />
-        </div>
-        {clientErrors.password && (
-          <span style={{ color: "red" }}>{clientErrors.password}</span>
-        )}
-        <br />
+          {clientErrors.usernameOrEmail && <p className="text-red-500 text-sm">{clientErrors.usernameOrEmail}</p>}
 
-        <input type="submit" value="Sign In" />
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              placeholder="Enter password"
+            />
+            <FontAwesomeIcon
+              icon={showPassword ? faEyeSlash : faEye}
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-3 cursor-pointer text-gray-500"
+            />
+          </div>
+          {clientErrors.password && <p className="text-red-500 text-sm">{clientErrors.password}</p>}
 
-        {/* Forgot Password Link */}
-        <p>
-          <span
-            style={{ color: "blue", cursor: "pointer", textDecoration: "underline" }}
-            onClick={() => navigate("/forgot-password")}
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-3 rounded-lg hover:bg-blue-600 transition duration-300"
           >
-            Forgot Password?
-          </span>
-        </p>
-      </form>
+            Sign In
+          </button>
+
+          <p className="text-center text-sm mt-3">
+            <span
+              className="text-blue-500 cursor-pointer hover:underline"
+              onClick={() => navigate("/forgot-password")}
+            >
+              Forgot Password?
+            </span>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
