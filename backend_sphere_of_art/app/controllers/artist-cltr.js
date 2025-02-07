@@ -53,12 +53,16 @@ artistCltr.list = async (req, res) => {
 };
 
 // Define the show method in the artist controller to retrieve the current artist's information
-artistCltr.show = async ( req,res ) => {
+artistCltr.show = async (req, res) => {
     try {
-        const artist = await Artist.findById(req.params.id).populate('user', 'username email'); // Populate user details if needed
+        const artist = await Artist.findById(req.params.id)
+            .populate('user', 'username email') // Populate user details
+            .populate('portfolio'); //  Populate portfolio details
+
         if (!artist) {
             return res.status(404).json({ message: 'Artist not found' });
         }
+
         res.status(200).json(artist);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });

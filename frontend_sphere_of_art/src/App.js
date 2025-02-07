@@ -29,9 +29,7 @@ export default function App() {
     <div className="App">
       {/* Top navigation bar */}
       <ul className="flex justify-between bg-gray-800 p-4 text-white">
-        <li>
-          <Link to="/home" className="hover:text-gray-400">Home</Link>
-        </li>
+        
 
         {!userState.isLoggedIn ? (
           <>
@@ -44,6 +42,9 @@ export default function App() {
           </>
         ) : (
           <>
+          <li>
+          <Link to="/home" className="hover:text-gray-400">Home</Link>
+          </li>
             <li>
               <Link to="/dashboard" className="hover:text-gray-400">Dashboard</Link>
             </li>
