@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 export default function Register() {
     const navigate = useNavigate();
@@ -30,7 +31,17 @@ export default function Register() {
         if (Object.keys(clientValidationsErrors).length === 0) {
             try {
                 await axios.post("http://localhost:4800/api/users/register", formData);
-                navigate("/login");
+
+                // Show success alert using SweetAlert2
+                Swal.fire({
+                    title: "Registration Successful!",
+                    text: "You can now log in.",
+                    icon: "success",
+                    confirmButtonText: "OK",
+                }).then(() => {
+                    navigate("/login"); // Navigate after user clicks "OK"
+                });
+
             } catch (err) {
                 setServerErrors(err.response?.data.errors);
             }

@@ -41,7 +41,7 @@ export default function App() {
         <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/findartist" element={<PrivateRoute permittedRoles={['customer']}><FindArtist /></PrivateRoute>} />
         <Route path="/artist-profile/:id" element={<ArtistProfile />} />
-        <Route path="/order" element={<PrivateRoute permittedRoles={['customer']}><Order /></PrivateRoute>} />
+        <Route path="/order/:id" element={<PrivateRoute permittedRoles={['customer']}><Order /></PrivateRoute>} />
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
         <Route path="/portfolio" element={<PrivateRoute permittedRoles={['artist']}><Portfolio /></PrivateRoute>} />
         <Route path="/portfolioupload" element={<PrivateRoute permittedRoles={['artist']}><PortfolioUpload /></PrivateRoute>} />

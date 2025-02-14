@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -9,12 +9,12 @@ const ArtistProfile = () => {
   const [artist, setArtist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchArtist = async () => {
       try {
         const response = await axios.get(`${API_BASE_URL}/api/artists/${id}`);
-        console.log("API Response:", response.data); // Debugging
         setArtist(response.data);
       } catch (err) {
         setError("Something went wrong: " + err.message);
@@ -25,6 +25,10 @@ const ArtistProfile = () => {
 
     fetchArtist();
   }, [id]);
+
+  const handleOrderClick = () => {
+    navigate(`/order/${id}`);  // Navigate to the order page with the artist's id
+  };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">{error}</p>;
@@ -38,15 +42,13 @@ const ArtistProfile = () => {
           <p>Bio: {artist.bio || "No bio available"}</p>
           <p className="mt-2">Styles: {artist.styles?.join(", ") || "No styles available"}</p>
 
-          {/* Display portfolio images with full view and equal size */}
+          {/* Display portfolio images */}
           {artist.portfolio?.length > 0 ? (
             <div className="mt-4">
               <h3 className="text-lg font-semibold">Portfolio:</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {artist.portfolio.map((item) => {
                   const imageUrl = item.filePath ? `${API_BASE_URL}/${item.filePath}` : null;
-                  console.log("Image URL:", imageUrl); // Debugging
-
                   return (
                     <div key={item._id} className="p-2 border rounded-lg shadow-sm">
                       {imageUrl ? (
@@ -70,6 +72,16 @@ const ArtistProfile = () => {
           ) : (
             <p>No portfolio items uploaded.</p>
           )}
+
+          {/* Order Button */}
+          <div className="mt-6">
+            <button
+              onClick={handleOrderClick}
+              className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700"
+            >
+              Place Order with {artist.user?.username}
+            </button>
+          </div>
         </div>
       )}
     </div>

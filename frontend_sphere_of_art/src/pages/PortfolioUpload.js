@@ -5,6 +5,7 @@ import { uploadPortfolioWork, clearSuccessMessage } from '../redux/slices/portfo
 const PortfolioUpload = () => {
   const [title, setTitle] = useState('');
   const [image, setImage] = useState(null);
+  const [clientErrors, setClientErrors] = useState({});
   const dispatch = useDispatch();
   const { loading, successMessage, error } = useSelector((state) => state.portfolio);
 
@@ -12,24 +13,35 @@ const PortfolioUpload = () => {
     setImage(e.target.files[0]);
   };
 
+  const runClientValidations = () => {
+    const errors = {};
+    if (!title.trim()) {
+      errors.title = "Title is required";
+    }
+    if (!image) {
+      errors.image = "Please choose an image";
+    }
+    return errors;
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title || !image) {
-      alert('Please provide a title and an image.');
-      return;
+    const errors = runClientValidations();
+    if (Object.keys(errors).length === 0) {
+      const formData = new FormData();
+      formData.append('title', title);
+      formData.append('image', image);
+
+      dispatch(uploadPortfolioWork(formData));
+      setTitle('');
+      setImage(null);
+
+      setTimeout(() => {
+        dispatch(clearSuccessMessage());
+      }, 3000);
+    } else {
+      setClientErrors(errors);
     }
-
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('image', image);
-
-    dispatch(uploadPortfolioWork(formData));
-    setTitle('');
-    setImage(null);
-
-    setTimeout(() => {
-      dispatch(clearSuccessMessage());
-    }, 3000);
   };
 
   return (
@@ -45,9 +57,9 @@ const PortfolioUpload = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            required
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
+          {clientErrors.title && <p className="text-red-500 text-sm mt-1">{clientErrors.title}</p>}
         </div>
 
         <div className="mb-4">
@@ -55,9 +67,9 @@ const PortfolioUpload = () => {
           <input
             type="file"
             onChange={handleFileChange}
-            required
             className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
+          {clientErrors.image && <p className="text-red-500 text-sm mt-1">{clientErrors.image}</p>}
         </div>
 
         <button

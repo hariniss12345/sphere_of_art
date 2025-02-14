@@ -11,9 +11,6 @@ export default function Navbar() {
   return (
     <nav className="bg-gray-800 text-white p-4">
       <div className="flex justify-between items-center">
-        {/* Logo */}
-        <h1 className="text-xl font-bold">ArtCommissions</h1>
-
         {/* Hamburger Menu Button (Visible only on small screens) */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -67,11 +64,6 @@ export default function Navbar() {
                     className="block px-4 hover:text-gray-400"
                   >
                     Find Your Artist
-                  </Link>
-                </li>
-                <li className="py-2">
-                  <Link to="/order" className="block px-4 hover:text-gray-400">
-                    Order
                   </Link>
                 </li>
               </>

@@ -4,6 +4,7 @@ import axios from "axios";
 import AuthContext from "../context/Auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 export default function Login() {
   const { handleLogin } = useContext(AuthContext);
@@ -47,7 +48,17 @@ export default function Login() {
         );
 
         handleLogin(userResponse.data);
-        navigate("/dashboard");
+
+        // Show success alert using SweetAlert2
+        Swal.fire({
+          title: "Login Successful!",
+          text: "Welcome back!",
+          icon: "success",
+          confirmButtonText: "OK",
+        }).then(() => {
+          navigate("/dashboard"); // Navigate to dashboard after clicking OK
+        });
+
       } catch (err) {
         setServerErrors(err.response.data.errors);
       }
