@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useParams } from 'react-router-dom';
 import { placeOrder } from '../redux/slices/orderSlice';
 
 const OrderForm = () => {
+  const { id } = useParams();  // Get artist ID from URL
   const [formData, setFormData] = useState({
     title: '',
     styles: '',
-    artist: '',  // Artist name or ID can be entered here manually
-    image: null,
+    images: null,
   });
 
   const [formErrors, setFormErrors] = useState({
     title: '',
     styles: '',
-    artist: '',
-    image: '',
+    images: '',
   });
 
   const dispatch = useDispatch();
 
+  // Validate the form fields
   const validateForm = () => {
     let errors = {};
     let isValid = true;
@@ -36,16 +37,11 @@ const OrderForm = () => {
       isValid = false;
     }
 
-    if (!formData.artist.trim()) {
-      errors.artist = 'Please enter an artist name or ID';
+    if (!formData.images) {
+      errors.images = 'Please upload an image';
       isValid = false;
-    }
-
-    if (!formData.image) {
-      errors.image = 'Please upload an image';
-      isValid = false;
-    } else if (!['image/jpeg', 'image/png'].includes(formData.image.type)) {
-      errors.image = 'Please upload a valid image (JPEG or PNG)';
+    } else if (!['image/jpeg', 'image/png'].includes(formData.images.type)) {
+      errors.images = 'Please upload a valid image (JPEG or PNG)';
       isValid = false;
     }
 
@@ -53,6 +49,7 @@ const OrderForm = () => {
     return isValid;
   };
 
+  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -61,14 +58,16 @@ const OrderForm = () => {
     }));
   };
 
+  // Handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFormData((prevData) => ({
       ...prevData,
-      image: file,
+      images: file,
     }));
   };
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
 
@@ -79,8 +78,8 @@ const OrderForm = () => {
     const formDataToSubmit = new FormData();
     formDataToSubmit.append('title', formData.title);
     formDataToSubmit.append('styles', formData.styles);
-    formDataToSubmit.append('artist', formData.artist); // Artist can be the name or ID entered manually
-    formDataToSubmit.append('images', formData.image);
+    formDataToSubmit.append('artist', id);  // Send the artist ID from useParams
+    formDataToSubmit.append('images', formData.images);
 
     dispatch(placeOrder(formDataToSubmit));
   };
@@ -116,28 +115,15 @@ const OrderForm = () => {
         </div>
 
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Artist (Enter name or ID)</label>
-          <input
-            type="text"
-            name="artist"
-            value={formData.artist}
-            onChange={handleInputChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-          />
-          {formErrors.artist && <p className="text-red-500 text-sm">{formErrors.artist}</p>}
-        </div>
-
-        <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700">Upload Image</label>
           <input
             type="file"
-            name="image"
+            name="images"
             onChange={handleFileChange}
             required
             className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
           />
-          {formErrors.image && <p className="text-red-500 text-sm">{formErrors.image}</p>}
+          {formErrors.images && <p className="text-red-500 text-sm">{formErrors.images}</p>}
         </div>
 
         <button

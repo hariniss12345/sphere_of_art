@@ -27,7 +27,7 @@ const ArtistProfile = () => {
   }, [id]);
 
   const handleOrderClick = () => {
-    navigate(`/order/${id}`);  // Navigate to the order page with the artist's id
+    navigate(`/order/${artist.user?._id}`);  // Navigate to the order page with the artist's id
   };
 
   if (loading) return <p>Loading...</p>;
