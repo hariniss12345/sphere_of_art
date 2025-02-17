@@ -207,4 +207,4 @@ const OrderHub = () => {
   );
 };
 
-export default OrderHub;
+export default OrderHub

@@ -31,7 +31,6 @@ import artCltr from './app/controllers/art-cltr.js'
 //Importing the order controller from the specified path
 import orderCltr from './app/controllers/order-cltr.js'
 
-
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
 
