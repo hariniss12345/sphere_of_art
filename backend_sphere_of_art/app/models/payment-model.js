@@ -1,18 +1,18 @@
 // Importing mongoose to create the schema and interact with MongoDB
-import mongoose from 'mongoose';
+import { Schema,model } from 'mongoose';
 
 // Defining the schema for payment transactions
 const paymentSchema = new Schema({
     orderId: { 
-        type: mongoose.Schema.Types.ObjectId, // References the Order model
+        type: Schema.Types.ObjectId, // References the Order model
         ref: 'Order', 
     },
     artistId: { 
-        type: mongoose.Schema.Types.ObjectId, // References the Artist model
+        type: Schema.Types.ObjectId, // References the Artist model
         ref: 'Artist', 
     },
     customerId: { 
-        type: mongoose.Schema.Types.ObjectId, // References the Customer model
+        type: Schema.Types.ObjectId, // References the Customer model
         ref: 'Customer', 
     },
     stripePaymentIntentId: { 
