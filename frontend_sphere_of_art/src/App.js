@@ -23,6 +23,8 @@ import OrderHub from "./pages/OrderHub";
 import MyOrders from "./pages/MyOrders";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import PaymentPage from './pages/PaymentPage'
+import OrderConfirmation from './pages/OrderConfirmation'
 
 export default function App() {
   const { userState } = useContext(AuthContext);
@@ -49,6 +51,8 @@ export default function App() {
         <Route path="/my-orders/:customerId" element={<PrivateRoute permittedRoles={['customer']}><MyOrders /></PrivateRoute>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/payment" element={<PrivateRoute permittedRoles={['customer']}><PaymentPage /></PrivateRoute>} />
+        <Route path="/order-confirmation" element={<PrivateRoute permittedRoles={['customer']}><OrderConfirmation /></PrivateRoute>} />
       </Routes>
     </div>
   );
