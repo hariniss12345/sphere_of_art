@@ -31,6 +31,7 @@ import artCltr from './app/controllers/art-cltr.js'
 //Importing the order controller from the specified path
 import orderCltr from './app/controllers/order-cltr.js'
 
+import paymentCltr from './app/controllers/payment-cltr.js'
 
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
@@ -174,6 +175,11 @@ app.get('/api/orders/artist/:artistId',authenticateUser,authorizeUser(['artist']
 
 //GET route for orders:authenticates the user ,calls list method
 app.get('/api/orders/customer/:customerId',authenticateUser,authorizeUser(['customer']),orderCltr.listCustomer)
+
+
+app.post('/api/payment-intent',authenticateUser,authorizeUser(['customer']),paymentCltr.create)
+
+app.put('/api/payment-confirm',authenticateUser,authorizeUser(['customer']),paymentCltr.confirm)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

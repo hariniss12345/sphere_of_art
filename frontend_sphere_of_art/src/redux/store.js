@@ -10,14 +10,17 @@ import authReducer from "./slices/authSlice";
 
 import portfolioReducer from './slices/portfolioSlice';
 
+import paymentReducer from './slices/paymentSlice';
+
 // Configuring the Redux store with the artist slice
 const store = configureStore({
     reducer: {
-        artists: artistReducer, // Adding the artistReducer to handle artists-related state
+        artists: artistReducer, 
         order: orderReducer,
         auth: authReducer,
         portfolio: portfolioReducer,
-    },
+        payment : paymentReducer
+    }, 
 });
 
 // Exporting the store to be used in the app
