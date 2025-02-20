@@ -33,6 +33,8 @@ import orderCltr from './app/controllers/order-cltr.js'
 
 import paymentCltr from './app/controllers/payment-cltr.js'
 
+import reviewCltr from './app/controllers/review-cltr.js'
+
 // Import the validation schemas for user registration and login
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js'
 
@@ -180,6 +182,9 @@ app.get('/api/orders/customer/:customerId',authenticateUser,authorizeUser(['cust
 app.post('/api/payment-intent',authenticateUser,authorizeUser(['customer']),paymentCltr.create)
 
 app.put('/api/payment-confirm',authenticateUser,authorizeUser(['customer']),paymentCltr.confirm)
+
+app.post('/api/reviews',authenticateUser,authorizeUser(['customer']),reviewCltr.create)
+
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {
