@@ -179,6 +179,7 @@ app.get('/api/orders/customer/:customerId',authenticateUser,authorizeUser(['cust
 
 app.post('/api/payment-intent',authenticateUser,authorizeUser(['customer']),paymentCltr.create)
 
+app.put('/api/payment-confirm',authenticateUser,authorizeUser(['customer']),paymentCltr.confirm)
 
 // Start the server and listen on the port specified in the environment variables
 app.listen(process.env.PORT, () => {

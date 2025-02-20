@@ -55,4 +55,39 @@ paymentCltr.create = async (req, res) => {
     }
 };
 
+paymentCltr.confirm = async (req, res) => {
+    try {
+      // Destructure stripePaymentIntentId and orderId from req.body
+      const { stripePaymentIntentId, orderId } = req.body;
+      console.log(stripePaymentIntentId,orderId)
+      if (!stripePaymentIntentId || !orderId) {
+        return res.status(400).json({ error: "Payment ID and Order ID are required" });
+      }
+  
+      // Retrieve the PaymentIntent from Stripe using stripePaymentIntentId
+      const paymentIntent = await stripe.paymentIntents.retrieve(stripePaymentIntentId);
+      if (paymentIntent.status !== 'succeeded') {
+        return res.status(400).json({ error: "Payment not completed" });
+      }
+  
+      // Update the order status to "Paid"
+      const updatedOrder = await Order.findByIdAndUpdate(
+        orderId,
+        { status: 'Paid' },
+        { new: true }
+      );
+  
+      // Update the Payment record's status in your database
+      await Payment.findOneAndUpdate(
+        { stripePaymentIntentId: stripePaymentIntentId },
+        { status: 'succeeded' }
+      );
+  
+      res.json({ success: true, message: "Payment confirmed!", order: updatedOrder });
+    } catch (error) {
+      console.error("Payment confirmation error:", error);
+      res.status(500).json({ error: error.message });
+    }
+  };
+
 export default paymentCltr;

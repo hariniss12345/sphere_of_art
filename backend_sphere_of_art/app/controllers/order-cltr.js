@@ -100,7 +100,7 @@ orderCltr.artistAction = async (req, res) => {
     
           order.price = price;
           order.deliveryCharges = deliveryCharges;
-          order.totalPrice = price + deliveryCharges;
+          order.totalPrice = Number(price) + Number(deliveryCharges);
           order.dueDate = new Date(dueDate);
           order.status = 'in-progress'; // Update status to "in-progress"
           order.artistHasAccepted = true; // Mark artist acceptance

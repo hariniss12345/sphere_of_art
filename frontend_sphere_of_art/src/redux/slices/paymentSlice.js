@@ -11,6 +11,7 @@ export const createPaymentIntent = createAsyncThunk(
                 { orderId },
                 { headers: { Authorization: localStorage.getItem('token') } }
             );
+            console.log(response.data)
             return response.data.clientSecret;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Something went wrong");
@@ -23,7 +24,7 @@ export const confirmPayment = createAsyncThunk(
     'payment/confirmPayment',
     async (paymentData, { rejectWithValue }) => {
         try {
-            const response = await axios.post(
+            const response = await axios.put(
                 'http://localhost:4800/api/payment-confirm',
                 paymentData,
                 { headers: { Authorization: localStorage.getItem('token') } }
@@ -78,7 +79,7 @@ const paymentSlice = createSlice({
                 state.error = action.payload;
             });
     }
-});
+})
 
 export const { resetPaymentState } = paymentSlice.actions;
 export default paymentSlice.reducer;

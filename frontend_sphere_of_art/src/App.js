@@ -51,7 +51,7 @@ export default function App() {
         <Route path="/my-orders/:customerId" element={<PrivateRoute permittedRoles={['customer']}><MyOrders /></PrivateRoute>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/payment" element={<PrivateRoute permittedRoles={['customer']}><PaymentPage /></PrivateRoute>} />
+        <Route path="/payment/:orderId" element={<PrivateRoute permittedRoles={['customer']}><PaymentPage /></PrivateRoute>} />
         <Route path="/order-confirmation" element={<PrivateRoute permittedRoles={['customer']}><OrderConfirmation /></PrivateRoute>} />
       </Routes>
     </div>

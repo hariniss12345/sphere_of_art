@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { fetchCustomerOrders, setSelectedOrder, confirmOrder } from "../redux/slices/orderSlice";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const MyOrders = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { customerOrders, selectedOrder, loading, error } = useSelector((state) => state.order);
   const { customerId } = useParams(); // Get customerId from URL
 
@@ -96,7 +97,7 @@ const MyOrders = () => {
               <p><strong>Due Date:</strong> {new Date(selectedOrder.dueDate).toDateString()}</p>
               <p><strong>Total Price:</strong> ${selectedOrder.totalPrice}</p>
 
-              {/* Confirm and Decline Buttons */}
+              {/* Show Confirm and Decline buttons only if customer hasn't confirmed */}
               {!selectedOrder.customerHasAccepted ? (
                 <div className="mt-4">
                   <button
@@ -114,18 +115,15 @@ const MyOrders = () => {
                 </div>
               ) : (
                 <div className="mt-4">
-                  <button
-                    className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed mr-4"
-                    disabled
-                  >
-                    Confirmed
-                  </button>
-                  <button
-                    className="bg-gray-400 text-white px-4 py-2 rounded cursor-not-allowed"
-                    disabled
-                  >
-                    Declined
-                  </button>
+                  {/* Pay Now Button (only if not already paid) */}
+                  {!selectedOrder.isPaid && (
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      onClick={() => navigate(`/payment/${selectedOrder._id}`)}
+                    >
+                      Pay Now
+                    </button>
+                  )}
                 </div>
               )}
             </div>
