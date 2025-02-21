@@ -25,6 +25,7 @@ import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import PaymentPage from './pages/PaymentPage'
 import OrderConfirmation from './pages/OrderConfirmation'
+import AddReview from './pages/AddReview'
 
 export default function App() {
   const { userState } = useContext(AuthContext);
@@ -53,6 +54,7 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/payment/:orderId" element={<PrivateRoute permittedRoles={['customer']}><PaymentPage /></PrivateRoute>} />
         <Route path="/order-confirmation" element={<PrivateRoute permittedRoles={['customer']}><OrderConfirmation /></PrivateRoute>} />
+        <Route path="/add-review" element={<PrivateRoute permittedRoles={['customer']}><AddReview/></PrivateRoute>}/>
       </Routes>
     </div>
   );
