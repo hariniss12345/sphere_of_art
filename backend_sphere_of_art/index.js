@@ -184,6 +184,9 @@ app.post('/api/payment-intent',authenticateUser,authorizeUser(['customer']),paym
 app.put('/api/payment-confirm',authenticateUser,authorizeUser(['customer']),paymentCltr.confirm)
 
 app.post('/api/reviews',authenticateUser,authorizeUser(['customer']),reviewCltr.create)
+app.put('/api/reviews/:id',authenticateUser,authorizeUser(['customer']),reviewCltr.update)
+app.get('/api/reviews',authenticateUser,authorizeUser(['artist','customer']),reviewCltr.list)
+app.delete('/api/reviews/:id',authenticateUser,authorizeUser(['customer']),reviewCltr.delete)
 
 
 // Start the server and listen on the port specified in the environment variables
