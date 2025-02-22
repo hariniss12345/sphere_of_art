@@ -115,6 +115,17 @@ export default function Navbar() {
               </li>
             )}
 
+            {userState.user?.role === "customer" && (
+              <li className="py-2">
+                <Link
+                  to="/add-review"
+                  className="block px-4 hover:text-gray-400"
+                >
+                  Add Review
+                </Link>
+              </li>
+            )}
+
             <li className="py-2">
               <button
                 onClick={() => {
