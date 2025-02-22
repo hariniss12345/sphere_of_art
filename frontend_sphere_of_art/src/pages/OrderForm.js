@@ -2,24 +2,27 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { placeOrder } from '../redux/slices/orderSlice';
+import Swal from 'sweetalert2';
+
 
 const OrderForm = () => {
-  const { id } = useParams();  // Get artist ID from URL
+  const { id: artistId } = useParams();  
+  const dispatch = useDispatch();
+
+  const [orderId, setOrderId] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     styles: '',
     images: null,
   });
-
   const [formErrors, setFormErrors] = useState({
     title: '',
     styles: '',
     images: '',
   });
+  const [uploading, setUploading] = useState(false);
 
-  const dispatch = useDispatch();
-
-  // Validate the form fields
+  // Validate form fields
   const validateForm = () => {
     let errors = {};
     let isValid = true;
@@ -31,12 +34,10 @@ const OrderForm = () => {
       errors.title = 'Title should be at least 3 characters';
       isValid = false;
     }
-
     if (!formData.styles.trim()) {
       errors.styles = 'Styles are required';
       isValid = false;
     }
-
     if (!formData.images) {
       errors.images = 'Please upload an image';
       isValid = false;
@@ -49,93 +50,105 @@ const OrderForm = () => {
     return isValid;
   };
 
-  // Handle input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // Handle file input change
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    setFormData((prevData) => ({
-      ...prevData,
-      images: file,
-    }));
+    if (file) {
+      // Disable the button during upload
+      setUploading(true);
+      // Simulate upload delay (replace with your actual upload logic)
+      setTimeout(() => {
+        setFormData(prev => ({ ...prev, images: file }));
+        setUploading(false);
+      }, 1000);
+    }
   };
 
-  // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     const formDataToSubmit = new FormData();
     formDataToSubmit.append('title', formData.title);
     formDataToSubmit.append('styles', formData.styles);
-    formDataToSubmit.append('artist', id);  // Send the artist ID from useParams
+    formDataToSubmit.append('artist', artistId);
     formDataToSubmit.append('images', formData.images);
 
-    dispatch(placeOrder(formDataToSubmit));
+    const resultAction = await dispatch(placeOrder(formDataToSubmit));
+    if (placeOrder.fulfilled.match(resultAction)) {
+      const newOrder = resultAction.payload.order;
+      setOrderId(newOrder._id);
+
+      Swal.fire({
+        icon: 'success',
+        title: 'Order Placed!',
+        text: 'Your order has been placed successfully.',
+        confirmButtonText: 'OK'
+      });
+    }
   };
+
+  // Enable the "Place Order" button only if all details are provided and no upload is in progress.
+  const isFormValid = 
+    formData.title.trim().length >= 3 &&
+    formData.styles.trim().length > 0 &&
+    formData.images &&
+    !uploading;
 
   return (
     <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold mb-4">Create Your Order</h2>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-4">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
           <label className="block text-sm font-medium text-gray-700">Title</label>
           <input
             type="text"
             name="title"
             value={formData.title}
             onChange={handleInputChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Enter title"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {formErrors.title && <p className="text-red-500 text-sm">{formErrors.title}</p>}
+          {formErrors.title && <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>}
         </div>
-
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700">Style</label>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">Styles</label>
           <input
             type="text"
             name="styles"
             value={formData.styles}
             onChange={handleInputChange}
-            required
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Enter styles"
+            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {formErrors.styles && <p className="text-red-500 text-sm">{formErrors.styles}</p>}
+          {formErrors.styles && <p className="text-red-500 text-sm mt-1">{formErrors.styles}</p>}
         </div>
-
-        <div className="mb-4">
+        <div>
           <label className="block text-sm font-medium text-gray-700">Upload Image</label>
           <input
             type="file"
             name="images"
             onChange={handleFileChange}
-            required
-            className="mt-1 block w-full text-sm text-gray-500 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+            disabled={uploading}
+            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          {formErrors.images && <p className="text-red-500 text-sm">{formErrors.images}</p>}
+          {uploading && <p className="text-blue-500 text-sm mt-1">Uploading image...</p>}
+          {formErrors.images && <p className="text-red-500 text-sm mt-1">{formErrors.images}</p>}
         </div>
-
         <button
           type="submit"
-          disabled={false}
-          className="w-full mt-4 py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          disabled={!isFormValid}
+          className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
         >
           Place Order
         </button>
       </form>
     </div>
   );
-};
-
-export default OrderForm;
+}
+export default OrderForm

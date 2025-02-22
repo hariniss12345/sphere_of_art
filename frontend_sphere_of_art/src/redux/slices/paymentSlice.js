@@ -22,8 +22,10 @@ export const createPaymentIntent = createAsyncThunk(
 // Async thunk to confirm payment (after Stripe processes the payment)
 export const confirmPayment = createAsyncThunk(
     'payment/confirmPayment',
-    async (paymentData, { rejectWithValue }) => {
+    async ({ stripePaymentIntentId, orderId }, { rejectWithValue }) => {
         try {
+            // Create a payload object for your API
+            const paymentData = { stripePaymentIntentId, orderId };
             const response = await axios.put(
                 'http://localhost:4800/api/payment-confirm',
                 paymentData,
@@ -35,6 +37,7 @@ export const confirmPayment = createAsyncThunk(
         }
     }
 );
+
 
 const paymentSlice = createSlice({
     name: 'payment',

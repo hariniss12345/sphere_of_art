@@ -8,7 +8,6 @@ const CheckoutForm = ({ orderId }) => {
     const stripe = useStripe();
     const elements = useElements();
     const dispatch = useDispatch();
-
     const { clientSecret, loading } = useSelector((state) => state.payment);
     const [paymentError, setPaymentError] = useState(null);
 
@@ -23,6 +22,7 @@ const CheckoutForm = ({ orderId }) => {
         setPaymentError(null);
 
         if (!stripe || !elements) return;
+
         if (!clientSecret) {
             setPaymentError("Payment session expired. Please refresh and try again.");
             return;
@@ -32,15 +32,18 @@ const CheckoutForm = ({ orderId }) => {
 
         try {
             const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                },
+                payment_method: { card: cardElement },
             });
 
             if (error) {
                 setPaymentError(error.message);
-            } else if (paymentIntent.status === 'succeeded') {
-                dispatch(confirmPayment({ paymentId: paymentIntent.id }));
+            } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+                // Dispatch confirmPayment with the property names that the backend expects.
+                dispatch(confirmPayment({ 
+                    stripePaymentIntentId: paymentIntent.id, 
+                    orderId 
+                }));
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Payment Successful!',
@@ -53,19 +56,14 @@ const CheckoutForm = ({ orderId }) => {
         }
     };
 
-    // Tailwind style options for CardElement
     const cardElementOptions = {
         style: {
             base: {
                 fontSize: '16px',
                 color: '#424770',
-                '::placeholder': {
-                    color: '#aab7c4',
-                },
+                '::placeholder': { color: '#aab7c4' },
             },
-            invalid: {
-                color: '#9e2146',
-            },
+            invalid: { color: '#9e2146' },
         },
     };
 

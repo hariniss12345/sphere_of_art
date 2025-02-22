@@ -9,7 +9,7 @@ import { createPaymentIntent } from '../redux/slices/paymentSlice';
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY);
 
 const PaymentPage = () => {
-    const { orderId } = useParams(); // Get orderId from URL
+    const { orderId } = useParams(); 
     const dispatch = useDispatch();
     
     console.log("Received orderId in PaymentPage:", orderId);
@@ -25,7 +25,7 @@ const PaymentPage = () => {
         }
     }, [clientSecret, orderId, dispatch]);
 
-    // 🔥 Fix: Ensure `clientSecret` is a plain string
+    
     const options = clientSecret ? { clientSecret: clientSecret.clientSecret } : null;
 
     return (
