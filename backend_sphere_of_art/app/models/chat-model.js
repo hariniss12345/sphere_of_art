@@ -1,4 +1,4 @@
-import {Schema,model} from "mongoose";
+import {Schema,model} from 'mongoose'
 
 const chatSchema = new Schema({
     orderId: { 
@@ -18,6 +18,6 @@ const chatSchema = new Schema({
   { timestamps: true }
 );
 
-const Chat = model("Chat", chatSchema);
+const Chat = model('Chat', chatSchema);
 
 export default Chat

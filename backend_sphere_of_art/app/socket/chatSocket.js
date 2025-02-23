@@ -1,5 +1,5 @@
 // socket/chatSocket.js
-import Chat from '../app/models/Chat.js'; // Adjust the path as needed
+import Chat from '../models/chat-model.js'
 
 // Object to store connected users: key = userId, value = socket.id
 const users = {};
