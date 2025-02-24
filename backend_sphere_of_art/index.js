@@ -89,7 +89,8 @@ app.put('/api/payment-confirm', authenticateUser, authorizeUser(['customer']), p
 
 app.post('/api/reviews', authenticateUser, authorizeUser(['customer']), reviewCltr.create);
 app.put('/api/reviews/:id', authenticateUser, authorizeUser(['customer']), reviewCltr.update);
-app.get('/api/reviews', authenticateUser, authorizeUser(['artist', 'customer']), reviewCltr.list);
+app.get('/api/reviews/artist/:artistId',authenticateUser,authorizeUser(['artist']),reviewCltr.artistReviews)
+app.get('/api/reviews/customer/:customerId', authenticateUser, authorizeUser(['customer']), reviewCltr.customerReviews)
 app.delete('/api/reviews/:id', authenticateUser, authorizeUser(['customer']), reviewCltr.delete);
 
 // ---------------------
@@ -111,7 +112,7 @@ initChat(io);
 // Start the Server
 // ---------------------
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 4800;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

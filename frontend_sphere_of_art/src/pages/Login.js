@@ -1,10 +1,10 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import AuthContext from "../context/Auth";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2";
 
 export default function Login() {
   const { handleLogin } = useContext(AuthContext);
@@ -49,16 +49,14 @@ export default function Login() {
 
         handleLogin(userResponse.data);
 
-        // Show success alert using SweetAlert2
         Swal.fire({
           title: "Login Successful!",
           text: "Welcome back!",
           icon: "success",
           confirmButtonText: "OK",
         }).then(() => {
-          navigate("/dashboard"); // Navigate to dashboard after clicking OK
+          navigate("/dashboard");
         });
-
       } catch (err) {
         setServerErrors(err.response.data.errors);
       }
@@ -69,37 +67,51 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
+    <div className="flex min-h-screen items-center justify-center bg-black">
+      <div className="w-full max-w-md bg-gray-800 p-8 rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-center mb-6 text-white">Sign In</h2>
 
-        {serverErrors && <div className="text-red-500 text-center mb-4">{serverErrors}</div>}
+        {serverErrors && (
+          <div className="text-red-500 text-center mb-4">
+            {serverErrors}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-3 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400"
             value={formData.usernameOrEmail}
-            onChange={(e) => setFormData({ ...formData, usernameOrEmail: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, usernameOrEmail: e.target.value })
+            }
             placeholder="Enter username or email"
           />
-          {clientErrors.usernameOrEmail && <p className="text-red-500 text-sm">{clientErrors.usernameOrEmail}</p>}
+          {clientErrors.usernameOrEmail && (
+            <p className="text-red-500 text-sm">
+              {clientErrors.usernameOrEmail}
+            </p>
+          )}
 
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
-              className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-700 text-white placeholder-gray-400"
               value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
               placeholder="Enter password"
             />
             <FontAwesomeIcon
               icon={showPassword ? faEyeSlash : faEye}
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-3 cursor-pointer text-gray-500"
+              className="absolute right-3 top-3 cursor-pointer text-gray-400"
             />
           </div>
-          {clientErrors.password && <p className="text-red-500 text-sm">{clientErrors.password}</p>}
+          {clientErrors.password && (
+            <p className="text-red-500 text-sm">{clientErrors.password}</p>
+          )}
 
           <button
             type="submit"
@@ -108,15 +120,22 @@ export default function Login() {
             Sign In
           </button>
 
-          <p className="text-center text-sm mt-3">
+          <p className="text-center text-sm mt-3 text-gray-300">
             <span
-              className="text-blue-500 cursor-pointer hover:underline"
+              className="text-blue-400 cursor-pointer hover:underline"
               onClick={() => navigate("/forgot-password")}
             >
               Forgot Password?
             </span>
           </p>
         </form>
+
+        <p className="text-center text-sm mt-4 text-gray-300">
+          Don't have an account?{" "}
+          <Link to="/register" className="text-blue-400 hover:underline">
+            Register
+          </Link>
+        </p>
       </div>
     </div>
   );

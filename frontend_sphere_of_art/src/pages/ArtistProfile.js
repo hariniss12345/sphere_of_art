@@ -27,20 +27,24 @@ const ArtistProfile = () => {
   }, [id]);
 
   const handleOrderClick = () => {
-    navigate(`/order/${artist.user?._id}`);  // Navigate to the order page with the artist's id
+    navigate(`/order/${artist.user?._id}`);
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading)
+    return <p className="text-center text-lg text-white">Loading...</p>;
+  if (error)
+    return <p className="text-center text-red-500">{error}</p>;
 
   return (
-    <div className="p-4">
+    <div className="min-h-screen bg-black p-4 text-white">
       <h1 className="text-2xl font-semibold mb-4">Artist Profile</h1>
       {artist && (
         <div>
           <h2 className="text-xl font-bold">{artist.user?.username}</h2>
           <p>Bio: {artist.bio || "No bio available"}</p>
-          <p className="mt-2">Styles: {artist.styles?.join(", ") || "No styles available"}</p>
+          <p className="mt-2">
+            Styles: {artist.styles?.join(", ") || "No styles available"}
+          </p>
 
           {/* Display portfolio images */}
           {artist.portfolio?.length > 0 ? (
@@ -48,22 +52,31 @@ const ArtistProfile = () => {
               <h3 className="text-lg font-semibold">Portfolio:</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
                 {artist.portfolio.map((item) => {
-                  const imageUrl = item.filePath ? `${API_BASE_URL}/${item.filePath}` : null;
+                  const imageUrl = item.filePath
+                    ? `${API_BASE_URL}/${item.filePath}`
+                    : null;
                   return (
-                    <div key={item._id} className="p-2 border rounded-lg shadow-sm">
+                    <div
+                      key={item._id}
+                      className="p-2 border border-gray-700 rounded-lg shadow-sm bg-gray-900"
+                    >
                       {imageUrl ? (
                         <img
                           src={imageUrl}
                           alt={item.title}
-                          className="w-full h-40 object-contain rounded-lg bg-gray-100"
+                          className="w-full h-40 object-contain rounded-lg bg-gray-800"
                           onError={(e) => {
                             e.target.src = "/default-image.jpg"; // Fallback image
                           }}
                         />
                       ) : (
-                        <p className="text-center text-gray-500">Image not available</p>
+                        <p className="text-center text-gray-500">
+                          Image not available
+                        </p>
                       )}
-                      <p className="text-center mt-2 font-medium">{item.title}</p>
+                      <p className="text-center mt-2 font-medium text-white">
+                        {item.title}
+                      </p>
                     </div>
                   );
                 })}

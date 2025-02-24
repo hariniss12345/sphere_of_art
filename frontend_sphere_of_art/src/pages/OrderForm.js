@@ -4,7 +4,6 @@ import { useParams } from 'react-router-dom';
 import { placeOrder } from '../redux/slices/orderSlice';
 import Swal from 'sweetalert2';
 
-
 const OrderForm = () => {
   const { id: artistId } = useParams();  
   const dispatch = useDispatch();
@@ -58,7 +57,6 @@ const OrderForm = () => {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Disable the button during upload
       setUploading(true);
       // Simulate upload delay (replace with your actual upload logic)
       setTimeout(() => {
@@ -101,54 +99,57 @@ const OrderForm = () => {
     !uploading;
 
   return (
-    <div className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-2xl font-semibold mb-4">Create Your Order</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            placeholder="Enter title"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {formErrors.title && <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Styles</label>
-          <input
-            type="text"
-            name="styles"
-            value={formData.styles}
-            onChange={handleInputChange}
-            placeholder="Enter styles"
-            className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {formErrors.styles && <p className="text-red-500 text-sm mt-1">{formErrors.styles}</p>}
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Upload Image</label>
-          <input
-            type="file"
-            name="images"
-            onChange={handleFileChange}
-            disabled={uploading}
-            className="w-full p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {uploading && <p className="text-blue-500 text-sm mt-1">Uploading image...</p>}
-          {formErrors.images && <p className="text-red-500 text-sm mt-1">{formErrors.images}</p>}
-        </div>
-        <button
-          type="submit"
-          disabled={!isFormValid}
-          className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
-        >
-          Place Order
-        </button>
-      </form>
+    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <div className="w-full max-w-lg bg-gray-900 p-6 rounded-lg shadow-md text-white">
+        <h2 className="text-2xl font-semibold mb-4">Create Your Order</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              placeholder="Enter title"
+              className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formErrors.title && <p className="text-red-500 text-sm mt-1">{formErrors.title}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Styles</label>
+            <input
+              type="text"
+              name="styles"
+              value={formData.styles}
+              onChange={handleInputChange}
+              placeholder="Enter styles"
+              className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {formErrors.styles && <p className="text-red-500 text-sm mt-1">{formErrors.styles}</p>}
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-300">Upload Image</label>
+            <input
+              type="file"
+              name="images"
+              onChange={handleFileChange}
+              disabled={uploading}
+              className="w-full p-2 border border-gray-700 rounded-lg bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {uploading && <p className="text-blue-500 text-sm mt-1">Uploading image...</p>}
+            {formErrors.images && <p className="text-red-500 text-sm mt-1">{formErrors.images}</p>}
+          </div>
+          <button
+            type="submit"
+            disabled={!isFormValid}
+            className="w-full py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+          >
+            Place Order
+          </button>
+        </form>
+      </div>
     </div>
   );
-}
-export default OrderForm
+};
+
+export default OrderForm;

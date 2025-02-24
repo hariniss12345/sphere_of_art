@@ -7,11 +7,11 @@ const reviewSchema = new Schema({
   },
   customerId: {
     type: Schema.Types.ObjectId,
-    ref: 'Customer',
+    ref: 'User',
   },
   artistId: {
     type: Schema.Types.ObjectId,
-    ref: 'Artist',
+    ref: 'User',
   },
   rating: {
     type: Number,

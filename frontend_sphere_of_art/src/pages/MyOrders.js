@@ -27,36 +27,44 @@ const MyOrders = () => {
   // When payment is complete, navigate to the review route.
   const handleReviewOrder = () => {
     if (!selectedOrder) return;
-    // Navigate to a route that will render your review form.
-    // For example: /review/ORDER_ID/ARTIST_ID
-    navigate(`/review/${selectedOrder._id}/${selectedOrder.artist._id}`);
+    navigate(`/review/order/${selectedOrder._id}/artist/${selectedOrder.artist._id}`);
+  };
+
+  // Navigate to a chat page for this order.
+  const handleChat = () => {
+    if (!selectedOrder) return;
+    navigate(`/chat/order/${selectedOrder._id}/artist/${selectedOrder.artist._id}`);
   };
 
   return (
-    <div className="p-5">
+    <div className="min-h-screen bg-black p-5 text-white">
       <h2 className="text-2xl font-bold mb-4">My Orders</h2>
 
       {loading && <p>Loading orders...</p>}
-      {error && <p className="text-red-500">{error}</p>}
+      {error && (
+        <p className="text-red-500">
+          {typeof error === "object" ? JSON.stringify(error) : error}
+        </p>
+      )}
 
       {!selectedOrder ? (
         // Order List
         <table className="min-w-full border-collapse">
           <thead>
-            <tr className="bg-gray-200">
-              <th className="border px-4 py-2">Artist Name</th>
-              <th className="border px-4 py-2">Action</th>
+            <tr className="bg-gray-800">
+              <th className="border border-gray-700 px-4 py-2">Artist Name</th>
+              <th className="border border-gray-700 px-4 py-2">Action</th>
             </tr>
           </thead>
           <tbody>
             {customerOrders.map((order) => (
-              <tr key={order._id} className="border">
-                <td className="border px-4 py-2">
+              <tr key={order._id} className="border border-gray-700">
+                <td className="border border-gray-700 px-4 py-2">
                   {order.artist?.username || "Unknown Artist"}
                 </td>
-                <td className="border px-4 py-2">
+                <td className="border border-gray-700 px-4 py-2">
                   <button
-                    className="bg-blue-500 text-white px-3 py-1 rounded"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
                     onClick={() => dispatch(setSelectedOrder(order))}
                   >
                     View
@@ -68,7 +76,7 @@ const MyOrders = () => {
         </table>
       ) : (
         // Order Details
-        <div className="border p-4 rounded shadow">
+        <div className="border border-gray-700 p-4 rounded shadow bg-gray-900">
           <h3 className="text-xl font-bold mb-2">Order Details</h3>
           <p>
             <strong>Artist Name:</strong> {selectedOrder.artist?.username || "Unknown"}
@@ -85,7 +93,7 @@ const MyOrders = () => {
             <h4 className="font-semibold">Ordered Artwork</h4>
             {selectedOrder.arts && selectedOrder.arts.length > 0 ? (
               selectedOrder.arts.map((art) => (
-                <div key={art._id} className="border p-2 mt-2 rounded">
+                <div key={art._id} className="border border-gray-700 p-2 mt-2 rounded bg-gray-800">
                   <p>
                     <strong>Title:</strong> {art.title}
                   </p>
@@ -96,17 +104,17 @@ const MyOrders = () => {
                       className="mt-2 w-40 h-40 object-cover rounded"
                     />
                   ) : (
-                    <p className="text-gray-500">No image available</p>
+                    <p className="text-gray-400">No image available</p>
                   )}
                 </div>
               ))
             ) : (
-              <p className="text-gray-500">No artwork available</p>
+              <p className="text-gray-400">No artwork available</p>
             )}
           </div>
 
           {selectedOrder.price && selectedOrder.deliveryCharges && selectedOrder.dueDate && (
-            <div className="mt-4 p-3 border rounded">
+            <div className="mt-4 p-3 border border-gray-700 rounded bg-gray-800">
               <p>
                 <strong>Price:</strong> ${selectedOrder.price}
               </p>
@@ -121,42 +129,44 @@ const MyOrders = () => {
                 <strong>Total Price:</strong> ${selectedOrder.totalPrice}
               </p>
 
-              {/* If the order has not been confirmed, show Confirm and Decline buttons */}
+              {/* Testing: If order is confirmed, display buttons */}
               {!selectedOrder.customerHasAccepted ? (
                 <div className="mt-4">
                   <button
-                    className="bg-green-500 text-white px-4 py-2 rounded mr-2"
+                    className="bg-green-500 text-white px-4 py-2 rounded mr-2 hover:bg-green-600"
                     onClick={() => handleCustomerAction("confirm")}
                   >
                     Confirm
                   </button>
                   <button
-                    className="bg-red-500 text-white px-4 py-2 rounded"
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                     onClick={() => handleCustomerAction("decline")}
                   >
                     Decline
                   </button>
                 </div>
               ) : (
-                <div className="mt-4">
-                  {/* If the order is not paid, show the Pay Now button */}
+                <div className="mt-4 flex flex-row gap-2">
                   {!selectedOrder.isPaid && (
                     <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded"
+                      className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                       onClick={() => navigate(`/payment/${selectedOrder._id}`)}
                     >
                       Pay Now
                     </button>
                   )}
-                  {/* Once payment is complete, show "Review Your Order" button */}
-                  {selectedOrder.isPaid && (
-                    <button
-                      className="bg-purple-500 text-white px-4 py-2 rounded mt-2"
-                      onClick={handleReviewOrder}
-                    >
-                      Review Your Order
-                    </button>
-                  )}
+                  <button
+                    className="bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600"
+                    onClick={handleReviewOrder}
+                  >
+                    Review Your Order
+                  </button>
+                  <button
+                    className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600"
+                    onClick={handleChat}
+                  >
+                    Chat with Artist
+                  </button>
                 </div>
               )}
             </div>

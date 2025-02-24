@@ -26,12 +26,16 @@ import ResetPassword from "./pages/ResetPassword";
 import PaymentPage from './pages/PaymentPage'
 import OrderConfirmation from './pages/OrderConfirmation'
 import AddReview from './pages/AddReview'
+import Chat from './pages/Chat'
+import Reviews from './pages/Reviews'
+import ArtistReviews from './pages/ArtistReviews'
 
 export default function App() {
   const { userState } = useContext(AuthContext);
 
   return (
     <div className="App">
+      <div className = "min-h-screen bg-black">
       {/* Navigation Bar */}
       <NavBar />
 
@@ -54,8 +58,12 @@ export default function App() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/payment/:orderId" element={<PrivateRoute permittedRoles={['customer']}><PaymentPage /></PrivateRoute>} />
         <Route path="/order-confirmation" element={<PrivateRoute permittedRoles={['customer']}><OrderConfirmation /></PrivateRoute>} />
-        <Route path="/add-review" element={<PrivateRoute permittedRoles={['customer']}><AddReview/></PrivateRoute>}/>
+        <Route path="/review/order/:orderId/artist/:artistId" element={<PrivateRoute permittedRoles={['customer']}><AddReview/></PrivateRoute>}/>
+        <Route path="/chat/order/:orderId/artist/:artistId" element={<PrivateRoute ><Chat/></PrivateRoute>}/>
+        <Route path="/reviews/customer/:customerId" element={<PrivateRoute permittedRoles={['customer']}><Reviews/></PrivateRoute>} />
+        <Route path="/reviews/artist/:artistId" element={<PrivateRoute permittedRoles={['artist']}><ArtistReviews/></PrivateRoute>}/>
       </Routes>
+      </div>
     </div>
   );
 }

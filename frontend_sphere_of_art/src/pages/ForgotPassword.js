@@ -23,17 +23,15 @@ const ForgotPassword = () => {
     e.preventDefault();
     const errors = runClientValidations();
     if (Object.keys(errors).length === 0) {
-      dispatch(forgotPassword(email));  // Dispatch forgotPassword with the email
+      dispatch(forgotPassword(email));
       setClientErrors({});
     } else {
       setClientErrors(errors);
     }
   };
 
-  // Show SweetAlert2 notifications when message or error updates
   useEffect(() => {
     if (message) {
-      // Display a success message for password reset link sent
       Swal.fire({
         title: "Success!",
         text: "Password reset link sent to your email.",
@@ -43,7 +41,6 @@ const ForgotPassword = () => {
     }
 
     if (error) {
-      // Display an error message in case of failure
       Swal.fire({
         title: "Error!",
         text: error,
@@ -54,9 +51,9 @@ const ForgotPassword = () => {
   }, [message, error]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-semibold text-center mb-4">Forgot Password</h2>
+    <div className="flex justify-center items-center min-h-screen bg-black p-4">
+      <div className="bg-gray-900 p-6 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-2xl font-semibold text-center mb-4 text-white">Forgot Password</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
@@ -65,7 +62,7 @@ const ForgotPassword = () => {
               placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {clientErrors.email && <p className="text-red-500 text-sm mt-1">{clientErrors.email}</p>}
           </div>
@@ -73,7 +70,7 @@ const ForgotPassword = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
+            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 disabled:bg-gray-600"
           >
             {loading ? "Sending..." : "Send Reset Link"}
           </button>

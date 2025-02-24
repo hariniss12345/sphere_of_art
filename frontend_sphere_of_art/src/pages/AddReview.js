@@ -19,42 +19,35 @@ const AddReview = ({ onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validate that customer is logged in.
     if (!customerId) {
       setErrorMsg('Customer not logged in.');
       return;
     }
 
-    // Validate comment field
     if (!comment.trim()) {
       setErrorMsg('Comment is required.');
       return;
     }
 
-    // Validate rating (must be between 1 and 5)
     if (rating < 1 || rating > 5) {
       setErrorMsg('Please select a rating between 1 and 5.');
       return;
     }
 
-    // Ensure orderId and artistId are available
     if (!orderId || !artistId) {
       setErrorMsg('Missing order ID or artist ID.');
       return;
     }
 
     const reviewData = { orderId, customerId, artistId, rating, comment };
-    console.log('Submitting Review:', reviewData);
 
     const resultAction = await dispatch(createReview(reviewData));
 
     if (createReview.fulfilled.match(resultAction)) {
-      // Reset the form fields
       setRating(1);
       setComment('');
       setErrorMsg('');
 
-      // Display SweetAlert success notification
       Swal.fire({
         icon: 'success',
         title: 'Review Added!',
@@ -70,31 +63,39 @@ const AddReview = ({ onSuccess }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded shadow">
-      <h3 className="text-xl font-semibold mb-3">Add Your Review</h3>
+    <div className="min-h-screen bg-black flex items-center justify-center p-6">
+      <form 
+        onSubmit={handleSubmit} 
+        className="p-4 border border-gray-700 rounded shadow bg-gray-900 text-white w-full max-w-lg"
+      >
+        <h3 className="text-xl font-semibold mb-3">Add Your Review</h3>
 
-      <div className="mb-4">
-        <label className="block font-medium mb-1">Rating:</label>
-        <StarRating rating={rating} onRatingChange={setRating} starSize="2x" />
-      </div>
+        <div className="mb-4">
+          <label className="block font-medium mb-1">Rating:</label>
+          <StarRating rating={rating} onRatingChange={setRating} starSize="2x" />
+        </div>
 
-      <div className="mb-4">
-        <label htmlFor="comment" className="block font-medium mb-1">Comment:</label>
-        <textarea
-          id="comment"
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          required
-          className="mt-1 block w-full border rounded px-2 py-1"
-        />
-      </div>
+        <div className="mb-4">
+          <label htmlFor="comment" className="block font-medium mb-1">Comment:</label>
+          <textarea
+            id="comment"
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            required
+            className="mt-1 block w-full border border-gray-700 rounded px-2 py-1 bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
 
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-        Submit Review
-      </button>
+        <button 
+          type="submit" 
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        >
+          Submit Review
+        </button>
 
-      {errorMsg && <p className="mt-2 text-red-500">{errorMsg}</p>}
-    </form>
+        {errorMsg && <p className="mt-2 text-red-500">{errorMsg}</p>}
+      </form>
+    </div>
   );
 };
 

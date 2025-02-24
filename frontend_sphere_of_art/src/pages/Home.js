@@ -7,44 +7,47 @@ const HomePage = () => {
   // Sample artwork data stored in the frontend
   const artworkData = [
     { id: 1, title: "Eye Drop", category: "Drawing", image: "/images/eye.jpg" },
-    { id: 2, title: " Glass Spill", category: "Drawing", image: "/images/glass.jpg" },
+    { id: 2, title: "Glass Spill", category: "Drawing", image: "/images/glass.jpg" },
     { id: 3, title: "Fish Watercolor", category: "Painting", image: "/images/fish.jpg" },
     { id: 4, title: "Eye Painting", category: "Painting", image: "/images/eye paint.jpg" },
-    { id: 5, title: " Horse", category: "Drawing", image: "/images/horse.jpg" },
+    { id: 5, title: "Horse", category: "Drawing", image: "/images/horse.jpg" },
     { id: 6, title: "Bird", category: "Painting", image: "/images/Bird.jpg" },
   ];
 
-  // State for sorting & filtering
-  const [sortBy, setSortBy] = useState(""); // Sort option
-  const [selectedCategory, setSelectedCategory] = useState(""); // Selected category
+  const [sortBy, setSortBy] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  // State to hold the clicked image details
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  // Function to get displayed artworks based on filter/sort
+  // Filter & sort the artworks
   const getDisplayedArtworks = () => {
     let filteredArtworks = artworkData;
 
-    // Filter by category if selected
     if (selectedCategory) {
-      filteredArtworks = filteredArtworks.filter((art) => art.category === selectedCategory);
+      filteredArtworks = filteredArtworks.filter(
+        (art) => art.category === selectedCategory
+      );
     }
 
-    // Sort by title if selected
     if (sortBy === "title") {
-      filteredArtworks = [...filteredArtworks].sort((a, b) => a.title.localeCompare(b.title));
+      filteredArtworks = [...filteredArtworks].sort((a, b) =>
+        a.title.localeCompare(b.title)
+      );
     }
 
     return filteredArtworks;
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 bg-black min-h-screen text-white relative">
       <h1 className="text-3xl font-bold mb-6 text-center">Explore Art Forms</h1>
 
-      {/* 🔹 Sorting & Filtering Options */}
-      <div className="flex justify-between items-center mb-6">
+      {/* Sorting & Filtering Options */}
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
         <div>
           <label className="mr-2 font-medium">Sort By:</label>
           <select
-            className="p-2 border rounded"
+            className="p-2 border border-gray-700 rounded bg-gray-800 text-white"
             onChange={(e) => setSortBy(e.target.value)}
             value={sortBy}
           >
@@ -52,11 +55,10 @@ const HomePage = () => {
             <option value="title">Title (A-Z)</option>
           </select>
         </div>
-
         <div>
           <label className="mr-2 font-medium">Filter By Art:</label>
           <select
-            className="p-2 border rounded"
+            className="p-2 border border-gray-700 rounded bg-gray-800 text-white"
             onChange={(e) => setSelectedCategory(e.target.value)}
             value={selectedCategory}
           >
@@ -70,33 +72,55 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* 🔹 Display Artworks Grouped By Category */}
-      {categories.map((category) => {
-        // Get artworks for this category
-        const categoryArtworks = getDisplayedArtworks().filter(
-          (art) => art.category === category
-        );
-
-        if (categoryArtworks.length === 0) return null; // Hide empty categories
-
-        return (
-          <div key={category} className="mb-8">
-            <h2 className="text-2xl font-bold mb-4">{category}</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              {categoryArtworks.map((art) => (
-                <div key={art.id} className="border p-2 rounded-lg shadow-md">
-                  <img
-                    src={art.image}
-                    alt={art.title}
-                    className="w-full h-90 object-cover rounded-lg"
-                  />
-                  <p className="text-center font-medium mt-2">{art.title}</p>
-                </div>
-              ))}
+      {/* Main gallery */}
+      <div className={selectedImage ? "filter blur-sm" : ""}>
+        {categories.map((category) => {
+          const categoryArtworks = getDisplayedArtworks().filter(
+            (art) => art.category === category
+          );
+          if (categoryArtworks.length === 0) return null;
+          return (
+            <div key={category} className="mb-8">
+              <h2 className="text-2xl font-bold mb-4">{category}</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {categoryArtworks.map((art) => (
+                  <div
+                    key={art.id}
+                    className="border border-gray-700 p-2 rounded-lg shadow-md bg-gray-900 cursor-pointer"
+                    onClick={() => setSelectedImage(art)}
+                  >
+                    <img
+                      src={art.image}
+                      alt={art.title}
+                      className="w-full h-60 object-cover rounded-lg"
+                    />
+                    <p className="text-center font-medium mt-2">{art.title}</p>
+                  </div>
+                ))}
+              </div>
             </div>
+          );
+        })}
+      </div>
+
+      {/* Overlay for selected image */}
+      {selectedImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80">
+          <div className="relative">
+            <img
+              src={selectedImage.image}
+              alt={selectedImage.title}
+              className="max-h-screen object-contain"
+            />
+            <button
+              onClick={() => setSelectedImage(null)}
+              className="absolute top-2 right-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+            >
+              Close
+            </button>
           </div>
-        );
-      })}
+        </div>
+      )}
     </div>
   );
 };
