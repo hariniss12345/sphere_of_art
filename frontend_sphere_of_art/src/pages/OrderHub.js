@@ -1,15 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
-import { fetchArtistOrders, setSelectedOrder, acceptOrder } from "../redux/slices/orderSlice";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  fetchArtistOrders,
+  setSelectedOrder,
+  acceptOrder,
+} from "../redux/slices/orderSlice";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const OrderHub = () => {
   const dispatch = useDispatch();
-  const { artistOrders, selectedOrder, loading, error } = useSelector((state) => state.order);
+  const navigate = useNavigate();
   const { artistId } = useParams();
+  const { artistOrders, selectedOrder, loading, error } = useSelector(
+    (state) => state.order
+  );
 
+  // Local state for order form fields (when accepting/cancelling orders)
   const [showForm, setShowForm] = useState(false);
   const [showCancelReason, setShowCancelReason] = useState(false);
   const [price, setPrice] = useState("");
@@ -31,10 +39,12 @@ const OrderHub = () => {
     }
   }, [selectedOrder]);
 
-  // Keep selectedOrder updated when artistOrders change
+  // Update selectedOrder when artistOrders change.
   useEffect(() => {
     if (selectedOrder) {
-      const updatedOrder = artistOrders.find((order) => order._id === selectedOrder._id);
+      const updatedOrder = artistOrders.find(
+        (order) => order._id === selectedOrder._id
+      );
       if (updatedOrder) {
         dispatch(setSelectedOrder(updatedOrder));
       }
@@ -79,6 +89,15 @@ const OrderHub = () => {
     dispatch(setSelectedOrder(null));
   };
 
+  // Navigate to the chat view. This button will always be visible when an order is selected.
+  const handleChatWithCustomer = () => {
+    if (selectedOrder && selectedOrder.customer && selectedOrder.customer._id) {
+      navigate(`/chat/order/${selectedOrder._id}/customer/${selectedOrder.customer._id}`);
+    } else {
+      alert("Customer details are missing.");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black p-5 text-white">
       <h2 className="text-2xl font-bold mb-4">Order Hub</h2>
@@ -86,6 +105,7 @@ const OrderHub = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       {!selectedOrder ? (
+        // Order List
         <table className="min-w-full border-collapse">
           <thead>
             <tr className="bg-gray-800">
@@ -112,6 +132,7 @@ const OrderHub = () => {
           </tbody>
         </table>
       ) : (
+        // Order Details
         <div className="border border-gray-700 p-4 rounded shadow bg-gray-900">
           <h3 className="text-xl font-bold mb-2">Order Details</h3>
           <p>
@@ -166,6 +187,13 @@ const OrderHub = () => {
                   onClick={handleCancelOrder}
                 >
                   Cancel
+                </button>
+                {/* Chat button always visible when an order is selected */}
+                <button
+                  className="bg-teal-500 text-white px-4 py-2 ml-2 rounded hover:bg-teal-600"
+                  onClick={handleChatWithCustomer}
+                >
+                  Chat with Customer
                 </button>
               </div>
             ) : showForm ? (

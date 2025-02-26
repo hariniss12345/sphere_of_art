@@ -59,7 +59,8 @@ export default function App() {
         <Route path="/payment/:orderId" element={<PrivateRoute permittedRoles={['customer']}><PaymentPage /></PrivateRoute>} />
         <Route path="/order-confirmation" element={<PrivateRoute permittedRoles={['customer']}><OrderConfirmation /></PrivateRoute>} />
         <Route path="/review/order/:orderId/artist/:artistId" element={<PrivateRoute permittedRoles={['customer']}><AddReview/></PrivateRoute>}/>
-        <Route path="/chat/order/:orderId/artist/:artistId" element={<PrivateRoute ><Chat/></PrivateRoute>}/>
+        <Route path="/chat/order/:orderId/artist/:artistId" element={<Chat/>}/>
+        <Route path="/chat/order/:orderId/customer/:customerId" element={<Chat/>}/>
         <Route path="/reviews/customer/:customerId" element={<PrivateRoute permittedRoles={['customer']}><Reviews/></PrivateRoute>} />
         <Route path="/reviews/artist/:artistId" element={<PrivateRoute permittedRoles={['artist']}><ArtistReviews/></PrivateRoute>}/>
       </Routes>

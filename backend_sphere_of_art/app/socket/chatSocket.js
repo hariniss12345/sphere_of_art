@@ -1,4 +1,3 @@
-// socket/chatSocket.js
 import Chat from '../models/chat-model.js'
 
 // Object to store connected users: key = userId, value = socket.id
@@ -15,7 +14,7 @@ const initChat = (io) => {
       console.log(`User ${userId} joined with socket id: ${socket.id}`);
     });
 
-    // When a message is sent, save it and forward it to the receiver if online
+    // When a message is sent, save it and forward it to both sender and receiver
     socket.on('sendMessage', async ({ orderId, senderId, receiverId, message }) => {
       console.log('Received message:', message);
 
@@ -31,6 +30,11 @@ const initChat = (io) => {
       // Emit message to receiver if they're connected
       if (users[receiverId]) {
         io.to(users[receiverId]).emit('receiveMessage', chat);
+      }
+
+      // Emit message back to sender as well
+      if (users[senderId]) {
+        io.to(users[senderId]).emit('receiveMessage', chat);
       }
     });
 
