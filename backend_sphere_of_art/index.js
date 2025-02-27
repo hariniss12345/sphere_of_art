@@ -94,8 +94,8 @@ app.get('/api/reviews/artist/:artistId',authenticateUser,authorizeUser(['artist'
 app.get('/api/reviews/customer/:customerId', authenticateUser, authorizeUser(['customer']), reviewCltr.customerReviews)
 app.delete('/api/reviews/:id', authenticateUser, authorizeUser(['customer']), reviewCltr.delete);
 
-app.post('/api/chats',authenticateUser,authorizeUser(['artist','customer']),chatCltr.create)
 app.get('/api/chats/:orderId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.list)
+
 
 // ---------------------
 // Set Up Socket.IO

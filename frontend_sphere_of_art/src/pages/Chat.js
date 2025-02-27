@@ -4,17 +4,15 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import AuthContext from "../context/Auth.js";
 import { motion } from "framer-motion"; // For animations
+import { format } from "date-fns"; // For timestamps
 
 const Chat = () => {
-  // The route may provide either an artistId or a customerId (or both, but one is the other party).
   const { orderId, artistId, customerId } = useParams();
   const socket = useSocket();
   const { userState } = useContext(AuthContext);
-  const user = userState.user; // Logged in user
+  const user = userState.user; // Logged-in user
 
-  // Determine the other party's ID based on the logged-in user's role:
-  // - If the logged-in user is a customer, then the other party is the artist (artistId from URL).
-  // - If the logged-in user is an artist, then the other party is the customer (customerId from URL).
+  // Determine the other party's ID
   const otherPartyId = user.role === "customer" ? artistId : customerId;
 
   const [messages, setMessages] = useState([]);
@@ -28,8 +26,7 @@ const Chat = () => {
   useEffect(() => {
     if (!socket || !orderId || !user) return;
 
-    // Join room using orderId.
-    // (Both parties should join the same room identified by orderId.)
+    // Join chat room based on orderId
     socket.emit("join", { userId: user.id, orderId });
 
     const fetchMessages = async () => {
@@ -37,7 +34,7 @@ const Chat = () => {
         const response = await axios.get(`http://localhost:4800/api/chats/${orderId}`, {
           headers: { Authorization: localStorage.getItem("token") },
         });
-        setMessages(response.data);
+        setMessages(response.data); // ✅ Messages now include `createdAt`
       } catch (error) {
         console.error("Error fetching messages:", error);
       }
@@ -46,7 +43,7 @@ const Chat = () => {
 
     socket.on("receiveMessage", (message) => {
       setMessages((prevMessages) => {
-        // Prevent duplicates
+        // Prevent duplicate messages
         if (prevMessages.find((m) => m._id === message._id)) return prevMessages;
         return [...prevMessages, message];
       });
@@ -69,10 +66,9 @@ const Chat = () => {
     );
   }
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     if (!newMessage.trim()) return;
 
-    // Create message data with receiver as the other party.
     const messageData = {
       orderId,
       senderId: user.id,
@@ -80,25 +76,15 @@ const Chat = () => {
       message: newMessage,
     };
 
+    // Optimistic UI update (but without overwriting timestamps)
     const tempId = "temp-" + Date.now();
-    const optimisticMessage = { _id: tempId, ...messageData };
+    const optimisticMessage = { _id: tempId, ...messageData, createdAt: new Date().toISOString() };
     setMessages((prev) => [...prev, optimisticMessage]);
 
+    // Send message via WebSocket
     socket.emit("sendMessage", messageData);
 
-    try {
-      const response = await axios.post("http://localhost:4800/api/chats", messageData, {
-        headers: { Authorization: localStorage.getItem("token") },
-      });
-      // Replace optimistic message with response
-      setMessages((prev) =>
-        prev.map((msg) => (msg._id === tempId ? response.data : msg))
-      );
-      setNewMessage("");
-    } catch (error) {
-      console.error("Error sending message:", error);
-      setMessages((prev) => prev.filter((msg) => msg._id !== tempId));
-    }
+    setNewMessage(""); // Clear input field
   };
 
   return (
@@ -116,7 +102,9 @@ const Chat = () => {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.2 }}
-            className={`mb-2 flex ${msg.senderId === user.id ? "justify-end" : "justify-start"}`}
+            className={`mb-2 flex flex-col ${
+              msg.senderId === user.id ? "items-end" : "items-start"
+            }`}
           >
             <span
               className={`px-4 py-2 rounded-xl text-sm shadow-lg bg-opacity-70 backdrop-blur-md ${
@@ -126,6 +114,9 @@ const Chat = () => {
               }`}
             >
               {msg.message}
+            </span>
+            <span className="text-xs text-gray-400 mt-1">
+              {msg.createdAt ? format(new Date(msg.createdAt), "hh:mm a") : ""}
             </span>
           </motion.div>
         ))}

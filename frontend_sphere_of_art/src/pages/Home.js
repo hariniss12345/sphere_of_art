@@ -1,10 +1,7 @@
 import React, { useState } from "react";
 
 const HomePage = () => {
-  // Sample artwork categories
   const categories = ["Drawing", "Painting"];
-
-  // Sample artwork data stored in the frontend
   const artworkData = [
     { id: 1, title: "Eye Drop", category: "Drawing", image: "/images/eye.jpg" },
     { id: 2, title: "Glass Spill", category: "Drawing", image: "/images/glass.jpg" },
@@ -16,10 +13,8 @@ const HomePage = () => {
 
   const [sortBy, setSortBy] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-  // State to hold the clicked image details
   const [selectedImage, setSelectedImage] = useState(null);
 
-  // Filter & sort the artworks
   const getDisplayedArtworks = () => {
     let filteredArtworks = artworkData;
 
@@ -86,7 +81,7 @@ const HomePage = () => {
                 {categoryArtworks.map((art) => (
                   <div
                     key={art.id}
-                    className="border border-gray-700 p-2 rounded-lg shadow-md bg-gray-900 cursor-pointer"
+                    className="relative border border-gray-700 p-2 rounded-lg shadow-md bg-gray-900 cursor-pointer group"
                     onClick={() => setSelectedImage(art)}
                   >
                     <img
@@ -95,6 +90,11 @@ const HomePage = () => {
                       className="w-full h-60 object-cover rounded-lg"
                     />
                     <p className="text-center font-medium mt-2">{art.title}</p>
+                    
+                    {/* Hover Message */}
+                    <div className="absolute inset-0 bg-black bg-opacity-60 text-white flex items-center justify-center text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                      Please select the image to see full size
+                    </div>
                   </div>
                 ))}
               </div>

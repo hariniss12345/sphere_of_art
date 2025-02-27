@@ -33,7 +33,7 @@ const MyOrders = () => {
   // Navigate to a chat page for this order.
   const handleChat = () => {
     if (!selectedOrder) return;
-    navigate(`/chat/order/${selectedOrder._id}/artist/${selectedOrder.artist._id}`);
+    navigate(`/chat/order/${selectedOrder._id}/artist/${selectedOrder.artist}`);
   };
 
   return (

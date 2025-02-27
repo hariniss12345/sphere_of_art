@@ -171,6 +171,12 @@ const OrderHub = () => {
               <p className="text-gray-400">No artwork available</p>
             )}
           </div>
+          <button
+                  className="bg-teal-500 text-white px-4 py-2 ml-2 rounded hover:bg-teal-600"
+                  onClick={handleChatWithCustomer}
+                >
+                  Chat with Customer
+                </button>
 
           {/* Order Actions */}
           {!selectedOrder.artistHasAccepted && !selectedOrder.isCancelled ? (
@@ -189,12 +195,7 @@ const OrderHub = () => {
                   Cancel
                 </button>
                 {/* Chat button always visible when an order is selected */}
-                <button
-                  className="bg-teal-500 text-white px-4 py-2 ml-2 rounded hover:bg-teal-600"
-                  onClick={handleChatWithCustomer}
-                >
-                  Chat with Customer
-                </button>
+                
               </div>
             ) : showForm ? (
               <div className="mt-4">
