@@ -14,11 +14,11 @@ chatCltr.list =  async (req, res) => {
 
 chatCltr.update = async (req,res) => {
     try {
-        const { messageId } = req.params;
+        const { chatId } = req.params;
         const { newMessage } = req.body;
     
         const updatedChat = await Chat.findByIdAndUpdate(
-          messageId,
+          chatId,
           { message: newMessage },
           { new: true }
         );
@@ -33,5 +33,19 @@ chatCltr.update = async (req,res) => {
       }
 }
 
+chatCltr.delete = async (req,res) => {
+    try {
+        const { chatId } = req.params;
+    
+        const deletedChat = await Chat.findByIdAndDelete(chatId);
+        if (!deletedChat) {
+          return res.status(404).json({ message: "Message not found" });
+        }
+    
+        res.json({ message: "Chat deleted successfully" });
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+}
 
 export default chatCltr

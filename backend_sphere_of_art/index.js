@@ -96,6 +96,7 @@ app.delete('/api/reviews/:id', authenticateUser, authorizeUser(['customer']), re
 
 app.get('/api/chats/:orderId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.list)
 app.put('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.update)
+app.delete('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.delete)
 
 // ---------------------
 // Set Up Socket.IO
