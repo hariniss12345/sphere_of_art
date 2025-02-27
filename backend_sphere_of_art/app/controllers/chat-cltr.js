@@ -12,5 +12,26 @@ chatCltr.list =  async (req, res) => {
     }
 } 
 
+chatCltr.update = async (req,res) => {
+    try {
+        const { messageId } = req.params;
+        const { newMessage } = req.body;
+    
+        const updatedChat = await Chat.findByIdAndUpdate(
+          messageId,
+          { message: newMessage },
+          { new: true }
+        );
+    
+        if (!updatedChat) {
+          return res.status(404).json({ message: "Message not found" });
+        }
+    
+        res.json(updatedChat);
+      } catch (error) {
+        res.status(500).json({ error: error.message });
+      }
+}
+
 
 export default chatCltr
