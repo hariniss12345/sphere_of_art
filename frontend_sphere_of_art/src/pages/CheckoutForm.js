@@ -38,7 +38,6 @@ const CheckoutForm = ({ orderId }) => {
             if (error) {
                 setPaymentError(error.message);
             } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-                // Dispatch confirmPayment with the property names that the backend expects.
                 dispatch(confirmPayment({ 
                     stripePaymentIntentId: paymentIntent.id, 
                     orderId 
@@ -60,30 +59,32 @@ const CheckoutForm = ({ orderId }) => {
         style: {
             base: {
                 fontSize: '16px',
-                color: '#424770',
+                color: '#ffffff',
                 '::placeholder': { color: '#aab7c4' },
             },
-            invalid: { color: '#9e2146' },
+            invalid: { color: '#ff6b6b' },
         },
     };
 
     return (
-        <div className="max-w-md mx-auto p-6 bg-white rounded shadow">
-            <h2 className="text-center text-xl mb-4">Complete Your Payment</h2>
-            <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-                <label className="text-sm">Card Details</label>
-                <div className="p-3 border border-gray-300 rounded bg-gray-100">
-                    <CardElement options={cardElementOptions} />
-                </div>
-                {paymentError && <p className="text-red-500 text-sm">{paymentError}</p>}
-                <button 
-                    type="submit" 
-                    className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
-                    disabled={!stripe || loading}
-                >
-                    {loading ? 'Processing...' : 'Pay Now'}
-                </button>
-            </form>
+        <div className="min-h-screen bg-black flex items-center justify-center p-6">
+            <div className="w-full max-w-md p-6 bg-gray-900 rounded shadow text-white">
+                <h2 className="text-center text-xl mb-4">Complete Your Payment</h2>
+                <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
+                    <label className="text-sm text-gray-300">Card Details</label>
+                    <div className="p-3 border border-gray-700 rounded bg-gray-800">
+                        <CardElement options={cardElementOptions} />
+                    </div>
+                    {paymentError && <p className="text-red-500 text-sm">{paymentError}</p>}
+                    <button 
+                        type="submit" 
+                        className="py-2 px-4 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors disabled:opacity-50"
+                        disabled={!stripe || loading}
+                    >
+                        {loading ? 'Processing...' : 'Pay Now'}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 };

@@ -12,6 +12,8 @@ import portfolioReducer from './slices/portfolioSlice';
 
 import paymentReducer from './slices/paymentSlice';
 
+import reviewReducer from './slices/reviewSlice'
+
 // Configuring the Redux store with the artist slice
 const store = configureStore({
     reducer: {
@@ -19,7 +21,8 @@ const store = configureStore({
         order: orderReducer,
         auth: authReducer,
         portfolio: portfolioReducer,
-        payment : paymentReducer
+        payment: paymentReducer,
+        review: reviewReducer
     }, 
 });
 
