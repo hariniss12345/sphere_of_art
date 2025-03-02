@@ -1,37 +1,62 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
-// Async thunk to verify artist
+// Verify artist
 export const verifyArtist = createAsyncThunk(
-    'admin/verifyArtist',
+    "admin/verifyArtist",
     async (artistId, { rejectWithValue }) => {
         try {
-            const response = await axios.put(`http://localhost:4800/api/admin/verify-artist/${artistId}`,{
-                headers: { Authorization: localStorage.getItem('token') } 
-            });
-            return response.data.artist;
+            const response = await axios.put(`http://localhost:4800/api/admin/verify-artist/${artistId}`,{},{
+                headers: { Authorization: localStorage.getItem('token') } }
+            );
+            return response.data.artists
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return rejectWithValue(error.response?.data || "Failed to verify artist");
+        }
+    }
+);
+
+// Unverify artist
+export const unverifyArtist = createAsyncThunk(
+    "admin/unverifyArtist",
+    async (artistId, { rejectWithValue }) => {
+        try {
+           const response =  await axios.put(`http://localhost:4800/api/admin/unverify-artist/${artistId}`,{},{
+            headers: { Authorization: localStorage.getItem('token') } 
+           });
+            return response.data.artists;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Failed to unverify artist");
         }
     }
 );
 
 const adminSlice = createSlice({
-    name: 'admin',
-    initialState: { verifiedArtists: [], loading: false, error: null },
+    name: "admin",
+    initialState: { 
+        verifiedArtists: [], 
+        status: "idle", 
+        error: null 
+    },
     reducers: {},
     extraReducers: (builder) => {
         builder
-            .addCase(verifyArtist.pending, (state) => { state.loading = true; })
+            // Handle verifying artist
             .addCase(verifyArtist.fulfilled, (state, action) => {
-                state.loading = false;
                 state.verifiedArtists.push(action.payload);
             })
             .addCase(verifyArtist.rejected, (state, action) => {
-                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // Handle unverifying artist
+            .addCase(unverifyArtist.fulfilled, (state, action) => {
+                state.verifiedArtists = state.verifiedArtists.filter(id => id !== action.payload);
+            })
+            .addCase(unverifyArtist.rejected, (state, action) => {
                 state.error = action.payload;
             });
-    }
+    },
 });
 
 export default adminSlice.reducer;

@@ -1,40 +1,39 @@
-// Importing necessary functions from Redux Toolkit
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-
-// Importing axios for making API requests
 import axios from 'axios';
 
-// Defining an asynchronous thunk action to fetch artists from the backend
+// Fetch Artists from Backend
 export const fetchArtists = createAsyncThunk('artists/fetchArtists', async () => {
-  const response = await axios.get('http://localhost:4800/api/artists'); // Replace with your actual backend endpoint
-  console.log(response.data)
-  return response.data; // Returning the fetched artist data
+  const response = await axios.get('http://localhost:4800/api/artists');
+  console.log("Fetched artists:", response.data);
+  return response.data; // Return the fetched artist data
 });
 
-// Creating the artist slice to manage artist-related state
 const artistSlice = createSlice({
-  name: 'artists', // Slice name
+  name: 'artists',
   initialState: {
-    artists: [], // Stores fetched artist data
-    status: 'idle',  // Status can be 'idle', 'loading', 'succeeded', or 'failed'
-    error: null, // Stores error messages, if any
+    artists: [],
+    status: 'idle',
+    loading: false,
+    error: null,
   },
-  reducers: {}, // Reducers for synchronous actions (currently empty)
+  reducers: {},
   extraReducers: (builder) => {
     builder
       .addCase(fetchArtists.pending, (state) => {
-        state.status = 'loading'; // Set status to loading when request starts
+        state.status = 'loading';
+        state.loading = true;
       })
       .addCase(fetchArtists.fulfilled, (state, action) => {
-        state.status = 'succeeded'; // Set status to succeeded when request is successful
-        state.artists = action.payload;  // Update artists state with fetched data
+        state.status = 'succeeded';
+        state.loading = false;
+        state.artists = action.payload; // Update artists in the state
       })
       .addCase(fetchArtists.rejected, (state, action) => {
-        state.status = 'failed'; // Set status to failed when request fails
-        state.error = action.error.message; // Store error message
+        state.status = 'failed';
+        state.loading = false;
+        state.error = action.error.message;
       });
   },
 });
 
-// Exporting the reducer to be used in the store
 export default artistSlice.reducer;

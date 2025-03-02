@@ -29,10 +29,10 @@ import AddReview from './pages/AddReview'
 import Chat from './pages/Chat'
 import Reviews from './pages/Reviews'
 import ArtistReviews from './pages/ArtistReviews'
+import AdminArtistList from './pages/AdminArtistList'
 
 export default function App() {
-  const { userState } = useContext(AuthContext);
-
+  
   return (
     <div className="App">
       <div className = "min-h-screen bg-black">
@@ -63,6 +63,7 @@ export default function App() {
         <Route path="/chat/order/:orderId/customer/:customerId" element={<Chat/>}/>
         <Route path="/reviews/customer/:customerId" element={<PrivateRoute permittedRoles={['customer']}><Reviews/></PrivateRoute>} />
         <Route path="/reviews/artist/:artistId" element={<PrivateRoute permittedRoles={['artist']}><ArtistReviews/></PrivateRoute>}/>
+        <Route path="/verify-artist" element={<PrivateRoute permittedRoles={['admin']}><AdminArtistList/></PrivateRoute>}/>
       </Routes>
       </div>
     </div>

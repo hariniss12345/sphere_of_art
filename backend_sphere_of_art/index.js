@@ -99,8 +99,8 @@ app.get('/api/chats/:orderId',authenticateUser,authorizeUser(['artist','customer
 app.put('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.update)
 app.delete('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.delete)
 
-app.put('/api/verify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.verifyArtist)
-
+app.put('/api/admin/verify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.verifyArtist)
+app.put('/api/admin/unverify-aritst/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.unverifyArtist)
 // ---------------------
 // Set Up Socket.IO
 // ---------------------

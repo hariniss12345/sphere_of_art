@@ -55,7 +55,7 @@ export default function Login() {
           icon: "success",
           confirmButtonText: "OK",
         }).then(() => {
-          navigate("/dashboard");
+          navigate("/home");
         });
       } catch (err) {
         setServerErrors(err.response.data.errors);

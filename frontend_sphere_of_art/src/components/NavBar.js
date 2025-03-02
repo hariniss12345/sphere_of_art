@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import AuthContext from "../context/Auth.js";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 export default function Navbar() {
   const { userState, handelLogout } = React.useContext(AuthContext);
@@ -30,7 +32,7 @@ export default function Navbar() {
             {!userState.isLoggedIn ? (
               <li>
                 <Link to="/login" className="px-4 hover:text-gray-400">
-                  Login
+                Login <FontAwesomeIcon icon={faArrowRight}/>
                 </Link>
               </li>
             ) : (
@@ -96,10 +98,20 @@ export default function Navbar() {
                   </li>
                 )}
 
+            
+
                 {userState.user?.role === "artist" && (
                   <li>
                     <Link to={`/reviews/artist/${userState.user.id}`} className="px-4 hover:text-gray-400">
                       Reviews
+                    </Link>
+                  </li>
+                )}
+
+                {userState.user?.role === "admin" && (
+                  <li>
+                    <Link to='/verify-artist' className="px-4 hover:text-gray-400">
+                      Verify Artist
                     </Link>
                   </li>
                 )}
