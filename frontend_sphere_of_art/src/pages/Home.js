@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSearch, faSortAlphaDown, faFilter, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const HomePage = () => {
   const categories = ["Drawing", "Painting"];
@@ -9,40 +11,61 @@ const HomePage = () => {
     { id: 4, title: "Eye Painting", category: "Painting", image: "/images/eye paint.jpg" },
     { id: 5, title: "Horse", category: "Drawing", image: "/images/horse.jpg" },
     { id: 6, title: "Bird", category: "Painting", image: "/images/bird.jpg" },
+    { id: 7, title: "Pikachu", category: "Drawing", image: "/images/pikachu.jpg" },
+    { id: 8, title: "Sunset", category: "Painting", image: "/images/sunset.jpg" },
+    { id: 9, title: "Mickey Mouse", category: "Drawing", image: "/images/mickey mouse.jpg" },
+    { id: 10,title: "Girl",category: "Drawing", image: "/images/girl.jpg"},
   ];
 
   const [sortBy, setSortBy] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
+  const [pageIndex, setPageIndex] = useState({ Drawing: 0, Painting: 0 });
+
+  const itemsPerPage = 5;
 
   const getDisplayedArtworks = () => {
     let filteredArtworks = artworkData;
 
     if (selectedCategory) {
-      filteredArtworks = filteredArtworks.filter(
-        (art) => art.category === selectedCategory
+      filteredArtworks = filteredArtworks.filter((art) => art.category === selectedCategory);
+    }
+
+    if (searchQuery) {
+      filteredArtworks = filteredArtworks.filter((art) =>
+        art.title.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (sortBy === "title") {
-      filteredArtworks = [...filteredArtworks].sort((a, b) =>
-        a.title.localeCompare(b.title)
-      );
+      filteredArtworks = [...filteredArtworks].sort((a, b) => a.title.localeCompare(b.title));
     }
 
     return filteredArtworks;
   };
 
   return (
-    <div className="p-6 bg-black-900 min-h-screen text-white relative">
-      <h1 className="text-4xl font-extrabold mb-6 text-center text-yellow-400">Explore Art Forms</h1>
+    <div className="p-6 bg-black min-h-screen text-white relative">
+      <h1 className="text-4xl font-extrabold mb-6 text-center text-green-400">Explore Art Forms</h1>
 
-      {/* Sorting & Filtering Options */}
+      {/* Search, Sort, and Filter */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-        <div>
-          <label className="mr-2 font-medium text-yellow-400">Sort By:</label>
+        <div className="relative">
+          <FontAwesomeIcon icon={faSearch} className="absolute left-3 top-3 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search by title..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 p-2 border border-gray-700 rounded bg-gray-800 text-white focus:ring-2 focus:ring-blue-400"
+          />
+        </div>
+
+        <div className="relative">
+          <FontAwesomeIcon icon={faSortAlphaDown} className="absolute left-3 top-3 text-gray-400" />
           <select
-            className="p-2 border border-gray-700 rounded bg-gray-800 text-white focus:ring-2 focus:ring-blue-400"
+            className="pl-10 p-2 border border-gray-700 rounded bg-gray-800 text-white focus:ring-2 focus:ring-blue-400"
             onChange={(e) => setSortBy(e.target.value)}
             value={sortBy}
           >
@@ -50,10 +73,11 @@ const HomePage = () => {
             <option value="title">Title (A-Z)</option>
           </select>
         </div>
-        <div>
-          <label className="mr-2 font-medium text-yellow-400">Filter By Art:</label>
+
+        <div className="relative">
+          <FontAwesomeIcon icon={faFilter} className="absolute left-3 top-3 text-gray-400" />
           <select
-            className="p-2 border border-gray-700 rounded bg-gray-800 text-white focus:ring-2 focus:ring-blue-400"
+            className="pl-10 p-2 border border-gray-700 rounded bg-gray-800 text-white focus:ring-2 focus:ring-blue-400"
             onChange={(e) => setSelectedCategory(e.target.value)}
             value={selectedCategory}
           >
@@ -67,36 +91,65 @@ const HomePage = () => {
         </div>
       </div>
 
-      {/* Main Gallery */}
+      {/* Main Gallery with Pagination */}
       <div className={selectedImage ? "filter blur-sm" : ""}>
         {categories.map((category) => {
-          const categoryArtworks = getDisplayedArtworks().filter(
-            (art) => art.category === category
-          );
+          const categoryArtworks = getDisplayedArtworks().filter((art) => art.category === category);
           if (categoryArtworks.length === 0) return null;
+
+          const totalPages = Math.ceil(categoryArtworks.length / itemsPerPage);
+          const currentPage = pageIndex[category] || 0;
+          const startIndex = currentPage * itemsPerPage;
+          const displayedArtworks = categoryArtworks.slice(startIndex, startIndex + itemsPerPage);
+
           return (
             <div key={category} className="mb-8">
-              <h2 className="text-2xl font-bold mb-4 text-blue-400">{category}</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-                {categoryArtworks.map((art) => (
-                  <div
-                    key={art.id}
-                    className="relative border border-gray-700 p-3 rounded-xl shadow-lg bg-gray-800 cursor-pointer group transition-all hover:border-yellow-400 hover:scale-105"
-                    onClick={() => setSelectedImage(art)}
+              <h2 className="text-2xl font-bold mb-4 text-pink-400">{category}</h2>
+              <div className="relative flex items-center">
+                {currentPage > 0 && (
+                  <button
+                    onClick={() =>
+                      setPageIndex((prev) => ({
+                        ...prev,
+                        [category]: Math.max(prev[category] - 1, 0),
+                      }))
+                    }
+                    className="absolute left-0 p-3 text-white bg-gray-800 rounded-full shadow-md hover:bg-gray-700"
                   >
-                    <img
-                      src={art.image}
-                      alt={art.title}
-                      className="w-full h-40 object-cover rounded-lg"
-                    />
-                    <p className="text-center font-medium mt-3 text-white">{art.title}</p>
+                    <FontAwesomeIcon icon={faChevronLeft} />
+                  </button>
+                )}
 
-                    {/* Hover Message */}
-                    <div className="absolute inset-0 bg-black bg-opacity-70 text-white flex items-center justify-center text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                      Click to view full size
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-6 mx-auto">
+                  {displayedArtworks.map((art) => (
+                    <div
+                      key={art.id}
+                      className="relative border border-gray-700 p-3 rounded-xl shadow-lg bg-gray-800 cursor-pointer group transition-all hover:border-yellow-400 hover:scale-105"
+                      onClick={() => setSelectedImage(art)}
+                    >
+                      <img src={art.image} alt={art.title} className="w-48 h-48 object-cover rounded-lg" />
+                      <p className="text-center font-medium mt-3 text-white">{art.title}</p>
+
+                      <div className="absolute inset-0 bg-black bg-opacity-70 text-white flex items-center justify-center text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                        Click to view full size
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
+
+                {currentPage < totalPages - 1 && (
+                  <button
+                    onClick={() =>
+                      setPageIndex((prev) => ({
+                        ...prev,
+                        [category]: Math.min(prev[category] + 1, totalPages - 1),
+                      }))
+                    }
+                    className="absolute right-0 p-3 text-white bg-gray-800 rounded-full shadow-md hover:bg-gray-700"
+                  >
+                    <FontAwesomeIcon icon={faChevronRight} />
+                  </button>
+                )}
               </div>
             </div>
           );
@@ -107,11 +160,7 @@ const HomePage = () => {
       {selectedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90">
           <div className="relative p-4 bg-gray-900 rounded-lg shadow-xl">
-            <img
-              src={selectedImage.image}
-              alt={selectedImage.title}
-              className="max-h-[70vh] w-auto object-contain rounded-lg"
-            />
+            <img src={selectedImage.image} alt={selectedImage.title} className="max-h-[70vh] w-auto object-contain rounded-lg" />
             <button
               onClick={() => setSelectedImage(null)}
               className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded transition-all"
