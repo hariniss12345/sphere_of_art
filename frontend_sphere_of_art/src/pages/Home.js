@@ -3,25 +3,30 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faSortAlphaDown, faFilter, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const HomePage = () => {
-  const categories = ["Drawing", "Painting"];
+  const categories = ["Pencil Drawing", "Painting"];
   const artworkData = [
-    { id: 1, title: "Eye Drop", category: "Drawing", image: "/images/eye.jpg" },
-    { id: 2, title: "Glass Spill", category: "Drawing", image: "/images/glass.jpg" },
+    { id: 1, title: "Eye Drop", category: "Pencil Drawing", image: "/images/eye.jpg" },
+    { id: 2, title: "Glass Spill", category: "Pencil Drawing", image: "/images/glass.jpg" },
     { id: 3, title: "Fish Watercolor", category: "Painting", image: "/images/fish.jpg" },
     { id: 4, title: "Eye Painting", category: "Painting", image: "/images/eye paint.jpg" },
-    { id: 5, title: "Horse", category: "Drawing", image: "/images/horse.jpg" },
+    { id: 5, title: "Horse", category: "Pencil Drawing", image: "/images/horse.jpg" },
     { id: 6, title: "Bird", category: "Painting", image: "/images/bird.jpg" },
-    { id: 7, title: "Pikachu", category: "Drawing", image: "/images/pikachu.jpg" },
+    { id: 7, title: "Pikachu", category: "Pencil Drawing", image: "/images/pikachu.jpg" },
     { id: 8, title: "Sunset", category: "Painting", image: "/images/sunset.jpg" },
-    { id: 9, title: "Mickey Mouse", category: "Drawing", image: "/images/mickey mouse.jpg" },
-    { id: 10,title: "Girl",category: "Drawing", image: "/images/girl.jpg"},
+    { id: 9, title: "Mickey Mouse", category: "Pencil Drawing", image: "/images/mickey mouse.jpg" },
+    { id: 10,title: "Girl",category: "Pencil Drawing", image: "/images/girl.jpg"},
+    { id: 11,title: "Butterfly",category: "Pencil Drawing",image: "/images/butterfly.jpg"},
+    { id: 12,title: "Mr Bean",category: "Pencil Drawing",image: "/images/mr bean.jpg"},
+    { id: 13,title: "Murugan",category: "Pencil Drawing",image: "/images/murugar.jpg"},
+    { id: 14,title: "Rose",category : "Pencil Drawing",image: "/images/rose.jpg"},
+    { id: 15,title: "Lotus",category: "Painting",image: "/images/lotus.jpg"}
   ];
 
   const [sortBy, setSortBy] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedImage, setSelectedImage] = useState(null);
-  const [pageIndex, setPageIndex] = useState({ Drawing: 0, Painting: 0 });
+  const [pageIndex, setPageIndex] = useState({ 'Pencil Drawing': 0, 'Painting': 0 });
 
   const itemsPerPage = 5;
 

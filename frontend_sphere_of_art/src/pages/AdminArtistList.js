@@ -13,14 +13,14 @@ const AdminArtistList = () => {
 
     const handleVerify = async (artistId) => {
         console.log("Verifying artist:", artistId);
-        await dispatch(verifyArtist(artistId)); // Wait for verification to complete
-        dispatch(fetchArtists()); // Fetch updated artists list
+        await dispatch(verifyArtist(artistId));
+        dispatch(fetchArtists()); 
     };
 
     const handleUnverify = async (artistId) => {
         console.log("Unverifying artist:", artistId);
-        await dispatch(unverifyArtist(artistId)); // Wait for unverification to complete
-        dispatch(fetchArtists()); // Fetch updated artists list
+        await dispatch(unverifyArtist(artistId));
+        dispatch(fetchArtists());
     };
 
     if (loading) return <p>Loading...</p>;
@@ -36,21 +36,22 @@ const AdminArtistList = () => {
                                 <h3 className="text-lg font-medium">{artist?.user?.username || "Unknown"}</h3>
                                 <p>{artist.bio || "No bio available"}</p>
                             </div>
-                            {artist.isVerified ? (
-                                <button
-                                    onClick={() => handleUnverify(artist._id)}
-                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-700"
-                                >
-                                    Unverify
-                                </button>
-                            ) : (
+                            <div className="flex gap-2">
                                 <button
                                     onClick={() => handleVerify(artist._id)}
-                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-700"
+                                    className={`px-4 py-2 rounded ${artist.isVerified ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-700 text-white"}`}
+                                    disabled={artist.isVerified} 
                                 >
                                     Verify
                                 </button>
-                            )}
+                                <button
+                                    onClick={() => handleUnverify(artist._id)}
+                                    className={`px-4 py-2 rounded ${!artist.isVerified ? "bg-gray-400 cursor-not-allowed" : "bg-red-500 hover:bg-red-700 text-white"}`}
+                                    disabled={!artist.isVerified}
+                                >
+                                    Unverify
+                                </button>
+                            </div>
                         </li>
                     ))
                 ) : (

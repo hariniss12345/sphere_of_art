@@ -24,6 +24,7 @@ export const unverifyArtist = createAsyncThunk(
            const response =  await axios.put(`http://localhost:4800/api/admin/unverify-artist/${artistId}`,{},{
             headers: { Authorization: localStorage.getItem('token') } 
            });
+           console.log(response.data.artists)
             return response.data.artists;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to unverify artist");

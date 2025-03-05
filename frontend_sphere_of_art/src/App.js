@@ -1,7 +1,6 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import AuthContext from "./context/Auth.js";
-import { useContext } from "react";
+import { Routes, Route,Navigate } from "react-router-dom";
+
 
 // Import Components
 import NavBar from "./components/NavBar.js"; // Import new Navbar
@@ -41,6 +40,7 @@ export default function App() {
 
       {/* Routes */}
       <Routes>
+        <Route path="/" element={<Navigate to="/main" />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
