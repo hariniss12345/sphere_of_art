@@ -17,6 +17,7 @@
     "framer-motion": "^12.4.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-google-charts": "^5.2.1",
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.28.0",
     "react-scripts": "5.0.1",
