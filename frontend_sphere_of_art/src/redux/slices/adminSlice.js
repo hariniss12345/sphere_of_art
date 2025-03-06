@@ -9,7 +9,8 @@ export const verifyArtist = createAsyncThunk(
             const response = await axios.put(`http://localhost:4800/api/admin/verify-artist/${artistId}`,{},{
                 headers: { Authorization: localStorage.getItem('token') } }
             );
-            return response.data.artists
+            console.log('veri',response.data)
+            return response.data
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to verify artist");
         }
@@ -21,11 +22,12 @@ export const unverifyArtist = createAsyncThunk(
     "admin/unverifyArtist",
     async (artistId, { rejectWithValue }) => {
         try {
-           const response =  await axios.put(`http://localhost:4800/api/admin/unverify-artist/${artistId}`,{},{
+            console.log('artist',artistId)
+            const response =  await axios.put(`http://localhost:4800/api/admin/unverify-artist/${artistId}`,{},{
             headers: { Authorization: localStorage.getItem('token') } 
            });
-           console.log(response.data.artists)
-            return response.data.artists;
+            console.log('res',response.data)
+            return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to unverify artist");
         }

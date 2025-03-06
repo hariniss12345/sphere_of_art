@@ -100,7 +100,10 @@ app.put('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer'
 app.delete('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.delete)
 
 app.put('/api/admin/verify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.verifyArtist)
-app.put('/api/admin/unverify-aritst/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.unverifyArtist)
+app.put('/api/admin/unverify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.unverifyArtist)
+app.get('/api/admin/manage-users',authenticateUser,authorizeUser(['admin']),adminCltr.manageUsers)
+
+
 // ---------------------
 // Set Up Socket.IO
 // ---------------------
