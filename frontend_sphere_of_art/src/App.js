@@ -29,6 +29,8 @@ import Chat from './pages/Chat'
 import Reviews from './pages/Reviews'
 import ArtistReviews from './pages/ArtistReviews'
 import AdminArtistList from './pages/AdminArtistList'
+import ManageUsers from './pages/ManageUsers'
+import Commission from './pages/Commission'
 
 export default function App() {
   
@@ -64,6 +66,8 @@ export default function App() {
         <Route path="/reviews/customer/:customerId" element={<PrivateRoute permittedRoles={['customer']}><Reviews/></PrivateRoute>} />
         <Route path="/reviews/artist/:artistId" element={<PrivateRoute permittedRoles={['artist']}><ArtistReviews/></PrivateRoute>}/>
         <Route path="/verify-artist" element={<PrivateRoute permittedRoles={['admin']}><AdminArtistList/></PrivateRoute>}/>
+        <Route path="/manage-users" element={<PrivateRoute permittedRoles={['admin']}><ManageUsers/></PrivateRoute>}/>
+        <Route path="/manage-commission" element={<PrivateRoute permittedRoles={['admin']}><Commission/></PrivateRoute>}/>
       </Routes>
       </div>
     </div>

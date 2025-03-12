@@ -102,6 +102,8 @@ app.delete('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','custom
 app.put('/api/admin/verify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.verifyArtist)
 app.put('/api/admin/unverify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.unverifyArtist)
 app.get('/api/admin/manage-users',authenticateUser,authorizeUser(['admin']),adminCltr.manageUsers)
+app.get('/api/admin/orders-per-artist',authenticateUser,authorizeUser(['admin']),adminCltr.manageOrders)
+app.get('/api/admin/commissions',authenticateUser,authorizeUser(['admin']),adminCltr.manageCommission)
 
 
 // ---------------------

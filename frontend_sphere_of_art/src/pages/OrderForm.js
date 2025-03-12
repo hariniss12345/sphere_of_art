@@ -21,7 +21,6 @@ const OrderForm = () => {
   });
   const [uploading, setUploading] = useState(false);
 
-  // Validate form fields
   const validateForm = () => {
     let errors = {};
     let isValid = true;
@@ -58,7 +57,6 @@ const OrderForm = () => {
     const file = e.target.files[0];
     if (file) {
       setUploading(true);
-      // Simulate upload delay (replace with your actual upload logic)
       setTimeout(() => {
         setFormData(prev => ({ ...prev, images: file }));
         setUploading(false);
@@ -68,7 +66,6 @@ const OrderForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (!validateForm()) return;
 
     const formDataToSubmit = new FormData();
@@ -91,7 +88,6 @@ const OrderForm = () => {
     }
   };
 
-  // Enable the "Place Order" button only if all details are provided and no upload is in progress.
   const isFormValid = 
     formData.title.trim().length >= 3 &&
     formData.styles.trim().length > 0 &&

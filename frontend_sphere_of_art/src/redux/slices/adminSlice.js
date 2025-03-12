@@ -11,7 +11,6 @@ export const verifyArtist = createAsyncThunk(
                 {},
                 { headers: { Authorization: localStorage.getItem("token") } }
             );
-            console.log("veri", response.data);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to verify artist");
@@ -24,13 +23,11 @@ export const unverifyArtist = createAsyncThunk(
     "admin/unverifyArtist",
     async (artistId, { rejectWithValue }) => {
         try {
-            console.log("artist", artistId);
             const response = await axios.put(
                 `http://localhost:4800/api/admin/unverify-artist/${artistId}`,
                 {},
                 { headers: { Authorization: localStorage.getItem("token") } }
             );
-            console.log("res", response.data);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to unverify artist");
@@ -46,10 +43,25 @@ export const fetchLoggedInUsers = createAsyncThunk(
             const response = await axios.get("http://localhost:4800/api/admin/manage-users", {
                 headers: { Authorization: localStorage.getItem("token") },
             });
-            console.log("Logged-in Users", response.data);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.response?.data || "Failed to fetch logged-in users");
+        }
+    }
+);
+
+// Fetch all orders
+export const fetchOrders = createAsyncThunk(
+    "admin/fetchOrders",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axios.get("http://localhost:4800/api/admin/orders-per-artist", {
+                headers: { Authorization: localStorage.getItem("token") },
+            });
+            console.log('bar',response.data)
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Failed to fetch orders");
         }
     }
 );
@@ -64,6 +76,7 @@ const adminSlice = createSlice({
             artistsCount: 0,
             customersCount: 0,
         },
+        orders: [],
         status: "idle",
         error: null,
     },
@@ -97,6 +110,19 @@ const adminSlice = createSlice({
             })
             .addCase(fetchLoggedInUsers.rejected, (state, action) => {
                 state.error = action.payload;
+            })
+
+            // Handle fetching orders
+            .addCase(fetchOrders.pending, (state) => {
+                state.status = "loading";
+            })
+            .addCase(fetchOrders.fulfilled, (state, action) => {
+                state.orders = action.payload;
+                state.status = "succeeded";
+            })
+            .addCase(fetchOrders.rejected, (state, action) => {
+                state.error = action.payload;
+                state.status = "failed";
             });
     },
 });

@@ -116,6 +116,23 @@ export default function Navbar() {
                   </li>
                 )}
 
+                
+                {userState.user?.role === "admin" && (
+                  <li>
+                    <Link to='/manage-users' className="px-4 hover:text-gray-400">
+                    Manage Users
+                    </Link>
+                  </li>
+                )}
+
+                {userState.user?.role === "admin" && (
+                  <li>
+                    <Link to='/manage-commission' className="px-4 hover:text-gray-400">
+                    Manage commission
+                    </Link>
+                  </li>
+                )}
+
                 <li>
                   <button
                     onClick={() => {
