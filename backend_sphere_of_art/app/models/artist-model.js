@@ -9,9 +9,16 @@ const artistSchema = new Schema(
       ref: 'User',
     },
 
+    profilePic: {
+      type: String, // URL or file path to the profile picture
+      default: null, // Default empty string if no profile picture is set
+    },
+
     // Short biography of the artist
-    bio: String, 
-      
+    bio: {
+      type:String, 
+      default:"",
+    },    
     // Array to store the artist's preferred styles 
     styles: {
       type: [String], // Array of strings

@@ -72,9 +72,8 @@ artistCltr.show = async (req, res) => {
 
 // Define the update method in the artist controller to update the artist's information
 artistCltr.update = async (req, res) => {
-    const errors = validationResult(req)
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        // If validation errors exist, return a 400 response with the error details
         return res.status(400).json({ errors: errors.array() });
     }
 
@@ -82,26 +81,30 @@ artistCltr.update = async (req, res) => {
     const body = req.body; // Extract updated data from request body
 
     try {
-        // Update the artist document by its ID
-        const artist = await Artist.findOneAndUpdate(
-            { _id: id }, // Query condition to find the document
-            body,        // Data to update
-            { new: true, runValidators: true } // Options: return updated document and validate
-        );
-
+        // Find the artist first
+        let artist = await Artist.findById(id);
         if (!artist) {
-            // If no matching artist found, return an error
-            return res.status(404).json({ error: 'record not found' });
+            return res.status(404).json({ error: 'Artist not found' });
         }
 
-        // Return the updated artist document
+        // If a new profile picture is uploaded, update the profilePic field
+        if (req.file) {
+            body.profilePic = `/uploads/${req.file.filename}`; // Save the file path
+        }
+
+        // Update the artist document
+        artist = await Artist.findByIdAndUpdate(
+            id,
+            { $set: body }, // Use `$set` to update specific fields
+            { new: true, runValidators: true }
+        );
+
         res.json(artist);
     } catch (err) {
-        // Log and handle any errors during the update process
         console.error(err.message);
         res.status(500).json({ error: 'Something went wrong' });
     }
-}
+};
 
 // Define the delete method in the artist controller to delete the artist's information
 artistCltr.delete = async (req, res) => {

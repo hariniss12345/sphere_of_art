@@ -64,7 +64,7 @@ app.delete('/api/customers/:id', authenticateUser, authorizeUser(['customer']), 
 app.post('/api/artists', authenticateUser, authorizeUser(['artist']), checkSchema(artistValidationSchema), artistCltr.create);
 app.get('/api/artists/:id', artistCltr.show);
 app.get('/api/artists', artistCltr.list);
-app.put('/api/artists/:id', authenticateUser, authorizeUser(['artist']), checkSchema(idValidationSchema), checkSchema(artistValidationSchema), artistCltr.update);
+app.put('/api/artists/:id', authenticateUser, authorizeUser(['artist']),upload.single('profilePic'),checkSchema(idValidationSchema), checkSchema(artistValidationSchema), artistCltr.update);
 app.delete('/api/artists/:id', authenticateUser, authorizeUser(['artist']), checkSchema(idValidationSchema), artistCltr.delete);
 
 app.post('/api/portfolios/upload', authenticateUser, authorizeUser(['artist']), upload.single('image'), checkSchema(portfolioValidationSchema), portfolioCltr.upload);
