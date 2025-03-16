@@ -31,6 +31,7 @@ import ArtistReviews from './pages/ArtistReviews'
 import AdminArtistList from './pages/AdminArtistList'
 import ManageUsers from './pages/ManageUsers'
 import Commission from './pages/Commission'
+import Messages from './pages/Messages'
 
 export default function App() {
   
@@ -39,6 +40,8 @@ export default function App() {
       <div className = "min-h-screen bg-black">
       {/* Navigation Bar */}
       <NavBar />
+
+      <Messages/>
 
       {/* Routes */}
       <Routes>
