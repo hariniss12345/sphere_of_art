@@ -7,34 +7,34 @@ const artistCltr = {}
 
 // Create method for the artist controller
 artistCltr.create = async (req, res) => {
-    // Check if there are any validation errors in the request
-    const errors = validationResult(req)
+    const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        // If validation errors are found, return a 400 status with the error details
-        return res.status(400).json({ errors: errors.array() })
+        return res.status(400).json({ errors: errors.array() });
     }
-    
-    // Pick the required fields from the request body using lodash (bio, styles, portfolio)
-    const body = _.pick(req.body, ['bio', 'styles', 'portfolio'])
-    
+
     try {
-        // Create a new instance of the Artist model using the picked data
-        const artist = new Artist(body)
-        
-        // Assign the user ID from the authenticated user (this assumes userId is present in req.currentUser)
-        artist.user = req.currentUser.userId
-        
-        // Save the artist to the database
-        await artist.save()
-        
-        // Send the created artist object as the response
-        res.json(artist)
+        // Pick allowed fields from request body
+        const body = _.pick(req.body, ['bio', 'styles', 'portfolio']);
+
+        // Check if a file was uploaded
+        if (req.file) {
+            body.profilePic = `/uploads/${req.file.filename}`; // Store image path
+        }
+
+        // Create a new artist instance
+        const artist = new Artist(body);
+        artist.user = req.currentUser.userId;
+
+        // Save to database
+        await artist.save();
+
+        // Send response
+        res.status(201).json(artist);
     } catch (err) {
-        // If any error occurs during the save operation, log the error and send a generic error response
-        console.log(err.message)
-        res.status(500).json({ error: 'Something went wrong' })
+        console.error(err.message);
+        res.status(500).json({ error: 'Something went wrong' });
     }
-}
+};
 
 artistCltr.list = async (req, res) => {
     try {

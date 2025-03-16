@@ -56,9 +56,9 @@ app.post('/api/users/forgot-password', userCltr.forgotPassword);
 app.post('/api/users/reset-password/:token', userCltr.resetPassword);
 app.get('/api/users/profile', authenticateUser, userCltr.profile);
 
-app.post('/api/customers', authenticateUser, authorizeUser(['customer']), checkSchema(customerValidationSchema), customerCltr.create);
+app.post('/api/customers', authenticateUser, authorizeUser(['customer']),upload.single('profilePic'),/*checkSchema(customerValidationSchema),*/ customerCltr.create);
 app.get('/api/customers/my', authenticateUser, authorizeUser(['customer']), customerCltr.show);
-app.put('/api/customers/:id', authenticateUser, authorizeUser(['customer']), checkSchema(idValidationSchema), checkSchema(customerValidationSchema), customerCltr.update);
+app.put('/api/customers/:id', authenticateUser, authorizeUser(['customer']),upload.single('profilePic'),checkSchema(idValidationSchema), checkSchema(customerValidationSchema), customerCltr.update);
 app.delete('/api/customers/:id', authenticateUser, authorizeUser(['customer']), checkSchema(idValidationSchema), customerCltr.delete);
 
 app.post('/api/artists', authenticateUser, authorizeUser(['artist']), checkSchema(artistValidationSchema), artistCltr.create);

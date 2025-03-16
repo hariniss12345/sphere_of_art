@@ -9,7 +9,8 @@ const customerSchema = new Schema(
       type: Schema.Types.ObjectId, // MongoDB ObjectId type
       ref: 'User', // Refers to the 'User' collection
     },
-    address: String, // Address of the customer
+    address: String, // Address of the customer,
+    contactNumber:String,
     profilePic:String,
   },
   {
