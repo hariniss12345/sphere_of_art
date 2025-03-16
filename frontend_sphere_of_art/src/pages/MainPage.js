@@ -1,14 +1,35 @@
-// This is the MainPage component, which serves as a landing page for the application
-export default function MainPage() {
-    return (
-        <div className="main">
-            {/* Main heading of the page */}
-            <h1>Unleash Your Creativity with Sphere of Art</h1>
+import { useRef, useEffect } from "react";
 
-            {/* Subheading providing a brief overview of the platform */}
-            <h2>
-                Upload your ideas, connect with skilled artists, and see your imagination come to life
-            </h2>
+export default function MainPage() {
+    const videoRef = useRef(null);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (videoRef.current) {
+                const rect = videoRef.current.getBoundingClientRect();
+                if (rect.top >= 0 && rect.bottom <= window.innerHeight) {
+                    videoRef.current.play();
+                } else {
+                    videoRef.current.pause();
+                }
+            }
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
+
+    return (
+        <div className="relative w-full h-screen flex justify-center items-center overflow-hidden bg-black">
+            {/* Background Video */}
+            <video
+                ref={videoRef}
+                src="/images/main-video.mp4"
+                className="w-[100%] h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
+                muted
+                loop
+                playsInline
+            />
         </div>
     );
 }

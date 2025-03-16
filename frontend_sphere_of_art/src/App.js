@@ -1,7 +1,6 @@
 import "./App.css";
-import { Routes, Route } from "react-router-dom";
-import AuthContext from "./context/Auth.js";
-import { useContext } from "react";
+import { Routes, Route,Navigate } from "react-router-dom";
+
 
 // Import Components
 import NavBar from "./components/NavBar.js"; // Import new Navbar
@@ -29,18 +28,24 @@ import AddReview from './pages/AddReview'
 import Chat from './pages/Chat'
 import Reviews from './pages/Reviews'
 import ArtistReviews from './pages/ArtistReviews'
+import AdminArtistList from './pages/AdminArtistList'
+import ManageUsers from './pages/ManageUsers'
+import Commission from './pages/Commission'
+import Messages from './pages/Messages'
 
 export default function App() {
-  const { userState } = useContext(AuthContext);
-
+  
   return (
     <div className="App">
       <div className = "min-h-screen bg-black">
       {/* Navigation Bar */}
       <NavBar />
 
+      <Messages/>
+
       {/* Routes */}
       <Routes>
+        <Route path="/" element={<Navigate to="/main" />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/home" element={<Home />} />
         <Route path="/register" element={<Register />} />
@@ -63,6 +68,9 @@ export default function App() {
         <Route path="/chat/order/:orderId/customer/:customerId" element={<Chat/>}/>
         <Route path="/reviews/customer/:customerId" element={<PrivateRoute permittedRoles={['customer']}><Reviews/></PrivateRoute>} />
         <Route path="/reviews/artist/:artistId" element={<PrivateRoute permittedRoles={['artist']}><ArtistReviews/></PrivateRoute>}/>
+        <Route path="/verify-artist" element={<PrivateRoute permittedRoles={['admin']}><AdminArtistList/></PrivateRoute>}/>
+        <Route path="/manage-users" element={<PrivateRoute permittedRoles={['admin']}><ManageUsers/></PrivateRoute>}/>
+        <Route path="/manage-commission" element={<PrivateRoute permittedRoles={['admin']}><Commission/></PrivateRoute>}/>
       </Routes>
       </div>
     </div>

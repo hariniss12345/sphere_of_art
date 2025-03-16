@@ -17,6 +17,7 @@ import orderCltr from './app/controllers/order-cltr.js';
 import paymentCltr from './app/controllers/payment-cltr.js';
 import reviewCltr from './app/controllers/review-cltr.js';
 import chatCltr from './app/controllers/chat-cltr.js';
+import adminCltr from './app/controllers/admin-cltr.js';
 
 import { userRegisterSchema , userLoginSchema } from './app/validators/user-validation-schema.js';
 import idValidationSchema from './app/validators/id-validation-schema.js';
@@ -97,6 +98,13 @@ app.delete('/api/reviews/:id', authenticateUser, authorizeUser(['customer']), re
 app.get('/api/chats/:orderId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.list)
 app.put('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.update)
 app.delete('/api/chats/:chatId',authenticateUser,authorizeUser(['artist','customer']),chatCltr.delete)
+
+app.put('/api/admin/verify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.verifyArtist)
+app.put('/api/admin/unverify-artist/:artistId',authenticateUser,authorizeUser(['admin']),adminCltr.unverifyArtist)
+app.get('/api/admin/manage-users',authenticateUser,authorizeUser(['admin']),adminCltr.manageUsers)
+app.get('/api/admin/orders-per-artist',authenticateUser,authorizeUser(['admin']),adminCltr.manageOrders)
+app.get('/api/admin/commissions',authenticateUser,authorizeUser(['admin']),adminCltr.manageCommission)
+
 
 // ---------------------
 // Set Up Socket.IO
