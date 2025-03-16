@@ -10,6 +10,7 @@ const customerSchema = new Schema(
       ref: 'User', // Refers to the 'User' collection
     },
     address: String, // Address of the customer
+    profilePic:String,
   },
   {
     // Enable timestamps to automatically add 'createdAt' and 'updatedAt' fields
